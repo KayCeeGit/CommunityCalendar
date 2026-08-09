@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    <title>Test calander</title>
+</head>
+
+<body>  
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo">NSW Community Calendar</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">Calendar</a></li>
+                <li><a href="about.html" class="nav-link">What is this?</a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="filters">
+        <select id="filter-month">
+        <option value="all">All Months</option>
+        <option value="1">January</option>
+        <option value="2">February</option>
+        <option value="3">March</option>
+        <option value="4">April</option>
+        <option value="5">May</option>
+        <option value="6">June</option>
+        <option value="7">July</option>
+        <option value="8">August</option>
+        <option value="9">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+        </select>
+        <select id="filter-weapon">
+        <option value="all">All Weapons</option>
+        <option value="epee">Epee</option>
+        <option value="foil">Foil</option>
+        <option value="saber">Saber</option>
+        </select>
+        <select id="filter-format">
+        <option value="all">All Formats</option>
+        <option value="individual">Individual</option>
+        <option value="team">Team</option>
+        </select>
+        <button id="reset-filters">Reset</button>
+
+
+
+        <!-- -------------------------------------------------- -->
+    <div class="header">
+        <h1>Upcoming Events</h1>
+    <!-- EVENTS -->
+
+    <div class="container">
+
+        <!-- SIFL 4 -->
+        <div class="item-container"
+            data-month="9"
+            data-day="20"
+            data-weapon="epee saber"
+            data-gender="mens womens"
+            data-format="individual">
+
+            <div class="img-container">
+                
+                <!-- Image -->
+                <img src="img\test4.jpg" alt="Placeholder Image">
+            </div>
+
+            <div class="body-container">
+                <div class="overlay"></div>
+
+                <div class="event-info">
+                
+                    <!-- Name -->
+                    <p class="title">SIFL #5</p>
+
+                    <div class="seperator"></div>
+
+                    <!-- Weapon -->
+                    <p class="info-wep">Epee / Saber</p>
+
+                    <!-- Format -->
+                    <p class="info-format">Individual</p>
+
+                    <!-- Gender -->
+                    <p class="info-gender">Mens / Womens</p>
+
+                    <!-- Date -->
+                           <p class="info-date"><i class="far fa-calendar-alt"></i>20/9</p>
+
+                    <div class="additional-info">
+                        <p class="info">
+
+                            <!-- Location -->
+                            <i class="fas fa-map-marker-alt"></i>
+                            Sydney Beyond Fencing
+                        </p>
+                        <p class="info">
+                            <!-- Price -->
+                            <p class="price">$30</p> 
+                        </p>
+
+                        <p class="info-description">
+                            <!-- Times -->
+                             Event Times:
+                             <ul>
+                                <li>Mens Epee: 10:00am</li>
+                                <li>Mens Saber: 11:00am</li>
+                                <li>Womens Epee: 12:00pm</li>
+                                <li>Womens Saber: 1:00pm</li>
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <a href="https://www.instagram.com/sydneyintervarsityfencing/" class="action">Go To Page</a>
+        </div>
+
+        <!-- SIFL 6 -->
+        <div class="item-container"
+                data-month="12"
+                data-day="12"
+                data-weapon="epee saber"
+                data-gender="mens womens"
+                data-format="team">
+                <div class="img-container">
+
+                    <!-- Image -->
+                    <img src="img\test4.jpg" alt="Placeholder Image">
+                </div>
+
+                <div class="body-container">
+                    <div class="overlay"></div>
+
+                    <div class="event-info">
+                    
+                        <!-- Name -->
+                        <p class="title">SIFL #6</p>
+
+                        <div class="seperator"></div>
+
+                        <!-- Weapon -->
+                        <p class="info-wep">Epee / Saber</p>
+
+                        <!-- Format -->
+                        <p class="info-format">Teams</p>
+
+                        <!-- Gender -->
+                        <p class="info-gender">Mens / Womens</p>
+
+                        <!-- Date -->
+                           <p class="info-date"><i class="far fa-calendar-alt"></i>12/12</p>
+
+                    <div class="additional-info">
+                        <p class="info">
+
+                            <!-- Location -->
+                            <i class="fas fa-map-marker-alt"></i>
+                            Sydney Academy Of Fencing
+                        </p>
+                        <p class="info">
+                            <!-- Price -->
+                            <p class="price">$30</p> 
+                        </p>
+
+                            <p class="info-description">
+                                <!-- Times -->
+                                Event Times:
+                                <ul>
+                                    TBD
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://www.instagram.com/sydneyintervarsityfencing/" class="action">Go To Page</a>
+        </div>
+
+        <!-- PFL#1 Epee foil-->
+        <div class="item-container"
+                data-month="8"
+                data-day="23"
+                data-weapon="foil epee"
+                data-gender="mens womens"
+                data-format="individual">
+                <div class="img-container">
+
+                    <!-- Image -->
+                    <img src="img\saf.png" alt="Placeholder Image">
+                </div>
+
+                <div class="body-container">
+                    <div class="overlay"></div>
+
+                    <div class="event-info">
+                    
+                        <!-- Name -->
+                        <p class="title">Premier League #1</p>
+
+                        <div class="seperator"></div>
+
+                        <!-- Weapon -->
+                        <p class="info-wep">Epee / Foil</p>
+
+                        <!-- Format -->
+                        <p class="info-format">Individual</p>
+
+                        <!-- Gender -->
+                        <p class="info-gender">Mens / Womens</p>
+
+                        <!-- Date -->
+                           <p class="info-date"><i class="far fa-calendar-alt"></i>23/8</p>
+
+                    <div class="additional-info">
+                        <p class="info">
+
+                            <!-- Location -->
+                            <i class="fas fa-map-marker-alt"></i>
+                            Sydney Beyond Fencing
+                        </p>
+                        <p class="info">
+                            <!-- Price -->
+                            <p class="price"></p> 
+                        </p>
+
+                            <p class="info-description">
+                                <!-- Times -->
+                                Event Times:
+                                <ul>
+                                    <li>Epee: 10am</li>
+                                    <li>Foil: 10am</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://www.facebook.com/events/1948603639159681/?acontext=%7B%22event_action_history%22%3A[%7B%22mechanism%22%3A%22your_upcoming_events_unit%22%2C%22surface%22%3A%22bookmark%22%7D]%2C%22ref_notif_type%22%3Anull%7D" class="action">Go To Page</a>
+        </div>
+
+        <!-- PFL#1 Saber -->
+        <div class="item-container"
+                data-month="8"
+                data-day="16"
+                data-weapon="saber"
+                data-gender="mens womens"
+                data-format="individual">
+                <div class="img-container">
+
+                    <!-- Image -->
+                    <img src="img\saf.png" alt="Placeholder Image">
+                </div>
+
+                <div class="body-container">
+                    <div class="overlay"></div>
+
+                    <div class="event-info">
+                    
+                        <!-- Name -->
+                        <p class="title">Premier League #1</p>
+
+                        <div class="seperator"></div>
+
+                        <!-- Weapon -->
+                        <p class="info-wep">Saber</p>
+
+                        <!-- Format -->
+                        <p class="info-format">Individual</p>
+
+                        <!-- Gender -->
+                        <p class="info-gender">Mens / Womens</p>
+
+                        <!-- Date -->
+                     <!-- <i class="far fa-calendar-alt"></i>    -->
+                           <p class="info-date"><i class="far fa-calendar-alt"></i>16/8</p>
+
+                    <div class="additional-info">
+                        <p class="info">
+
+                            <!-- Location -->
+                            <i class="fas fa-map-marker-alt"></i>
+                            Sydney Academy Of Fencing
+                        </p>
+                        <p class="info">
+                            <!-- Price -->
+                            <p class="price">$30</p> 
+                        </p>
+
+                            <p class="info-description">
+                                <!-- Times -->
+                                Event Times:
+                                <ul>
+                                    <li>Saber: 10am</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://www.facebook.com/events/900953155904600/?acontext=%7B%22event_action_history%22%3A[%7B%22mechanism%22%3A%22your_upcoming_events_unit%22%2C%22surface%22%3A%22bookmark%22%7D]%2C%22ref_notif_type%22%3Anull%7D" class="action">Go To Page</a>
+        </div>
+
+        <!-- AFC#1 -->
+        <div class="item-container"
+                data-month="9"
+                data-day="11 12 13"
+                data-weapon="saber epee foil"
+                data-gender="mens womens"
+                data-format="individual">
+                <div class="img-container">
+
+                    <!-- Image -->
+                    <img src="img\aff.jpg" alt="Placeholder Image">
+                </div>
+
+                <div class="body-container">
+                    <div class="overlay"></div>
+
+                    <div class="event-info">
+                    
+                        <!-- Name -->
+                        <p class="title">AFC #1</p>
+
+                        <div class="seperator"></div>
+
+                        <!-- Weapon -->
+                        <p class="info-wep">Foil / Epee / Saber</p>
+
+                        <!-- Format -->
+                        <p class="info-format">Individual</p>
+
+                        <!-- Gender -->
+                        <p class="info-gender">Mens / Womens</p>
+
+                        <!-- Date -->
+                     <!-- <i class="far fa-calendar-alt"></i>    -->
+                           <p class="info-date"><i class="far fa-calendar-alt"></i>11-13/9</p>
+
+                    <div class="additional-info">
+                        <p class="info">
+
+                            <!-- Location -->
+                            <i class="fas fa-map-marker-alt"></i>
+                            Victoria State Fencing Centre
+                        </p>
+                        <p class="info">
+                            <!-- Price -->
+                            <p class="price"></p> 
+                        </p>
+
+                            <p class="info-description">
+                                <!-- Times -->
+                                Event Times:
+                                <ul>
+                                    See Website
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-afc-1/" class="action">Go To Page</a>
+        </div>
+
+        <!-- AFC#2 -->
+        <div class="item-container"
+                data-month="10"
+                data-day="16 17 18"
+                data-weapon="saber epee foil"
+                data-gender="mens womens"
+                data-format="individual">
+                <div class="img-container">
+
+                    <!-- Image -->
+                    <img src="img\aff.jpg" alt="Placeholder Image">
+                </div>
+
+                <div class="body-container">
+                    <div class="overlay"></div>
+
+                    <div class="event-info">
+                    
+                        <!-- Name -->
+                        <p class="title">AFC #2</p>
+
+                        <div class="seperator"></div>
+
+                        <!-- Weapon -->
+                        <p class="info-wep">Foil / Epee / Saber</p>
+
+                        <!-- Format -->
+                        <p class="info-format">Individual</p>
+
+                        <!-- Gender -->
+                        <p class="info-gender">Mens / Womens</p>
+
+                        <!-- Date -->
+                     <!-- <i class="far fa-calendar-alt"></i>    -->
+                           <p class="info-date"><i class="far fa-calendar-alt"></i>16-18/10</p>
+
+                    <div class="additional-info">
+                        <p class="info">
+
+                            <!-- Location -->
+                            <i class="fas fa-map-marker-alt"></i>
+                            Nissan Arena, Brisbane
+                        </p>
+                        <p class="info">
+                            <!-- Price -->
+                            <p class="price"></p> 
+                        </p>
+
+                            <p class="info-description">
+                                <!-- Times -->
+                                Event Times:
+                                <ul>
+                                    See Website
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-2/" class="action">Go To Page</a>
+        </div>
+
+        <!-- Unigames -->
+        <div class="item-container"
+                data-month="9"
+                data-day="26 27 28 29"
+                data-weapon="saber epee foil"
+                data-gender="mens womens"
+                data-format="individual team">
+                <div class="img-container">
+
+                    <!-- Image -->
+                    <img src="img\unisport.jpg" alt="Placeholder Image">
+                </div>
+
+                <div class="body-container">
+                    <div class="overlay"></div>
+
+                    <div class="event-info">
+                    
+                        <!-- Name -->
+                        <p class="title">Unisport Nationals</p>
+
+                        <div class="seperator"></div>
+
+                        <!-- Weapon -->
+                        <p class="info-wep">Foil / Epee / Saber</p>
+
+                        <!-- Format -->
+                        <p class="info-format">Individual / Teams</p>
+
+                        <!-- Gender -->
+                        <p class="info-gender">Mens / Womens</p>
+
+                        <!-- Date -->
+                     <!-- <i class="far fa-calendar-alt"></i>    -->
+                           <p class="info-date"><i class="far fa-calendar-alt"></i>26-29/9</p>
+
+                    <div class="additional-info">
+                        <p class="info">
+
+                            <!-- Location -->
+                            <i class="fas fa-map-marker-alt"></i>
+                            Murdoch Active Sports Centre, Perth
+                        </p>
+                        <p class="info">
+                            <!-- Price -->
+                            <p class="price"></p> 
+                        </p>
+
+                            <p class="info-description">
+                                <!-- Times -->
+                                Event Times:
+                                <ul>
+                                    See Website
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://www.ausfencing.org/tribe-events/2026-uni-sports-nationals-fencing/" class="action">Go To Page</a>
+        </div>
+
+        <!-- MQU Champs Epee-->
+        <div class="item-container"
+                data-month="11"
+                data-day="4"
+                data-weapon="epee"
+                data-gender="mens womens"
+                data-format="individual">
+                <div class="img-container">
+
+                    <!-- Image -->
+                    <img src="img\mqu.png" alt="Placeholder Image">
+                </div>
+
+                <div class="body-container">
+                    <div class="overlay"></div>
+
+                    <div class="event-info">
+                    
+                        <!-- Name -->
+                        <p class="title">MQU Champs</p>
+
+                        <div class="seperator"></div>
+
+                        <!-- Weapon -->
+                        <p class="info-wep">Epee </p>
+
+                        <!-- Format -->
+                        <p class="info-format">Individual</p>
+
+                        <!-- Gender -->
+                        <p class="info-gender">Mens / Womens</p>
+
+                        <!-- Date -->
+                     <!-- <i class="far fa-calendar-alt"></i>    -->
+                           <p class="info-date"><i class="far fa-calendar-alt"></i>4/11</p>
+
+                    <div class="additional-info">
+                        <p class="info">
+
+                            <!-- Location -->
+                            <i class="fas fa-map-marker-alt"></i>
+                           MUSAC Sports Center
+                        </p>
+                        <p class="info">
+                            <!-- Price -->
+                            <p class="price"></p> 
+                        </p>
+
+                            <p class="info-description">
+                                <!-- Times -->
+                                Event Times:
+                                <ul>
+                                    Epee: 8am - 12pm
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://www.instagram.com/mquni_fencingclub/" class="action">Go To Page</a>
+        </div>
+
+         <!-- MQU Champs Saber-->
+        <div class="item-container"
+                data-month="11"
+                data-day="11"
+                data-weapon="saber"
+                data-gender="mens womens"
+                data-format="individual">
+                <div class="img-container">
+
+                    <!-- Image -->
+                    <img src="img\mqu.png" alt="Placeholder Image">
+                </div>
+
+                <div class="body-container">
+                    <div class="overlay"></div>
+
+                    <div class="event-info">
+                    
+                        <!-- Name -->
+                        <p class="title">MQU Champs</p>
+
+                        <div class="seperator"></div>
+
+                        <!-- Weapon -->
+                        <p class="info-wep">Saber </p>
+
+                        <!-- Format -->
+                        <p class="info-format">Individual</p>
+
+                        <!-- Gender -->
+                        <p class="info-gender">Mens / Womens</p>
+
+                        <!-- Date -->
+                     <!-- <i class="far fa-calendar-alt"></i>    -->
+                           <p class="info-date"><i class="far fa-calendar-alt"></i>11/11</p>
+
+                    <div class="additional-info">
+                        <p class="info">
+
+                            <!-- Location -->
+                            <i class="fas fa-map-marker-alt"></i>
+                           MUSAC Sports Center
+                        </p>
+                        <p class="info">
+                            <!-- Price -->
+                            <p class="price"></p> 
+                        </p>
+
+                            <p class="info-description">
+                                <!-- Times -->
+                                Event Times:
+                                <ul>
+                                    Saber: 8am - 12pm
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://www.instagram.com/mquni_fencingclub/" class="action">Go To Page</a>
+        </div>
+    </div>
+    </div>
+
+
+
+    <script src="script.js"></script>
+</body>
+
+</html >
+
+
+
+<!-- <div class="container">
+        <div class="item-container"
+            data-month="XXX"
+            data-weapon="XXX"
+            data-gender="XXX"
+            data-format="XXX">
+
+            <div class="img-container"
+
+                Image 
+                <img src="img\XXX.jpg" alt="No Image Found">
+            </div>
+
+            <div class="body-container">
+                <div class="overlay"></div>
+
+                <div class="event-info">
+                
+                    Name 
+                    <p class="title">XXX #5</p>
+
+                    <div class="seperator"></div>
+
+                     Weapon 
+                    <p class="info-wep">XXX </p>
+
+                     Format 
+                    <p class="info-format">XXX</p>
+
+                     Gender 
+                    <p class="info-gender">XXX</p>
+
+                     Price 
+                    <p class="price">XXX</p> 
+
+                    <div class="additional-info">
+                        <p class="info">
+
+                             Location 
+                            <i class="fas fa-map-marker-alt"></i>
+                            XXX
+                        </p>
+                        <p class="info">
+
+                             Date 
+                            <i class="far fa-calendar-alt"></i>
+                            XXX
+                        </p>
+
+                        <p class="info-description">
+                            Times 
+                            Event Times:
+                            <ul>
+                                XXX
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <a href="XXX" class="action">Go To Page</a>
+        </div> -->
