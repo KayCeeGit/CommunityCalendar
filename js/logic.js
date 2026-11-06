@@ -4,7 +4,7 @@
 // Dates are always ISO strings ("2026-12-12"). ISO strings sort correctly as
 // plain text, so we can compare them with <, >, and localeCompare.
 
-export const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'];
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -23,16 +23,17 @@ function isRealDate(s) {
 }
 
 /**
- * Minimum an event needs to be safely shown. Anything failing this is skipped
- * (and logged) rather than breaking the whole page. This matters once the
- * interface and AI scrapers start adding events.
+ * The minimum an event needs for the page to draw it safely. Anything failing
+ * this is skipped (and logged) instead of breaking the whole page. It covers
+ * exactly the fields render.js relies on.
  */
 export function isValidEvent(e) {
   return Boolean(
     e && typeof e === 'object' &&
     typeof e.name === 'string' && e.name.trim() &&
+    typeof e.venue === 'string' &&
     isRealDate(e.start_date) && isRealDate(e.end_date) && e.end_date >= e.start_date &&
-    Array.isArray(e.weapons) && Array.isArray(e.format)
+    Array.isArray(e.weapons) && Array.isArray(e.format) && Array.isArray(e.gender)
   );
 }
 
@@ -47,17 +48,17 @@ export function splitEvents(events, today) {
   };
 }
 
-/** Sort by start date, then end date, then name. Returns a new array. */
-export function sortEvents(events, { newestFirst = false } = {}) {
-  const sorted = [...events].sort((a, b) =>
+/** Oldest first: by start date, then end date, then name. Returns a new array. */
+export function sortEvents(events) {
+  return [...events].sort((a, b) =>
     a.start_date.localeCompare(b.start_date) ||
     a.end_date.localeCompare(b.end_date) ||
     a.name.localeCompare(b.name));
-  return newestFirst ? sorted.reverse() : sorted;
 }
 
-export const monthKey = (e) => e.start_date.slice(0, 7); // "2026-12"
-export const yearOf = (e) => e.start_date.slice(0, 4);   // "2026"
+const monthKey = (e) => e.start_date.slice(0, 7); // "2026-12", used to group cards
+const monthOf = (e) => e.start_date.slice(5, 7);  // "12", used by the month filter
+export const yearOf = (e) => e.start_date.slice(0, 4); // "2026"
 
 /** "2026-12" -> "December 2026" (or just "December"). */
 export function monthLabel(key, withYear = true) {
@@ -67,12 +68,13 @@ export function monthLabel(key, withYear = true) {
 }
 
 /**
- * Filters by month ("2026-12"), year ("2026"), weapon, and format.
+ * Filters by month ("01" to "12"), year ("2026"), weapon, and format.
  * Each filter is "all" (or missing) to mean "don't filter on this".
+ * Month and year are separate, so month "01" + year "2027" means January 2027.
  */
 export function filterEvents(events, { month = 'all', year = 'all', weapon = 'all', format = 'all' } = {}) {
   return events.filter((e) =>
-    (month === 'all' || monthKey(e) === month) &&
+    (month === 'all' || monthOf(e) === month) &&
     (year === 'all' || yearOf(e) === year) &&
     (weapon === 'all' || e.weapons.includes(weapon)) &&
     (format === 'all' || e.format.includes(format)));
@@ -90,14 +92,9 @@ export function groupByMonth(events) {
   return groups;
 }
 
-/** Unique, sorted values for the month dropdown: [{ value, label }]. */
-export function monthOptions(events) {
-  return [...new Set(events.map(monthKey))].sort().map((key) => ({ value: key, label: monthLabel(key) }));
-}
-
-/** Unique, sorted values for the year dropdown: [{ value, label }]. */
-export function yearOptions(events) {
-  return [...new Set(events.map(yearOf))].sort().map((y) => ({ value: y, label: y }));
+/** The years that have events, newest first, for the year dropdown: ["2027", "2026"]. */
+export function yearsIn(events) {
+  return [...new Set(events.map(yearOf))].sort().reverse();
 }
 
 /**

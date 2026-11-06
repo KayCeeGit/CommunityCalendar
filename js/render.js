@@ -12,11 +12,14 @@ const WEAPONS = [['foil', 'Foil'], ['epee', 'Epee'], ['saber', 'Saber']];
 const FORMATS = [['individual', 'Individual'], ['team', 'Teams']];
 const GENDERS = [['mens', 'Mens'], ['womens', 'Womens']];
 
+// Shown when an event's organiser (or its logo file) can't be found.
+const PLACEHOLDER_IMAGE = 'img/placeholder.svg';
+
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ESCAPES[c]);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ESCAPES[c]);
 
 /** Only plain web links are allowed (blocks things like javascript: URLs). */
-export function safeLink(url) {
+function safeLink(url) {
   try {
     const u = new URL(url);
     return u.protocol === 'https:' || u.protocol === 'http:' ? url : null;
@@ -25,23 +28,22 @@ export function safeLink(url) {
   }
 }
 
-/** Images must be a file inside img/ (no ".." tricks), or a full https link. */
-export function safeImage(path) {
-  if (typeof path !== 'string') return null;
-  if (/^img\/[\w\-. ]+$/.test(path) && !path.includes('..')) return path;
-  return safeLink(path)?.startsWith('https:') ? path : null;
+/** Logos must be a file inside img/ (no ".." tricks). */
+function safeImage(path) {
+  return typeof path === 'string' && /^img\/[\w\-. ]+$/.test(path) && !path.includes('..') ? path : null;
 }
 
 /** Picks the allowed values out of a list, in a fixed order, as display labels. */
 const labels = (values, table) =>
   table.filter(([key]) => values.includes(key)).map(([, label]) => label).join(' / ');
 
-export function cardHtml(e) {
-  const image = safeImage(e.image);
+/** `organiser` is the matching entry from organisers.json (or undefined if there isn't one). */
+export function cardHtml(e, organiser) {
+  const image = safeImage(organiser?.image) ?? PLACEHOLDER_IMAGE;
   const link = safeLink(e.url);
   return `
 <div class="item-container" data-id="${esc(e.id)}">
-  <div class="img-container">${image ? `<img src="${esc(image)}" alt="${esc(e.name)}">` : ''}</div>
+  <div class="img-container"><img src="${esc(image)}" alt="${esc(organiser?.name ?? e.name)}" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMAGE}'"></div>
   <div class="body-container">
     <div class="overlay"></div>
     <div class="event-info">
@@ -49,10 +51,10 @@ export function cardHtml(e) {
       <div class="seperator"></div>
       <p class="info-wep">${labels(e.weapons, WEAPONS)}</p>
       <p class="info-format">${labels(e.format, FORMATS)}</p>
-      <p class="info-gender">${labels(e.gender ?? [], GENDERS)}</p>
+      <p class="info-gender">${labels(e.gender, GENDERS)}</p>
       <p class="info-date"><i class="far fa-calendar-alt"></i>${esc(formatDateRange(e))}</p>
       <div class="additional-info">
-        <p class="info"><i class="fas fa-map-marker-alt"></i> ${esc(e.venue ?? 'Venue TBC')}</p>
+        <p class="info"><i class="fas fa-map-marker-alt"></i> ${esc(e.venue)}</p>
       </div>
     </div>
   </div>

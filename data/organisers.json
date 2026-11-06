@@ -1,0 +1,56 @@
+[
+  {
+    "id": "sifl",
+    "name": "Sydney Intervarsity Fencing League",
+    "image": "img/sifl.jpg",
+    "aliases": ["SIFL", "Sydney Intervarsity Fencing", "Sydney Intervarsity Fencing League", "sydneyintervarsityfencing"]
+  },
+  {
+    "id": "aff",
+    "name": "Australian Fencing Federation",
+    "image": "img/aff.jpg",
+    "aliases": ["AFF", "Fencing Australia", "ausfencing.org", "AFC", "Australian Fencing Circuit"]
+  },
+    {
+    "id": "nswfa",
+    "name": "NSW Fencing Association",
+    "image": "img/NSFA.jpg",
+    "aliases": ["NSWFA", "NSW Fencing", "New South Wales Fencing"]
+  },
+  {
+    "id": "nsfa",
+    "name": "NSFA",
+    "image": "img/NSFA.jpg",
+    "aliases": ["NSFA", "nsfencing", "nsfencing.tidyhq.com"]
+  },
+  {
+    "id": "saf",
+    "name": "Sydney Academy of Fencing",
+    "image": "img/saf.png",
+    "aliases": ["SAF", "Sydney Academy of Fencing", "Sydney Academy Of Fencing"]
+  },
+  {
+    "id": "usyd",
+    "name": "Sydney University Fencing Club",
+    "image": "img/usyd.jpg",
+    "aliases": ["USYD", "Sydney Uni Fencing", "Sydney University Fencing Club", "sydneyunifencing"]
+  },
+  {
+    "id": "mqu",
+    "name": "Macquarie University Fencing Club",
+    "image": "img/mqu.png",
+    "aliases": ["MQU", "Macquarie Uni Fencing", "Macquarie University Fencing Club", "mquni_fencingclub", "MQFencing"]
+  },
+  {
+    "id": "unisport",
+    "name": "UniSport Australia",
+    "image": "img/unisport.jpg",
+    "aliases": ["Unisport", "UniSport", "UniSport Australia", "Uni Sport Nationals"]
+  },
+  {
+    "id": "lakemaq",
+    "name": "Lake Macquarie Fencing Club",
+    "image": "img/lakemaq.jpg",
+    "aliases": ["Lake Macquarie", "Lake Mac", "Lake Macquarie Fencing Club"]
+  }
+]

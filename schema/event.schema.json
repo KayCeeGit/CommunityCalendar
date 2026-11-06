@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "event.schema.json",
+  "title": "Fencing event",
+  "description": "One entry in data/events.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "start_date", "end_date", "weapons", "format", "gender", "level", "venue", "organiser", "url"],
+  "properties": {
+    "id": {
+      "description": "Permanent label like evt-0042. Assigned when an event is approved; never reused or changed.",
+      "type": "string",
+      "pattern": "^evt-\\d{4,}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "start_date": {
+      "description": "YYYY-MM-DD",
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "end_date": {
+      "description": "YYYY-MM-DD. Same as start_date for a one-day event.",
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "weapons": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["foil", "epee", "saber"] }
+    },
+    "format": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["individual", "team"] }
+    },
+    "gender": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["mens", "womens"] }
+    },
+    "level": {
+      "description": "Age/experience categories. To allow a new one, add it to this list.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["open", "novice", "u14", "u18", "cadet", "youth", "u16", "u12", "u11", "u10","u13","u15","u17", "school", "veteran"] }
+    },
+    "venue": {
+      "type": "string",
+      "minLength": 1
+    },
+    "organiser": {
+      "description": "The id of an entry in data/organisers.json -> used to get images for the cards",
+      "type": "string",
+      "minLength": 1
+    },
+    "url": {
+      "description": "Where visitors go for details. web link",
+      "type": "string",
+      "pattern": "^https?://\\S+$"
+    }
+  }
+}

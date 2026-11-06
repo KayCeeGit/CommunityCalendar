@@ -19,8 +19,8 @@
       "open"
     ],
     "venue": "Lake Macquarie PCYC",
-    "url": "https://nsfencing.tidyhq.com/public/pages/upcoming-competitions",
-    "image": "img/NSFA.jpg"
+    "organiser": "nswfa",
+    "url": "https://nsfencing.tidyhq.com/public/pages/upcoming-competitions"
   },
   {
     "id": "evt-0002",
@@ -42,8 +42,8 @@
       "open"
     ],
     "venue": "Sydney Beyond Fencing",
-    "url": "https://www.facebook.com/events/1948603639159681/?acontext=%7B%22event_action_history%22%3A[%7B%22mechanism%22%3A%22your_upcoming_events_unit%22%2C%22surface%22%3A%22bookmark%22%7D]%2C%22ref_notif_type%22%3Anull%7D",
-    "image": "img/saf.png"
+    "organiser": "saf",
+    "url": "https://www.facebook.com/events/1948603639159681/?acontext=%7B%22event_action_history%22%3A[%7B%22mechanism%22%3A%22your_upcoming_events_unit%22%2C%22surface%22%3A%22bookmark%22%7D]%2C%22ref_notif_type%22%3Anull%7D"
   },
   {
     "id": "evt-0003",
@@ -64,8 +64,8 @@
       "open"
     ],
     "venue": "The Arena, USYD",
-    "url": "https://www.instagram.com/sydneyunifencing/",
-    "image": "img/usyd.jpg"
+    "organiser": "usyd",
+    "url": "https://www.instagram.com/sydneyunifencing/"
   },
   {
     "id": "evt-0004",
@@ -88,8 +88,8 @@
       "open"
     ],
     "venue": "Victoria State Fencing Centre",
-    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-afc-1/",
-    "image": "img/aff.jpg"
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-afc-1/"
   },
   {
     "id": "evt-0005",
@@ -113,8 +113,8 @@
       "u14"
     ],
     "venue": "Maitland PCYC",
-    "url": "https://www.facebook.com/events/1401210448741048",
-    "image": "img/NSFA.jpg"
+    "organiser": "nswfa",
+    "url": "https://www.facebook.com/events/1401210448741048"
   },
   {
     "id": "evt-0006",
@@ -135,8 +135,8 @@
       "open"
     ],
     "venue": "The Arena, USYD",
-    "url": "https://www.instagram.com/sydneyunifencing/",
-    "image": "img/usyd.jpg"
+    "organiser": "usyd",
+    "url": "https://www.instagram.com/sydneyunifencing/"
   },
   {
     "id": "evt-0007",
@@ -158,8 +158,8 @@
       "open"
     ],
     "venue": "Sydney Beyond Fencing",
-    "url": "https://www.instagram.com/sydneyintervarsityfencing/",
-    "image": "img/sifl.jpg"
+    "organiser": "sifl",
+    "url": "https://www.instagram.com/sydneyintervarsityfencing/"
   },
   {
     "id": "evt-0008",
@@ -183,8 +183,8 @@
       "open"
     ],
     "venue": "Murdoch Active Sports Centre, Perth",
-    "url": "https://www.ausfencing.org/tribe-events/2026-uni-sports-nationals-fencing/",
-    "image": "img/unisport.jpg"
+    "organiser": "unisport",
+    "url": "https://www.ausfencing.org/tribe-events/2026-uni-sports-nationals-fencing/"
   },
   {
     "id": "evt-0009",
@@ -205,8 +205,8 @@
       "open"
     ],
     "venue": "MUSAC Sports Center",
-    "url": "https://www.instagram.com/mquni_fencingclub/",
-    "image": "img/mqu.png"
+    "organiser": "mqu",
+    "url": "https://www.instagram.com/mquni_fencingclub/"
   },
   {
     "id": "evt-0010",
@@ -227,8 +227,8 @@
       "open"
     ],
     "venue": "MUSAC Sports Center",
-    "url": "https://www.instagram.com/mquni_fencingclub/",
-    "image": "img/mqu.png"
+    "organiser": "mqu",
+    "url": "https://www.instagram.com/mquni_fencingclub/"
   },
   {
     "id": "evt-0011",
@@ -249,8 +249,8 @@
       "open"
     ],
     "venue": "Sydney Academy Of Fencing",
-    "url": "https://www.facebook.com/events/900953155904600/?acontext=%7B%22event_action_history%22%3A[%7B%22mechanism%22%3A%22your_upcoming_events_unit%22%2C%22surface%22%3A%22bookmark%22%7D]%2C%22ref_notif_type%22%3Anull%7D",
-    "image": "img/saf.png"
+    "organiser": "saf",
+    "url": "https://www.facebook.com/events/900953155904600/?acontext=%7B%22event_action_history%22%3A[%7B%22mechanism%22%3A%22your_upcoming_events_unit%22%2C%22surface%22%3A%22bookmark%22%7D]%2C%22ref_notif_type%22%3Anull%7D"
   },
   {
     "id": "evt-0012",
@@ -273,8 +273,8 @@
       "open"
     ],
     "venue": "Nissan Arena, Brisbane",
-    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-2/",
-    "image": "img/aff.jpg"
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-2/"
   },
   {
     "id": "evt-0013",
@@ -295,8 +295,8 @@
       "open"
     ],
     "venue": "The Arena, USYD",
-    "url": "https://www.instagram.com/sydneyunifencing/",
-    "image": "img/usyd.jpg"
+    "organiser": "usyd",
+    "url": "https://www.instagram.com/sydneyunifencing/"
   },
   {
     "id": "evt-0014",
@@ -318,8 +318,8 @@
       "open"
     ],
     "venue": "Morisset PCYC",
-    "url": "https://www.facebook.com/events/2434445696966166",
-    "image": "img/NSFA.jpg"
+    "organiser": "nswfa",
+    "url": "https://www.facebook.com/events/2434445696966166"
   },
   {
     "id": "evt-0015",
@@ -343,8 +343,8 @@
       "u14"
     ],
     "venue": "Singleton PCYC",
-    "url": "https://www.facebook.com/events/1059707093466028/",
-    "image": "img/NSFA.jpg"
+    "organiser": "nswfa",
+    "url": "https://www.facebook.com/events/1059707093466028/"
   },
   {
     "id": "evt-0016",
@@ -368,8 +368,8 @@
       "open"
     ],
     "venue": "Western Australia",
-    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-3/",
-    "image": "img/aff.jpg"
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-3/"
   },
   {
     "id": "evt-0017",
@@ -391,7 +391,7 @@
       "open"
     ],
     "venue": "Sydney Academy Of Fencing",
-    "url": "https://www.instagram.com/sydneyintervarsityfencing/",
-    "image": "img/sifl.jpg"
+    "organiser": "sifl",
+    "url": "https://www.instagram.com/sydneyintervarsityfencing/"
   }
 ]

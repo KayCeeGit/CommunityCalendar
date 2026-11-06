@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 190" role="img" aria-label="No organiser logo yet">
+  <rect width="320" height="190" fill="#fffffe"/>
+  <g stroke="#b9bcc4" stroke-width="6" stroke-linecap="round" fill="none">
+    <line x1="118" y1="130" x2="202" y2="46"/>
+    <line x1="202" y1="130" x2="118" y2="46"/>
+  </g>
+  <g stroke="#b9bcc4" stroke-width="6" stroke-linecap="round">
+    <line x1="106" y1="118" x2="124" y2="136"/>
+    <line x1="214" y1="118" x2="196" y2="136"/>
+  </g>
+</svg>
