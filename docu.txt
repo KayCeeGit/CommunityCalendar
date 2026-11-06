@@ -1,0 +1,13 @@
+The website pulls events from the JSON filem, with the keys:
+
+"id" - evt-xxxx
+"name" -str
+"start_date" yyyy-mm-dd
+"end_date" yyyy-mm-dd
+"weapons" [x,y,z] (where xyz are foil,epee,saber)
+"format" [x,y] (where xy are team, individual)
+"gender" [x,y] (mens, womens)
+"level" [x,y,z] (Different catagories, opens, youth, cadet, etc)
+"venue" -str
+"url" -str
+"image" -str
