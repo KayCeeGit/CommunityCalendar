@@ -1,0 +1,268 @@
+/* style.css: the "board" look: Fixtures' boldness with Hybrid's convenience.
+   From Fixtures: huge cobalt month names, heavy black rules, square joined buttons, one dense row per event,
+   F / E / S letters filled in black, a yellow row under the pointer, a yellow "Next up" slab,
+   and a cobalt archive with yellow type.
+   From Hybrid: one row of filters (weapon buttons + dropdowns), month names that stay pinned on the left on wide
+   screens, a "Next up" box that lists every event that day and collapses on phones, a Compact view switch,
+   and small tidy rows on phones.
+   Colours are tokens at the top: light by default, dark if the visitor's device is dark. */
+
+:root {
+    --display: 'Bricolage Grotesque', 'Arial Black', system-ui, sans-serif;
+    --body: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    --bg: #edeff4;          /* page */
+    --surface: #ffffff;     /* event rows */
+    --fg: #0b1020;          /* text and the heavy rules */
+    --muted: #565d72;       /* secondary text (5:1 on the page colour) */
+    --hairline: #c5cad8;    /* thin dividers */
+    --accent: #2340ff;      /* month names */
+    --hover: #ffe14d;       /* the row under the pointer */
+    --focus: #2340ff;
+    --on-fg: #ffffff;       /* text on a black (--fg) block */
+    --glyph-off: #8a91a6;   /* an F / E / S the event doesn't use */
+    --slab: #ffe14d;        /* the "next up" block */
+    --on-slab: #0b1020;
+    --pick: #ffe14d;        /* a dropdown that is filtering */
+    --on-pick: #0b1020;
+    --red: #d92d3a;
+    --amber: #ffb020;
+    --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%230b1020' stroke-width='2.5'/%3E%3C/svg%3E");
+    --arrow-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%230b1020' stroke-width='2.5'/%3E%3C/svg%3E");
+    --wrap: 1240px;
+    --gutter: clamp(16px, 4vw, 40px);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0b1020; --surface: #151b33; --fg: #edeff4; --on-fg: #0b1020; --muted: #a3aac0; --hairline: #2d365a;
+        --accent: #ffe14d; --hover: #232b4d; --focus: #ffe14d; --glyph-off: #6b7394;
+        --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23edeff4' stroke-width='2.5'/%3E%3C/svg%3E");
+    }
+}
+
+/* The archive: a cobalt page with yellow type, in light and dark alike. */
+body[data-page="archive"] {
+    --bg: #2340ff; --surface: transparent; --fg: #ffffff; --on-fg: #2340ff; --muted: #d6dcff; --hairline: rgba(255, 255, 255, 0.35);
+    --accent: #ffe14d; --hover: #0b1020; --focus: #ffe14d; --glyph-off: #aab6ff;
+    --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23ffffff' stroke-width='2.5'/%3E%3C/svg%3E");
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body { min-height: 100vh; background: var(--bg); color: var(--fg); font: 400 1rem/1.5 var(--body); }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.wrap { width: 100%; max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gutter); }
+
+/* ---------- top bar ---------- */
+.navbar { border-bottom: 2px solid var(--fg); }
+.nav-container { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; max-width: var(--wrap); margin: 0 auto; padding: 12px var(--gutter); }
+.nav-logo { display: flex; align-items: center; gap: 12px; font: 800 1.3rem/1.2 var(--display); letter-spacing: -0.01em; text-decoration: none; }
+.brand-mark { flex: none; width: 30px; height: 30px; background: var(--accent); box-shadow: inset 0 0 0 7px var(--bg), inset 0 0 0 30px var(--accent); border: 0; position: relative; }
+.brand-mark::after { content: ''; position: absolute; right: 0; bottom: 0; width: 11px; height: 11px; background: var(--fg); }
+.nav-menu { display: flex; gap: 4px; padding: 0; list-style: none; }
+.nav-link { display: block; padding: 6px 12px; border: 2px solid transparent; font-weight: 600; text-decoration: none; }
+.nav-link:hover { border-color: var(--fg); }
+.nav-link.active { background: var(--fg); color: var(--on-fg); }
+
+/* ---------- top of the page ---------- */
+.hero { display: grid; gap: 18px; padding-block: clamp(28px, 5vw, 48px) 28px; }
+.hero h1 { max-width: 11ch; font: 800 clamp(2.5rem, 9vw, 6.2rem)/0.92 var(--display); letter-spacing: -0.035em; text-wrap: balance; }
+.lede { max-width: 34rem; font-size: 1.15rem; color: var(--muted); }
+
+/* "Next up": a yellow slab listing every event going ahead on the next day. */
+.next-up { display: flex; align-items: center; gap: 12px; padding: 14px 20px; background: var(--slab); color: var(--on-slab); }
+.next-up[hidden] { display: none; }
+.next-up .lamp { display: none; }
+.next-up .text { min-width: 0; flex: 1; }
+.next-up .next-label { display: inline; font-size: 0.9rem; font-weight: 600; }
+.next-up .when { display: inline; margin-left: 6px; font: 800 1.1rem/1.2 var(--display); }
+.next-events { margin: 4px 0 0; padding: 0; list-style: none; }
+.next-events li + li { margin-top: 2px; }
+.next-events strong { font: 800 1.45rem/1.15 var(--display); letter-spacing: -0.01em; }
+.next-toggle, .next-count { display: none; }   /* phones only */
+
+/* ---------- filters: one row of square controls ---------- */
+.filters { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter); }
+#filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 24px; padding-block: 16px 4px; border-top: 2px solid var(--fg); }
+.filter-row { display: grid; gap: 5px; min-width: 0; }
+.filter-label { font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+
+/* weapon: four joined segments */
+.chip-set { display: inline-flex; justify-self: start; max-width: 100%; border: 2px solid var(--fg); }
+.chip { position: relative; flex: none; cursor: pointer; }
+.chip + .chip { border-left: 2px solid var(--fg); }
+.chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.chip span { display: flex; align-items: center; min-height: 38px; padding: 0 16px; font-weight: 600; transition: background-color 0.12s, color 0.12s; }
+.chip:hover span { background: var(--hover); color: #0b1020; }
+.chip input:checked + span { background: var(--fg); color: var(--on-fg); }
+.chip input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: -5px; }
+
+select { min-height: 42px; padding: 0 34px 0 12px; border: 2px solid var(--fg); border-radius: 0; background: transparent var(--arrow) no-repeat right 12px center; color: var(--fg); font: 600 1rem var(--body); appearance: none; cursor: pointer; }
+select:hover { background-color: var(--hover); color: #0b1020; }
+select option { color: #0b1020; background: #fff; }
+select:not(:has(option[value="all"]:checked)) { background: var(--pick) var(--arrow-dark) no-repeat right 12px center; color: var(--on-pick); border-color: var(--pick); }
+
+.filters-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; min-height: 52px; padding-block: 8px 0; }
+.count { margin-right: auto; font-weight: 600; color: var(--muted); }
+#reset-filters { min-height: 40px; padding: 0 6px; border: 0; background: none; color: inherit; font: 600 1rem var(--body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; visibility: hidden; }
+.is-filtering #reset-filters { visibility: visible; }
+
+/* the Compact view switch: a real checkbox drawn as a square toggle */
+.switch { position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 40px; font-weight: 600; cursor: pointer; }
+.switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.switch-track { position: relative; flex: none; width: 44px; height: 24px; border: 2px solid var(--fg); transition: background-color 0.12s; }
+.switch-track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: var(--fg); transition: transform 0.12s, background-color 0.12s; }
+.switch input:checked + .switch-track { background: var(--fg); }
+.switch input:checked + .switch-track::after { transform: translateX(20px); background: var(--on-fg); }
+.switch input:focus-visible + .switch-track { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+/* ---------- months and event rows ---------- */
+.container { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter) 80px; }
+.month-block { padding-top: 36px; }
+.month-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 16px; padding-bottom: 0.14em; color: var(--accent); font: 800 clamp(2.6rem, 12vw, 5rem)/0.9 var(--display); letter-spacing: -0.045em; }
+.month-header .year { margin-left: 0.12em; font-size: 0.45em; letter-spacing: -0.02em; color: var(--muted); }
+.month-header small { color: var(--muted); font: 600 1rem/1.5 var(--body); letter-spacing: 0; }
+.month-events { border-top: 2px solid var(--fg); }
+
+.item-container { position: relative; display: grid; grid-template-columns: 4.5rem auto minmax(0, 1fr) auto; grid-template-areas: "date info info logo" "date weapons meta meta"; align-items: center; gap: 8px 14px; padding: 14px 12px;
+    background: var(--surface); border-bottom: 1.5px solid var(--hairline); transition: background-color 0.12s; }
+.item-container:hover { background: var(--hover); color: #0b1020; }
+body[data-page="archive"] .item-container:hover { color: #fff; }
+.item-container:hover .info, .item-container:hover .meta, .item-container:hover .weekday, .item-container:hover small { color: inherit; }
+
+.event-date { grid-area: date; display: grid; justify-items: start; align-self: start; line-height: 1; }
+.event-date b { font: 800 2.5rem/0.95 var(--display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.event-date .weekday { margin-top: 4px; font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+.event-date small { margin-top: 2px; font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+
+.event-info { grid-area: info; min-width: 0; }
+.title { font: 700 1.25rem/1.2 var(--display); letter-spacing: -0.01em; overflow-wrap: break-word; }
+.info { margin-top: 2px; font-size: 0.92rem; color: var(--muted); overflow-wrap: anywhere; }
+.status-notice, .type-tag { display: inline-block; margin: 0 6px 4px 0; padding: 1px 8px; font-size: 0.78rem; font-weight: 700; line-height: 1.5; }
+.type-tag { border: 1.5px solid currentColor; }
+.status-notice { background: var(--red); color: #fff; }
+.is-postponed .status-notice { background: var(--amber); color: #0b1020; }
+.is-cancelled .title { text-decoration: line-through; text-decoration-thickness: 2px; }
+.is-cancelled .weapons, .is-cancelled .meta, .is-cancelled .img-container, .is-cancelled .event-date { opacity: 0.55; }
+
+/* F E S: a letter is filled when the event uses that weapon */
+.weapons { grid-area: weapons; display: flex; gap: 4px; }
+.weapons span { display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border: 1.5px solid var(--glyph-off); color: var(--glyph-off); font: 800 0.9rem/1 var(--display); }
+.weapons .on { border-color: var(--fg); background: var(--fg); color: var(--on-fg); }
+.item-container:hover .weapons .on { border-color: #0b1020; background: #0b1020; color: #ffe14d; }
+body[data-page="archive"] .item-container:hover .weapons .on { border-color: #ffe14d; background: #ffe14d; color: #0b1020; }
+
+.meta { grid-area: meta; display: grid; font-size: 0.88rem; line-height: 1.35; color: var(--muted); }
+
+.img-container { grid-area: logo; align-self: start; display: grid; place-items: center; width: 44px; height: 44px; overflow: hidden; background: #fff; border: 1.5px solid var(--hairline); border-radius: 50%; }
+.img-container img { width: 100%; height: 100%; object-fit: contain; }
+
+/* the whole row is the link; only the arrow is visible */
+.action { position: absolute; inset: 0; display: block; font-size: 0; text-decoration: none; }
+.action i { position: absolute; right: 14px; bottom: 14px; font-size: 0.95rem; color: var(--muted); }
+.item-container:hover .action i { color: inherit; }
+.action:focus-visible { outline: none; }
+.action:focus-visible::after { content: ''; position: absolute; inset: 0; outline: 3px solid var(--focus); outline-offset: -3px; }
+
+.message { padding: 56px 0; font-size: 1.15rem; }
+
+/* ---------- About page ---------- */
+.content { max-width: 46rem; margin: 0 auto; padding: clamp(32px, 7vw, 56px) var(--gutter) 96px; }
+.content h1 { margin-bottom: 24px; font: 800 clamp(2.4rem, 7vw, 4rem)/0.98 var(--display); letter-spacing: -0.03em; text-wrap: balance; }
+.content p { margin-bottom: 1.1em; font-size: 1.08rem; line-height: 1.65; text-wrap: pretty; }
+.button { display: inline-block; margin-top: 8px; padding: 12px 22px; border: 2px solid var(--fg); background: var(--fg); color: var(--on-fg); font-weight: 700; text-decoration: none; }
+.button:hover { background: var(--hover); color: #0b1020; }
+
+/* ---------- wide screens ---------- */
+@media (min-width: 900px) {
+    /* headline on the left, the "Next up" slab on the right */
+    .hero { grid-template-columns: minmax(0, 1fr) 24rem; align-items: end; column-gap: 48px; padding-block: 52px 36px; }
+    .hero h1, .lede { grid-column: 1; }
+    .next-up { grid-column: 2; grid-row: 1 / span 2; }
+
+    /* each month's name stays pinned on the left while you scroll through its events */
+    .month-block { display: grid; grid-template-columns: 17rem minmax(0, 1fr); column-gap: 32px; padding-top: 40px; }
+    .month-header { position: sticky; top: 16px; align-self: start; display: block; font-size: 3.4rem; white-space: nowrap; }
+    .month-header .year { display: block; margin: 8px 0 0; font: 700 1.3rem/1 var(--display); letter-spacing: 0; }
+    .month-header small { display: block; margin-top: 8px; }
+    .month-events { margin-top: 0.3rem; }
+
+    /* one line per event */
+    .item-container { grid-template-columns: 4.5rem minmax(0, 1fr) 6.2rem 9.5rem 44px; grid-template-areas: "date info weapons meta logo"; gap: 0 18px; padding: 14px 52px 14px 14px; }
+    .event-date, .img-container { align-self: center; }
+    .action i { bottom: auto; top: 50%; transform: translateY(-50%); }
+
+    /* Compact view: a thinner row without the format and the logo */
+    .is-compact .item-container { grid-template-columns: 4.5rem minmax(0, 1fr) 6.2rem; grid-template-areas: "date info weapons"; padding-block: 8px; }
+    .is-compact .event-date b { font-size: 1.8rem; }
+    .is-compact .event-date .weekday { margin-top: 2px; }
+    .is-compact .meta, .is-compact .img-container { display: none; }
+}
+
+/* ---------- phones ---------- */
+@media (max-width: 719px) {
+    body { overflow-x: clip; }   /* safety net: if a wider font ever pushes something past the screen edge, the page still never scrolls sideways */
+
+    /* top bar on one short line: the brand mark (still the home link) and the three pages */
+    .nav-container { gap: 4px 8px; padding-block: 6px; }
+    .brand-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }   /* hidden but still read by screen readers */
+    .nav-logo { flex: none; min-height: 44px; }
+    .nav-menu { flex: 1 1 auto; flex-wrap: wrap; justify-content: flex-end; gap: 3px; min-width: 0; }
+    .nav-link { display: grid; place-items: center; min-height: 44px; padding: 0 clamp(5px, 2vw, 10px); font-size: clamp(0.7rem, 3.3vw, 0.9rem); white-space: nowrap; }
+
+    .hero { grid-template-columns: minmax(0, 1fr); gap: 10px; padding-block: 16px 14px; }
+    .hero h1 { font-size: 2.5rem; }
+    .lede { font-size: 0.95rem; }
+
+    /* "Next up": one line, tap anywhere on it to show every event that day */
+    .next-up { position: relative; gap: 0; padding: 0; }
+    .next-up .text { padding: 6px 4px 6px 14px; }
+    .next-head { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+    .next-up .next-label, .next-up .when { flex: none; margin: 0; white-space: nowrap; }
+    .next-count { display: block; min-width: 0; overflow: hidden; font-weight: 600; font-size: 0.85rem; text-overflow: ellipsis; white-space: nowrap; }
+    .next-up.is-open .next-count { display: none; }
+    .next-events { display: none; margin-top: 6px; }
+    .next-up.is-open .next-events { display: block; }
+    .next-events strong { font-size: 1.1rem; }
+    .next-toggle { display: grid; flex: none; place-items: center; width: 44px; align-self: stretch; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+    .next-toggle::before { content: ''; width: 9px; height: 9px; margin-top: -4px; border: solid currentColor; border-width: 0 3px 3px 0; transform: rotate(45deg); transition: transform 0.15s; }
+    .next-up.is-open .next-toggle::before { margin-top: 4px; transform: rotate(-135deg); }
+    .next-toggle::after { content: ''; position: absolute; inset: 0; }   /* the whole slab is the button */
+    .next-toggle:focus-visible { outline: none; }
+    .next-toggle:focus-visible::after { outline: 3px solid var(--on-slab); outline-offset: -4px; }
+
+    /* filters, kept small: weapon buttons on their own row, the dropdowns three to a row, the count and Clear on one line */
+    .switch { display: none; }   /* no Compact view on phones: the rows are already small */
+    #filters { gap: 6px 8px; padding-block: 10px 0; }
+    .filter-row { gap: 3px; }
+    .filter-label { font-size: 0.7rem; }
+    .filter-row:has(.chip-set) { order: -1; flex-basis: 100%; }
+    .filter-row:not(:has(.chip-set)) { flex: 1 1 6.5rem; }
+    select { width: 100%; min-height: 38px; padding: 0 24px 0 8px; font-size: 0.9rem; background-position: right 8px center; }
+    select:not(:has(option[value="all"]:checked)) { background-position: right 8px center; }
+    .chip span { min-height: 34px; padding: 0 12px; font-size: 0.9rem; }
+    .filters-foot { min-height: 0; padding-block: 4px 0; }
+    #reset-filters { min-height: 32px; font-size: 0.85rem; }
+
+    .month-block { padding-top: 20px; }
+    .month-header { font-size: clamp(2.2rem, 11vw, 3.2rem); }
+
+    /* small rows: the date on the left, the name beside it, the F/E/S letters and format along the bottom */
+    .item-container { grid-template-columns: 3.2rem auto minmax(0, 1fr) auto; gap: 3px 12px; padding: 9px 12px; }
+    .event-date b { font-size: 2.1rem; }
+    .event-date .weekday { margin-top: 2px; font-size: 0.75rem; }
+    .title { font-size: 1.02rem; line-height: 1.15; }
+    .info { margin-top: 1px; overflow: hidden; font-size: 0.8rem; text-overflow: ellipsis; white-space: nowrap; }
+    .status-notice, .type-tag { margin-bottom: 2px; font-size: 0.72rem; }
+    .meta { font-size: 0.72rem; line-height: 1.25; }
+    .weapons span { width: 1.45rem; height: 1.45rem; font-size: 0.75rem; }
+    .img-container { width: 32px; height: 32px; }
+    .action i { bottom: 8px; right: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+}

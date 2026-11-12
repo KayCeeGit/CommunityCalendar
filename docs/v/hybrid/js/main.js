@@ -107,6 +107,7 @@ async function init() {
   if (next) {
     const part = (tag, className, text) => Object.assign(document.createElement(tag), { className, textContent: text });
     const names = Object.assign(part('ul', 'next-events', ''), { id: 'next-list' });
+    // One dark tile per event (just the name), so events sharing a day are easy to tell apart
     names.append(...next.events.map((e) => { const li = document.createElement('li'); li.append(part('strong', '', e.name)); return li; }));
     const summary = next.events.length === 1 ? next.events[0].name : `${next.events.length} events`; // shown only while collapsed on phones
     const head = part('span', 'next-head', '');
@@ -122,7 +123,7 @@ async function init() {
       toggle.setAttribute('aria-expanded', String(open));
       toggle.setAttribute('aria-label', open ? 'Hide next events' : 'Show next events');
     });
-    nextUpBox.replaceChildren(lamp('red'), text, lamp('green'), toggle);
+    nextUpBox.replaceChildren(lamp('red'), text, toggle);
     nextUpBox.hidden = false;
   }
 

@@ -376,7 +376,7 @@ function drawOrganiserForm() {
   showOrgErrors([]);
   $('#org-buttons').replaceChildren(
     h('button', { type: 'submit', class: 'primary' }, adding ? 'Add organiser' : 'Save changes'),
-    adding ? null : h('button', { type: 'button', onclick: () => { editingOrganiser = null; orgForm().reset(); drawOrganiserForm(); } }, 'Cancel'));
+    ...(adding ? [] : [h('button', { type: 'button', onclick: () => { editingOrganiser = null; orgForm().reset(); drawOrganiserForm(); } }, 'Cancel')]));
 }
 
 function renderOrganisers() {
