@@ -67,7 +67,7 @@ export function monthLabel(key, withYear = true) {
 }
 
 /**
- * Filters by month ("01" to "12"), year ("2026"), weapon, format and type (competition, camp, training).
+ * Filters by month ("01" to "12"), year ("2026"), weapon, format and type (competition, camp, other).
  * Each filter is "all" (or missing) to mean "don't filter on this".
  * Month and year are separate, so month "01" + year "2027" means January 2027.
  */
@@ -99,16 +99,34 @@ export function yearsIn(events) {
   return [...new Set(events.map(yearOf))].sort().reverse();
 }
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
 /**
- * Display text for the card, in the same d/m style the site already uses:
- *   one day         -> "12/12"
- *   same month      -> "11-13/9"
- *   across months   -> "30/9 - 2/10"
+ * The pieces of an event's date for the card's date block:
+ *   one day      -> { weekday: "Sat", day: "12", month: "Dec", until: "" }
+ *   same month   -> { weekday: "Fri", day: "11", month: "Sep", until: "to 13" }
+ *   across months-> { weekday: "Wed", day: "30", month: "Sep", until: "to 2 Oct" }
  */
-export function formatDateRange(e) {
+export function dateParts(e) {
   const [, sm, sd] = e.start_date.split('-').map(Number);
   const [, em, ed] = e.end_date.split('-').map(Number);
-  if (e.start_date === e.end_date) return `${sd}/${sm}`;
-  if (sm === em) return `${sd}-${ed}/${sm}`;
-  return `${sd}/${sm} - ${ed}/${em}`;
+  const weekday = WEEKDAYS[new Date(`${e.start_date}T00:00:00Z`).getUTCDay()];
+  const until = e.start_date === e.end_date ? '' : sm === em ? `to ${ed}` : `to ${ed} ${MONTHS[em - 1]}`;
+  return { weekday, day: String(sd), month: MONTHS[sm - 1], until };
+}
+
+/** Whole days from `from` to `to` (both "YYYY-MM-DD"); negative when `to` is earlier. */
+export const daysBetween = (from, to) => Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000);
+
+/**
+ * The event for the "Next up" box: the first one (events must be sorted) that is still going ahead,
+ * with a plain-words "when". Postponed and cancelled events are skipped. Null if there isn't one.
+ */
+export function nextUp(events, today) {
+  const event = events.find((e) => !e.status);
+  if (!event) return null;
+  const days = daysBetween(today, event.start_date);
+  const when = days < 0 ? 'on now' : days === 0 ? 'today' : days === 1 ? 'tomorrow' : `in ${days} days`;
+  return { event, when };
 }

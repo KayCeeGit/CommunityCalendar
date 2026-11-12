@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   todaySydney, isValidEvent, splitEvents, sortEvents, filterEvents, groupByMonth,
-  yearsIn, monthLabel, formatDateRange,
+  yearsIn, monthLabel, dateParts, daysBetween, nextUp,
 } from '../docs/js/logic.js';
 import { cardHtml } from '../docs/js/render.js';
 
@@ -55,10 +55,21 @@ test('weapon, format, month and year filters work alone and together', () => {
   assert.equal(filterEvents(all, { month: '12', year: '2027' }).length, 0);
 });
 
-test('date display matches the existing d/m style', () => {
-  assert.equal(formatDateRange(ev()), '12/12');
-  assert.equal(formatDateRange(ev({ start_date: '2026-09-11', end_date: '2026-09-13' })), '11-13/9');
-  assert.equal(formatDateRange(ev({ start_date: '2026-09-30', end_date: '2026-10-02' })), '30/9 - 2/10');
+test('the date block shows the weekday, the start day and where a longer event ends', () => {
+  assert.deepEqual(dateParts(ev()), { weekday: 'Sat', day: '12', month: 'Dec', until: '' });
+  assert.deepEqual(dateParts(ev({ start_date: '2026-09-11', end_date: '2026-09-13' })), { weekday: 'Fri', day: '11', month: 'Sep', until: 'to 13' });
+  assert.deepEqual(dateParts(ev({ start_date: '2026-09-30', end_date: '2026-10-02' })), { weekday: 'Wed', day: '30', month: 'Sep', until: 'to 2 Oct' });
+});
+
+test('"next up" skips postponed and cancelled events and says when in plain words', () => {
+  const list = [ev({ status: 'cancelled', start_date: '2026-11-13', end_date: '2026-11-13' }), ev({ name: 'Real', start_date: '2026-11-20', end_date: '2026-11-22' })];
+  assert.deepEqual(nextUp(list, '2026-11-12'), { event: list[1], when: 'in 8 days' });
+  assert.equal(nextUp(list, '2026-11-19').when, 'tomorrow');
+  assert.equal(nextUp(list, '2026-11-20').when, 'today');
+  assert.equal(nextUp(list, '2026-11-21').when, 'on now'); // mid-event
+  assert.equal(nextUp([list[0]], '2026-11-12'), null);
+  assert.equal(nextUp([], '2026-11-12'), null);
+  assert.equal(daysBetween('2026-12-30', '2027-01-02'), 3); // across New Year
 });
 
 test('bad events are rejected', () => {

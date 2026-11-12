@@ -1,12 +1,12 @@
 // main.js: connects the data to the page. It loads events.json, decides which
-// events belong on this page, fills the year dropdown, and redraws the cards
-// whenever a filter changes.
+// events belong on this page, builds the month and year options from the data,
+// and redraws the events whenever a filter changes.
 //
 // Each page says what it is with <body data-page="upcoming"> or "archive".
 
 import {
   isValidEvent, splitEvents, sortEvents, todaySydney, filterEvents, groupByMonth,
-  yearsIn, yearOf, monthLabel,
+  yearsIn, yearOf, monthLabel, nextUp,
 } from './logic.js';
 import { cardHtml, monthHeaderHtml, messageHtml } from './render.js';
 
@@ -14,14 +14,10 @@ const PAGE = document.body.dataset.page === 'archive' ? 'archive' : 'upcoming';
 
 const byId = (id) => document.getElementById(id);
 const container = byId('events');
-const selects = {
-  month: byId('filter-month'),
-  weapon: byId('filter-weapon'),
-  format: byId('filter-format'),
-  type: byId('filter-type'),
-  year: byId('filter-year'), // only exists on the archive page
-};
-const resetButton = byId('reset-filters');
+const form = byId('filters');
+const nextUpBox = byId('next-up');   // only on the calendar page
+const countBox = byId('result-count');
+const FILTERS = ['year', 'month', 'weapon', 'format', 'type']; // the radio groups in the filter form (year only exists on the archive page)
 
 let pageEvents = [];            // the events this page is allowed to show
 let organisersById = new Map(); // organiser id -> { name, image, ... }
@@ -41,31 +37,38 @@ async function loadEvents() {
   });
 }
 
+/** The filter values as { month: "all", weapon: "epee", ... }. A group missing from the page counts as "all". */
+const filterValues = () => Object.fromEntries(FILTERS.map((name) => [name, form.elements[name]?.value ?? 'all']));
+
 function render() {
-  const shown = filterEvents(pageEvents, {
-    month: selects.month.value,
-    year: selects.year ? selects.year.value : 'all',
-    weapon: selects.weapon.value,
-    format: selects.format.value,
-    type: selects.type.value,
-  });
+  const values = filterValues();
+  const shown = filterEvents(pageEvents, values);
+  const filtering = Object.values(values).some((v) => v !== 'all');
+  form.closest('.filters').classList.toggle('is-filtering', filtering);
+  countBox.textContent = pageEvents.length === 0 ? '' : `${shown.length} ${shown.length === 1 ? 'event' : 'events'}`;
 
   if (pageEvents.length === 0) {
-    container.innerHTML = messageHtml(PAGE === 'archive' ? 'No past events yet.' : 'No upcoming events listed right now.');
+    container.innerHTML = messageHtml(PAGE === 'archive' ? 'No past events yet.' : 'No upcoming events are listed right now. Check back soon, or add one from the About page.');
     return;
   }
   if (shown.length === 0) {
-    container.innerHTML = messageHtml('No events match these filters.');
+    container.innerHTML = messageHtml('No events match these filters. Clear the filters to see everything.');
     return;
   }
 
   // Only show the year in month headings when the list spans more than one year.
   const spansYears = new Set(shown.map(yearOf)).size > 1;
   container.innerHTML = groupByMonth(shown)
-    .map(({ key, events }) =>
-      monthHeaderHtml(monthLabel(key, spansYears)) +
-      events.map((e) => cardHtml(e, organisersById.get(e.organiser))).join(''))
+    .map(({ key, events }) => `<section class="month-block">${monthHeaderHtml(monthLabel(key, spansYears), events.length)}<div class="month-events">${
+      events.map((e) => cardHtml(e, organisersById.get(e.organiser))).join('')}</div></section>`)
     .join('');
+}
+
+/** Adds one option per value to a dropdown (the "All" option is already in the page). */
+function addOptions(selectId, items) {
+  const select = byId(selectId);
+  if (!select) return;
+  for (const [value, text] of items) select.append(Object.assign(document.createElement('option'), { value, textContent: text }));
 }
 
 async function init() {
@@ -78,20 +81,25 @@ async function init() {
     pageEvents = sortEvents(PAGE === 'archive' ? past : upcoming);
   } catch (err) {
     console.error(err);
-    container.innerHTML = messageHtml("Sorry, the events couldn't be loaded. Please try again later.");
+    container.innerHTML = messageHtml("The events couldn't be loaded. Check your connection and refresh the page.");
     return;
   }
 
-  // The year dropdown is filled from the data (the months are fixed in the HTML).
-  if (selects.year) {
-    for (const year of yearsIn(pageEvents)) selects.year.appendChild(new Option(year, year));
+  // The next event that is going ahead (built with textContent, so names can't inject markup).
+  const next = nextUpBox && nextUp(pageEvents, todaySydney());
+  if (next) {
+    const part = (tag, className, text) => Object.assign(document.createElement(tag), { className, textContent: text });
+    nextUpBox.replaceChildren(part('span', 'label', 'Next up'), part('strong', 'name', next.event.name), part('span', 'when', next.when));
+    nextUpBox.hidden = false;
   }
 
-  Object.values(selects).forEach((s) => s?.addEventListener('change', render));
-  resetButton?.addEventListener('click', () => {
-    Object.values(selects).forEach((s) => { if (s) s.value = 'all'; });
-    render();
-  });
+  // Month and year options come from the data, so there is never one with nothing behind it.
+  const monthsPresent = [...new Set(pageEvents.map((e) => e.start_date.slice(5, 7)))];
+  addOptions('month-select', monthsPresent.map((m) => [m, monthLabel(`2000-${m}`, false).slice(0, 3)]));
+  addOptions('year-select', yearsIn(pageEvents).map((y) => [y, y]));
+
+  form.addEventListener('change', render);
+  form.addEventListener('reset', () => setTimeout(render)); // the form is cleared after this event, so draw afterwards
   render();
 }
 

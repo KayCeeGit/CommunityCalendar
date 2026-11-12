@@ -66,7 +66,7 @@ export function mapNswfaEvent(item, organisers, today) {
  * Returns one result per item, saying what happened:
  *   queued           added to the queue (notes = warnings and anything the checks threw away)
  *   known            we already hold it: not touched, its page not even fetched
- *   set-aside        the AI says it isn't a competition, camp or training session (a meeting, a social...): not queued
+ *   set-aside        the AI says it isn't an event to list (a recap, something unrelated): not queued
  *   needs-person     the page or the AI's answer couldn't be used
  *   skipped          the calendar item itself was unusable
  *   past             already finished

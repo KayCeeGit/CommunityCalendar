@@ -233,7 +233,7 @@ export function findDuplicates(event, pool, organisers = []) {
 // ---------- sanity warnings (not duplicates, just "does this look like a typo?") ----------
 
 const MAX_EVENT_DAYS = 5;  // a competition
-const MAX_CAMP_DAYS = 14; // a camp or training block
+const MAX_CAMP_DAYS = 14; // a camp or other event
 const MAX_DAYS_AHEAD = 548; // about 18 months
 
 /** Plain-sentence warnings for an event that is valid but looks odd. `today` is YYYY-MM-DD. */

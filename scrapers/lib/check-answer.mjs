@@ -15,8 +15,8 @@ export function quoteOnPage(quote, text) {
   return typeof quote === 'string' && quote.trim() !== '' && plain(text).includes(plain(quote));
 }
 
-/** True when the model says the text isn't an event to list (type "other"). Anything unclear counts as a competition. */
-export const setAside = (answer) => String(answer.type).trim().toLowerCase() === 'other';
+/** True when the model says the text isn't an event to list (type "none"). Anything unclear counts as a competition. */
+export const setAside = (answer) => String(answer.type).trim().toLowerCase() === 'none';
 
 /**
  * answer = the model's JSON; text = what it was shown; choices = the allowed values.
@@ -39,7 +39,7 @@ export function checkAnswer(answer, text, choices) {
     fields[field] = good;
   }
 
-  // A competition is the default, so only "camp" and "training" are recorded.
+  // A competition is the default, so only "camp" and "other" are recorded.
   const type = String(answer.type).trim().toLowerCase();
   if (type !== 'competition' && choices.type.includes(type)) fields.type = type;
 
