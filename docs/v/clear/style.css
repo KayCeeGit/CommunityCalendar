@@ -1,0 +1,162 @@
+/* style.css: the "clear" look. Every choice here is about making the page easy to use:
+   - System fonts: nothing to download, so the text never jumps or flashes when the page loads.
+   - One readable column; light or dark to match the visitor's device; strong text contrast.
+   - Large tap targets (44px), visible keyboard focus, and no information carried by colour alone.
+   - Event names are real links and the whole row is clickable.
+   - Month headings stay pinned while you scroll, so you always know which month you are in.
+   - A print layout that lists events with their links.
+   Colours are tokens at the top. */
+
+:root {
+    color-scheme: light dark;
+    --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+    --bg: #ffffff;
+    --surface: #f4f6f9;     /* hover, the filter panel */
+    --text: #1a1d23;
+    --muted: #4f5664;       /* 7:1 on the page colour */
+    --line: #d4d9e1;        /* dividers */
+    --control: #6b7280;     /* borders of buttons and inputs (3:1 or better, as required) */
+    --accent: #0b5bd3;      /* links and the selected filter */
+    --on-accent: #ffffff;
+    --danger: #b3261e;
+    --warn: #8a5300;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #14171c; --surface: #1d2128; --text: #eceff4; --muted: #aab2c0; --line: #343a45; --control: #8b93a3;
+        --accent: #8ab8ff; --on-accent: #0b1220; --danger: #ff9a92; --warn: #f2c26b;
+    }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 1.0625rem/1.5 var(--font); }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.wrap { width: min(54rem, 100% - 32px); margin-inline: auto; }
+
+.skip { position: absolute; left: 8px; top: -60px; z-index: 20; padding: 10px 14px; background: var(--text); color: var(--bg); border-radius: 6px; }
+.skip:focus { top: 8px; }
+
+/* ---------- site header ---------- */
+.site { border-bottom: 1px solid var(--line); }
+.bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 24px; }
+.brand { padding-block: 12px; color: var(--text); font-weight: 700; text-decoration: none; }
+.nav-menu { display: flex; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.nav-link { display: block; padding: 12px 12px 9px; border-bottom: 3px solid transparent; color: var(--text); text-decoration: none; }
+.nav-link:hover { border-bottom-color: var(--control); }
+.nav-link.active { border-bottom-color: var(--accent); font-weight: 600; }
+
+main { padding: 24px 0 80px; }
+h1 { margin: 0 0 4px; font-size: 1.9rem; line-height: 1.2; }
+.lede { margin: 0; color: var(--muted); }
+
+/* ---------- next up ---------- */
+.next-up { margin: 16px 0 0; padding: 10px 14px; background: var(--surface); border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0; }
+.next-up .label { font-weight: 600; }
+.next-up .name { font-weight: 600; }
+.next-up .when { color: var(--muted); }
+
+/* ---------- filters ---------- */
+.filters { margin: 20px 0 8px; padding: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+#filters { display: flex; flex-wrap: wrap; align-items: end; gap: 12px 16px; }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field-search { flex: 1 1 100%; }
+.field-label { font-size: 0.9rem; font-weight: 600; }
+
+input[type="search"], select { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--control); border-radius: 6px; background-color: var(--bg); color: var(--text); font: inherit; }
+select { min-width: 8rem; padding-right: 34px; appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236b7280' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+select:not(:has(option[value="all"]:checked)) { border-color: var(--accent); border-width: 2px; padding-left: 11px; font-weight: 600; } /* a dropdown that is doing something stands out */
+
+.seg { display: inline-flex; }
+.seg-item { position: relative; cursor: pointer; }
+.seg-item input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.seg-item span { display: grid; place-items: center; min-height: 44px; padding: 0 14px; border: 1px solid var(--control); border-left-width: 0; background: var(--bg); }
+.seg-item:first-child span { border-left-width: 1px; border-radius: 6px 0 0 6px; }
+.seg-item:last-child span { border-radius: 0 6px 6px 0; }
+.seg-item:hover span { background: var(--surface); }
+.seg-item input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+.seg-item input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; position: relative; }
+
+.filters-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px; min-height: 44px; margin-top: 4px; }
+.count { margin: 0; color: var(--muted); }
+#reset-filters { visibility: hidden; min-height: 44px; padding: 0 8px; border: 0; background: none; color: var(--accent); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
+.is-filtering #reset-filters { visibility: visible; } /* hidden, not removed, so nothing shifts when it appears */
+
+/* ---------- months ---------- */
+.month-block { margin-top: 24px; }
+.month-header { position: sticky; top: 0; z-index: 2; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0; padding: 10px 0 8px; background: var(--bg); border-bottom: 2px solid var(--text); font-size: 1.2rem; line-height: 1.3; }
+.month-header small { color: var(--muted); font-size: 0.95rem; font-weight: 400; }
+
+/* ---------- an event: one row ---------- */
+.item-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 40px;
+    grid-template-areas: "date logo" "info info" "details details";
+    gap: 6px 16px;
+    padding: 14px 8px;
+    border-bottom: 1px solid var(--line);
+    scroll-margin-top: 4.5rem;
+}
+.item-container:hover { background: var(--surface); }
+.item-container:target { background: var(--surface); box-shadow: inset 4px 0 0 var(--accent); } /* the row you jumped to from "Next up" */
+
+.event-date { grid-area: date; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; font-variant-numeric: tabular-nums; }
+.event-date b { font-size: 1.5rem; line-height: 1.2; }
+.event-date .weekday { color: var(--muted); }
+.event-date small { flex-basis: 100%; color: var(--muted); font-size: 0.9rem; }
+
+.event-info { grid-area: info; min-width: 0; }
+.title { margin: 0; font-size: 1.1rem; line-height: 1.35; font-weight: 650; overflow-wrap: break-word; }
+.title a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.title a:hover { text-decoration-thickness: 2px; }
+.title a::after { content: ''; position: absolute; inset: 0; } /* the whole row is the link */
+.title a:focus-visible { outline: none; }
+.title a:focus-visible::after { outline: 3px solid var(--accent); outline-offset: -3px; }
+.info, .by { margin: 2px 0 0; }
+.by { color: var(--muted); font-size: 0.95rem; }
+.type-tag { display: inline-block; margin: 0 0 4px; padding: 0 8px; border: 1px solid var(--control); border-radius: 4px; font-size: 0.85rem; font-weight: 600; }
+.status-notice { margin: 0 0 4px; font-weight: 700; color: var(--danger); }
+.is-postponed .status-notice { color: var(--warn); }
+.is-cancelled .title { text-decoration: line-through; }
+.is-cancelled .title a { text-decoration: line-through underline; }
+
+.details { grid-area: details; font-size: 0.95rem; line-height: 1.4; }
+.details p { margin: 0; color: var(--muted); }
+.details .weapons { color: var(--text); font-weight: 600; }
+
+.logo { grid-area: logo; width: 40px; height: 40px; padding: 2px; border: 1px solid var(--line); border-radius: 6px; background: #fff; object-fit: contain; }
+
+.message { margin: 0; padding: 40px 0; font-size: 1.1rem; }
+
+/* ---------- wide screens: the details sit in their own column ---------- */
+@media (min-width: 720px) {
+    .item-container { grid-template-columns: 8.5rem minmax(0, 1fr) 13rem 40px; grid-template-areas: "date info details logo"; gap: 4px 20px; align-items: start; }
+    .event-date .weekday { flex-basis: 100%; font-size: 0.9rem; line-height: 1.2; } /* the weekday on its own line, then "15 Nov" */
+}
+
+/* ---------- About page ---------- */
+.content { max-width: 42rem; }
+.content p { margin: 1em 0; line-height: 1.65; }
+.button { display: inline-block; min-height: 44px; margin-top: 8px; padding: 10px 20px; border-radius: 6px; background: var(--accent); color: var(--on-accent); font-weight: 600; text-decoration: none; }
+.button:hover { text-decoration: underline; }
+
+/* ---------- print: a plain list with the links written out ---------- */
+@media print {
+    .skip, .site, .filters, .next-up, .style-switcher, .logo { display: none !important; }
+    body { padding-bottom: 0 !important; background: #fff; color: #000; font-size: 11pt; }
+    main { padding: 0; }
+    .month-header { position: static; background: none; border-bottom-color: #000; break-after: avoid; }
+    .item-container { break-inside: avoid; padding: 8px 0; border-bottom-color: #999; grid-template-columns: 7rem 1fr 11rem; grid-template-areas: "date info details"; }
+    .item-container:hover { background: none; }
+    .title a { color: #000; text-decoration: none; }
+    .title a[href^="http"]::after { content: " (" attr(href) ")"; position: static; font-size: 9pt; font-weight: 400; word-break: break-all; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+}

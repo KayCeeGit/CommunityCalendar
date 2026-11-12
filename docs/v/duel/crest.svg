@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" width="240" height="160">
+  <!-- Two swords slide in and cross, with a flash where they meet. Plays once when the page loads. -->
+  <style>
+    .a { animation: from-left 0.7s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+    .b { animation: from-right 0.7s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+    .flash { transform-origin: 120px 70px; animation: flash 0.6s 0.65s ease-out both; }
+    @keyframes from-left { from { transform: translateX(-110px); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes from-right { from { transform: translateX(110px); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes flash { from { transform: scale(0); opacity: 0.95; } to { transform: scale(1.7); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } .flash { opacity: 0; } }
+  </style>
+  <defs>
+    <g id="sword">
+      <polygon points="14,-4 150,0 14,4" fill="#c9d3e0" stroke="#8793a8" stroke-width="0.8"/>
+      <line x1="14" y1="0" x2="148" y2="0" stroke="#f4f7fb" stroke-width="1"/>
+      <rect x="8" y="-15" width="6" height="30" rx="2" fill="#d6aa52"/>
+      <rect x="-18" y="-3.5" width="26" height="7" rx="3" fill="#8f2231"/>
+      <circle cx="-23" cy="0" r="6" fill="#d6aa52"/>
+    </g>
+  </defs>
+  <g class="a"><use href="#sword" transform="translate(50 140) rotate(-45)"/></g>
+  <g class="b"><use href="#sword" transform="translate(190 140) rotate(-135)"/></g>
+  <circle class="flash" cx="120" cy="70" r="22" fill="#fff3c4"/>
+</svg>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b0b0c">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <title>Cian's Calendar</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="../switcher.css">
+</head>
+
+<body data-page="upcoming">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a class="nav-logo" href="index.html"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">Cian's Community Calendar</span></a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">Calendar</a></li>
+                <li><a href="about.html" class="nav-link">What is this?</a></li>
+                <li><a href="archive.html" class="nav-link">Archive</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="hero wrap">
+        <h1>What’s on in NSW fencing</h1>
+        <p class="lede">Competitions, camps and other events from clubs across the state.</p>
+        <p class="next-up" id="next-up" hidden></p>
+    </header>
+
+    <div class="filters">
+        <form id="filters" aria-label="Filter events">
+            <div class="filter-row">
+                <span class="filter-label" id="label-weapon">Weapon</span>
+                <div class="chip-set" role="radiogroup" aria-labelledby="label-weapon">
+                <label class="chip"><input type="radio" name="weapon" value="all" checked><span>All</span></label>
+                <label class="chip"><input type="radio" name="weapon" value="foil"><span>Foil</span></label>
+                <label class="chip"><input type="radio" name="weapon" value="epee"><span>Epee</span></label>
+                <label class="chip"><input type="radio" name="weapon" value="saber"><span>Saber</span></label>
+                </div>
+            </div>
+            <div class="filter-row">
+                <label class="filter-label" for="month-select">Month</label>
+                <select id="month-select" name="month">
+                    <option value="all">All</option>
+                </select>
+            </div>
+            <div class="filter-row">
+                <label class="filter-label" for="format-select">Format</label>
+                <select id="format-select" name="format">
+                    <option value="all">All</option>
+                    <option value="individual">Individual</option>
+                    <option value="team">Team</option>
+                </select>
+            </div>
+            <div class="filter-row">
+                <label class="filter-label" for="type-select">Type</label>
+                <select id="type-select" name="type">
+                    <option value="all">All</option>
+                    <option value="competition">Competition</option>
+                    <option value="camp">Camp</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+        </form>
+        <div class="filters-foot">
+            <p class="count" id="result-count" aria-live="polite"></p>
+        <label class="switch">
+            <input type="checkbox" id="density" role="switch">
+            <span class="switch-track" aria-hidden="true"></span>
+            <span>Compact view</span>
+        </label>
+            <button type="reset" form="filters" id="reset-filters">Clear filters</button>
+        </div>
+    </div>
+
+    <main>
+        <!-- Drawn by js/main.js from data/events.json: past events appear in the archive automatically -->
+        <div class="container" id="events" aria-live="polite"></div>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+    <script src="../switcher.js" defer></script>
+</body>
+</html>

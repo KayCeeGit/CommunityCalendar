@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#edeff4">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Cian's Calendar</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="../switcher.css">
+</head>
+
+<body data-page="upcoming">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a class="nav-logo" href="index.html">Cian's Community Calendar</a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">Calendar</a></li>
+                <li><a href="about.html" class="nav-link">What is this?</a></li>
+                <li><a href="archive.html" class="nav-link">Archive</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="hero wrap">
+        <h1>What’s on in NSW fencing</h1>
+        <p class="lede">Competitions, camps and other events from clubs across the state.</p>
+        <p class="next-up" id="next-up" hidden></p>
+    </header>
+
+    <div class="filters wrap">
+        <form id="filters" aria-label="Filter events">
+            <div class="filter-row">
+                <span class="filter-label" id="label-month">Month</span>
+                <div class="seg" role="radiogroup" aria-labelledby="label-month" id="month-chips">
+                    <label class="seg-item"><input type="radio" name="month" value="all" checked><span>All</span></label>
+                </div>
+            </div>
+            <div class="filter-row">
+                <span class="filter-label" id="label-weapon">Weapon</span>
+                <div class="seg" role="radiogroup" aria-labelledby="label-weapon">
+                    <label class="seg-item"><input type="radio" name="weapon" value="all" checked><span>All</span></label>
+                    <label class="seg-item"><input type="radio" name="weapon" value="foil"><span>Foil</span></label>
+                    <label class="seg-item"><input type="radio" name="weapon" value="epee"><span>Epee</span></label>
+                    <label class="seg-item"><input type="radio" name="weapon" value="saber"><span>Saber</span></label>
+                </div>
+            </div>
+            <div class="filter-row">
+                <span class="filter-label" id="label-format">Format</span>
+                <div class="seg" role="radiogroup" aria-labelledby="label-format">
+                    <label class="seg-item"><input type="radio" name="format" value="all" checked><span>All</span></label>
+                    <label class="seg-item"><input type="radio" name="format" value="individual"><span>Individual</span></label>
+                    <label class="seg-item"><input type="radio" name="format" value="team"><span>Team</span></label>
+                </div>
+            </div>
+            <div class="filter-row">
+                <span class="filter-label" id="label-type">Type</span>
+                <div class="seg" role="radiogroup" aria-labelledby="label-type">
+                    <label class="seg-item"><input type="radio" name="type" value="all" checked><span>All</span></label>
+                    <label class="seg-item"><input type="radio" name="type" value="competition"><span>Comp</span></label>
+                    <label class="seg-item"><input type="radio" name="type" value="camp"><span>Camp</span></label>
+                    <label class="seg-item"><input type="radio" name="type" value="other"><span>Other</span></label>
+                </div>
+            </div>
+        </form>
+        <div class="filters-foot">
+            <p class="count" id="result-count" aria-live="polite"></p>
+            <button type="reset" form="filters" id="reset-filters">Clear filters</button>
+        </div>
+    </div>
+
+    <main class="wrap">
+        <!-- Drawn by js/main.js from data/events.json: past events appear in the archive automatically -->
+        <div id="events" aria-live="polite"></div>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+    <script src="../switcher.js" defer></script>
+</body>
+</html>

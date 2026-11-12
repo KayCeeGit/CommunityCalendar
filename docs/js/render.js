@@ -55,7 +55,6 @@ export function cardHtml(e, organiser) {
   const date = dateParts(e);
   return `
 <article class="item-container${status ? ` is-${status}` : ''}" data-id="${esc(e.id)}">
-  <p class="serial">${esc(e.id)}</p>
   <time class="event-date" datetime="${esc(e.start_date)}"><b>${date.day}</b><span class="weekday">${date.weekday}</span>${date.until ? `<small>${date.until}</small>` : ''}</time>
   <div class="event-info">
     ${status ? `<p class="status-notice">${esc(STATUS_LABELS[status])}${e.status_note ? `: ${esc(e.status_note)}` : ''}</p>` : ''}
@@ -70,7 +69,9 @@ export function cardHtml(e, organiser) {
 </article>`;
 }
 
-export const monthHeaderHtml = (label, count) => `<h2 class="month-header">${esc(label)}<small>${count} ${count === 1 ? 'event' : 'events'}</small></h2>`;
+/** A month's banner. `round` is its place in the list (1, 2, 3...), shown as "Round 1". */
+export const monthHeaderHtml = (label, count, round) =>
+  `<h2 class="month-header"><span class="round">Round ${round}</span>${esc(label)}<small>${count} ${count === 1 ? 'event' : 'events'}</small></h2>`;
 
 export const messageHtml = (text) =>
   `<p class="message">${esc(text)}</p>`;

@@ -1,0 +1,464 @@
+/* Cian's Community Calendar: the piste.
+ *
+ * The look comes from the sport. The calendar page is the live strip: green, with a scoring box
+ * for the next event and the red / amber lamps for cancelled and postponed events. The archive is
+ * the same strip with the lamps off: indigo, quieter, laid out as a ledger.
+ *
+ * Order: tokens, base, navigation, hero, filters, month blocks, event cards, compact cards,
+ * archive ledger, about page, wider screens.
+ */
+
+:root {
+    --strip: #eef5f0;      /* the page: a cool, fresh grey-green */
+    --paper: #ffffff;      /* event cards */
+    --text: #12282b;       /* text and headings */
+    --ink: #0d2b2a;        /* nav and the scoring box (deep pine; stays dark in both themes) */
+    --muted: #4a6460;      /* secondary text */
+    --line: #cfdfd6;       /* hairlines */
+    --green: #0c8a5f;      /* actions, selected chips, links */
+    --green-soft: #d6f0e4;
+    --on-green: #ffffff;
+    --lamp-green: #34d399; /* the "go" lamp in the scoring box */
+    --red: #d93a4a;        /* cancelled */
+    --amber: #f4a81d;      /* postponed */
+    --on-ink: #eef8f3;
+
+    --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+    --body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+    --wrap: 1180px;
+    --gutter: clamp(16px, 4vw, 32px);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --strip: #0a1a17;
+        --paper: #12251f;
+        --text: #e8f3ee;
+        --ink: #06120f;
+        --muted: #9db8ae;
+        --line: #234038;
+        --green: #34d399;
+        --green-soft: #134034;
+        --on-green: #06120f;
+        --red: #ff6070;
+        --amber: #f8bf4a;
+    }
+}
+
+/* The archive: lamps off. Same structure, an indigo accent instead of green. */
+body[data-page="archive"] {
+    --strip: #eeeff8;
+    --text: #17163d;
+    --line: #d0d3ec;
+    --green: #4f46c8;
+    --green-soft: #e1e0f8;
+    --ink: #1c1a4a;
+    --muted: #5a5a82;
+}
+@media (prefers-color-scheme: dark) {
+    body[data-page="archive"] {
+        --strip: #0e0d26;
+        --paper: #16153a;
+        --text: #ecebff;
+        --line: #2c2b5a;
+        --green: #a5a0ff;
+        --green-soft: #28265e;
+        --ink: #090818;
+        --muted: #a9a8d0;
+        --on-green: #090818;
+    }
+}
+
+/* ---------- base ---------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    min-height: 100vh;
+    background: var(--strip);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+h1, h2, h3 { font-family: var(--display); color: var(--text); font-weight: 800; line-height: 1; }
+
+a { color: var(--green); }
+
+:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+
+.wrap { width: 100%; max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gutter); }
+
+/* ---------- navigation ---------- */
+
+.navbar { background: var(--ink); color: var(--on-ink); }
+
+.nav-container {
+    max-width: var(--wrap);
+    margin: 0 auto;
+    padding: 14px var(--gutter);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 24px;
+}
+
+.nav-logo { font-family: var(--display); font-size: 1.6rem; font-weight: 800; letter-spacing: 0.02em; color: var(--on-ink); text-decoration: none; }
+
+.nav-menu { display: flex; flex-wrap: wrap; gap: 4px 6px; list-style: none; padding: 0; }
+
+.nav-link {
+    display: block;
+    padding: 8px 12px;
+    color: var(--on-ink);
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    opacity: 0.8;
+}
+.nav-link:hover { opacity: 1; }
+.nav-link.active { opacity: 1; font-weight: 700; border-bottom-color: var(--green); }
+.navbar :focus-visible { outline-color: var(--on-ink); }
+
+/* ---------- hero ---------- */
+
+.hero { padding-block: clamp(28px, 6vw, 56px) clamp(18px, 3vw, 28px); }
+
+.hero h1 { font-size: clamp(2.9rem, 10vw, 5rem); letter-spacing: 0.005em; max-width: 12ch; }
+
+.lede { margin-top: 16px; max-width: 46ch; font-size: 1.125rem; color: var(--muted); }
+
+/* The scoring box: a dark panel with a red and a green lamp, showing the next event. */
+.next-up {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 28px;
+    padding: 12px 18px;
+    max-width: 100%;
+    background: var(--ink);
+    color: var(--on-ink);
+    border-radius: 12px;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.08);
+}
+.next-up[hidden] { display: none; }
+.next-up .text { min-width: 0; font-size: 1.05rem; line-height: 1.3; }
+.next-up strong { font-family: var(--display); font-size: 1.5rem; font-weight: 700; letter-spacing: 0.01em; }
+.next-up .when { color: var(--amber); font-weight: 600; white-space: nowrap; }
+.next-events { margin: 4px 0 0; padding: 0; list-style: none; }
+.next-events strong { font-size: 1.3rem; }
+.next-events li + li { margin-top: 6px; }
+
+.lamp { flex: none; width: 14px; height: 14px; border-radius: 50%; }
+.lamp.red { background: var(--red); box-shadow: 0 0 10px var(--red); }
+.lamp.green { background: var(--lamp-green); box-shadow: 0 0 10px var(--lamp-green); }
+
+/* ---------- filters ---------- */
+
+.filters { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter); }
+
+#filters { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 18px; padding-block: 10px; border-block: 1px solid var(--line); }
+.filter-row { display: flex; align-items: center; gap: 8px; }
+.filter-label { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
+
+/* the dropdowns: the same pill shape as the chips; one that is filtering turns solid, like a selected chip */
+select {
+    min-height: 40px;
+    padding: 6px 32px 6px 14px;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236b7b78' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+select:hover { border-color: var(--green); }
+select:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+select:not(:has(option[value="all"]:checked)) { border-color: var(--green); background-color: var(--green-soft); }
+
+.chip-set { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* A chip is a radio button: the real input stays (for keyboards and screen readers), the span is what you see. */
+.chip { position: relative; cursor: pointer; }
+.chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.chip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 6px 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.chip:hover span { border-color: var(--green); }
+.chip input:checked + span { background: var(--green); border-color: var(--green); color: var(--on-green); }
+.chip input:focus-visible + span { outline: 3px solid var(--green); outline-offset: 3px; }
+
+.filters-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding-block: 8px 0; }
+.count { margin-right: auto; font-weight: 600; color: var(--muted); }
+
+/* the Compact view switch: a real checkbox (keyboard and screen reader friendly) drawn as a toggle */
+.switch { position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 34px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+.switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.switch-track { position: relative; flex: none; width: 42px; height: 24px; background: var(--line); border-radius: 999px; transition: background-color 0.15s; }
+.switch-track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; background: var(--paper); border-radius: 50%; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); transition: transform 0.15s; }
+.switch input:checked + .switch-track { background: var(--green); }
+.switch input:checked + .switch-track::after { transform: translateX(18px); }
+.switch input:focus-visible + .switch-track { outline: 3px solid var(--green); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .switch-track, .switch-track::after { transition: none; } }
+
+#reset-filters {
+    min-height: 34px;
+    padding: 4px 14px;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+    background: transparent;
+    border: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    visibility: hidden;
+}
+.is-filtering #reset-filters { visibility: visible; }
+#reset-filters:hover { color: var(--text); }
+
+/* ---------- month blocks ---------- */
+
+.container { max-width: var(--wrap); margin: 0 auto; padding: 8px var(--gutter) 72px; }
+
+.month-block { padding-top: 28px; }
+
+.month-header { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; margin-bottom: 14px; font-size: clamp(2rem, 6vw, 3rem); letter-spacing: 0.01em; }
+.month-header small { font-family: var(--body); font-size: 0.95rem; font-weight: 600; color: var(--muted); }
+
+.month-events { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 14px; }
+
+/* ---------- event cards ---------- */
+
+.item-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 52px;
+    grid-template-areas: "date logo" "info info" "tags tags" "venue venue" "action action";
+    grid-template-rows: auto auto auto auto 1fr;
+    align-items: start;
+    column-gap: 14px;
+    padding: 16px;
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.item-container:hover { border-color: var(--green); box-shadow: 0 6px 22px rgba(13, 43, 42, 0.12); }
+
+/* the date: a big day number with the weekday and month beside it */
+.event-date {
+    grid-area: date;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 10px;
+    align-items: center;
+    line-height: 1;
+    color: var(--text);
+}
+.event-date b { grid-row: 1 / span 2; font-family: var(--display); font-size: 3rem; font-weight: 800; line-height: 0.9; }
+.event-date .weekday { align-self: end; font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+.event-date .month { align-self: start; margin-top: 3px; font-family: var(--display); font-size: 1.35rem; font-weight: 700; }
+.event-date small { grid-column: 2; margin-top: 4px; font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+
+.event-info { grid-area: info; min-width: 0; margin-top: 10px; }
+
+.title { font-size: clamp(1.5rem, 4.2vw, 1.75rem); font-weight: 700; letter-spacing: 0.01em; line-height: 1.05; overflow-wrap: anywhere; }
+
+.tags { grid-area: tags; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; padding: 0; list-style: none; }
+.tags li { padding: 3px 10px; font-size: 0.85rem; font-weight: 600; background: var(--green-soft); color: var(--text); border-radius: 999px; }
+
+.info { grid-area: venue; margin-top: 10px; font-size: 0.95rem; color: var(--muted); }
+.info i { margin-right: 6px; color: var(--green); }
+
+.img-container {
+    grid-area: logo;
+    width: 52px;
+    height: 52px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.img-container img { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+/* The whole card is the link: the button's ::after stretches over it. */
+.action {
+    grid-area: action;
+    align-self: end;
+    justify-self: start;
+    margin-top: 14px;
+    padding: 8px 16px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green);
+    color: var(--on-green);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 10px;
+}
+.action::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.action:focus-visible { outline: none; }
+.action:focus-visible::after { outline: 3px solid var(--green); outline-offset: 3px; }
+.action:hover { filter: brightness(1.08); }
+
+/* Camps and training */
+.type-tag {
+    display: inline-block;
+    margin-bottom: 8px;
+    padding: 2px 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--green);
+    border: 1.5px solid var(--green);
+    border-radius: 999px;
+}
+
+/* Postponed and cancelled: a lamp and a note, and the card steps back */
+.status-notice { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.95rem; font-weight: 700; }
+.status-notice::before { content: ""; flex: none; width: 12px; height: 12px; border-radius: 50%; }
+.is-postponed .status-notice::before { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+.is-cancelled .status-notice::before { background: var(--red); box-shadow: 0 0 8px var(--red); }
+.is-postponed { border-color: var(--amber); }
+.is-cancelled { border-color: var(--red); }
+.is-cancelled .title { text-decoration: line-through; text-decoration-thickness: 2px; }
+.is-cancelled .event-date, .is-cancelled .tags, .is-cancelled .img-container { opacity: 0.55; }
+
+.message { margin: 40px 0; max-width: 40ch; font-size: 1.1rem; color: var(--muted); }
+
+/* ---------- compact: more events per screen (calendar page, "Compact") ---------- */
+
+.is-compact .month-events { grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 10px; }
+
+.is-compact .item-container {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "date info" "date tags";
+    grid-template-rows: auto 1fr;
+    column-gap: 12px;
+    padding: 12px 14px;
+}
+.is-compact .event-date { grid-template-columns: auto; justify-items: center; row-gap: 2px; min-width: 2.6rem; }
+.is-compact .event-date b { grid-row: auto; font-size: 2.2rem; }
+.is-compact .event-date .weekday, .is-compact .event-date small { display: none; }
+.is-compact .event-date .month { margin: 0; font-size: 1.05rem; }
+.is-compact .event-info { margin-top: 0; }
+.is-compact .title { font-size: 1.2rem; }
+.is-compact .tags { margin-top: 6px; gap: 4px; }
+.is-compact .tags li { padding: 1px 8px; font-size: 0.78rem; }
+.is-compact .info, .is-compact .img-container { display: none; }
+
+/* In compact cards and the archive the only link is the invisible one stretched over the whole card. */
+.is-compact .action, body[data-page="archive"] .action {
+    position: absolute; inset: 0; margin: 0; padding: 0; min-height: 0; background: none; font-size: 0; color: transparent; border-radius: inherit;
+}
+.is-compact .action > *, body[data-page="archive"] .action > * { display: none; }
+.is-compact .action::after, body[data-page="archive"] .action::after { display: none; }
+
+/* ---------- the archive: a ledger, one line per event ---------- */
+
+body[data-page="archive"] .month-block { display: grid; grid-template-columns: minmax(0, 1fr); }
+body[data-page="archive"] .month-header { padding-bottom: 8px; border-bottom: 2px solid var(--text); }
+body[data-page="archive"] .month-events { display: block; }
+
+body[data-page="archive"] .item-container {
+    grid-template-columns: 7.5rem minmax(0, 1fr) auto 40px;
+    grid-template-areas: "date info tags logo" "date venue tags logo";
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 16px;
+    padding: 12px 4px;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+}
+body[data-page="archive"] .item-container:hover { background: var(--paper); box-shadow: none; }
+
+body[data-page="archive"] .event-date { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; }
+body[data-page="archive"] .event-date b { order: 1; font-size: 1.9rem; }
+body[data-page="archive"] .event-date .weekday { order: 0; align-self: baseline; font-size: 0.8rem; }
+body[data-page="archive"] .event-date .month { order: 2; align-self: baseline; margin: 0; font-size: 1.1rem; }
+body[data-page="archive"] .event-date small { order: 3; margin: 0; }
+body[data-page="archive"] .event-info { margin-top: 0; }
+body[data-page="archive"] .title { font-size: 1.35rem; }
+body[data-page="archive"] .tags { justify-content: flex-end; margin-top: 0; }
+body[data-page="archive"] .info { margin-top: 2px; font-size: 0.9rem; }
+body[data-page="archive"] .img-container { width: 40px; height: 40px; }
+body[data-page="archive"] .is-cancelled .title { text-decoration-thickness: 1.5px; }
+
+/* ---------- about page ---------- */
+
+.content { max-width: 40rem; margin: 0 auto; padding: clamp(32px, 7vw, 64px) var(--gutter) 80px; }
+.content h1 { margin-bottom: 24px; font-size: clamp(2.6rem, 9vw, 4.25rem); }
+.content p { margin-bottom: 1.1em; line-height: 1.7; }
+.button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    margin-top: 8px;
+    padding: 12px 22px;
+    background: var(--green);
+    color: var(--on-green);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 10px;
+}
+.button:hover { filter: brightness(1.08); }
+
+/* ---------- screens ---------- */
+
+@media (min-width: 900px) {
+    /* headline on the left, the scoring box on the right, so the first events stay above the fold */
+    .hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 40px; }
+    .hero h1, .lede { grid-column: 1; }
+    .next-up { grid-column: 2; grid-row: 1 / span 2; margin: 0 0 6px; max-width: 360px; }
+
+    /* each month's name stays in view while you scroll through its events */
+    .month-block { display: grid; grid-template-columns: 13rem minmax(0, 1fr); column-gap: 24px; padding-top: 36px; }
+    .month-header { position: sticky; top: 16px; align-self: start; flex-direction: column; gap: 6px; font-size: 2.3rem; }
+}
+
+@media (max-width: 719px) {
+    #filters { gap: 8px 16px; }
+    .filter-row { flex: 1 1 9rem; flex-direction: column; align-items: stretch; gap: 2px; }   /* label above a full-width dropdown */
+    .filter-row:has(.chip-set) { flex-basis: 100%; }
+    .chip-set { flex-wrap: wrap; }
+
+    .is-compact .month-events { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+
+    body[data-page="archive"] .item-container {
+        grid-template-columns: 5.5rem minmax(0, 1fr);
+        grid-template-areas: "date info" "date tags" "date venue";
+        row-gap: 4px;
+    }
+    body[data-page="archive"] .tags { justify-content: flex-start; }
+    body[data-page="archive"] .img-container { display: none; }
+    body[data-page="archive"] .event-date { flex-direction: column; align-items: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; scroll-behavior: auto !important; }
+}

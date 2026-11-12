@@ -1,0 +1,204 @@
+/* style.css: the "heralds' tourney" look.
+   A moonlit duelling hall: night blue, steel, gold leaf and crimson wax. Two swords clash over the title when the page opens.
+   Dates are wax seals, weapons are heraldic shields (foil azure, epee crimson, saber gold), months are ribbon banners.
+   The archive is the chronicle of past duels: aged vellum with dark ink.
+   Colours are tokens; the archive overrides them below. */
+
+:root {
+    --display: 'Pirata One', 'Cinzel', Georgia, serif;     /* blackletter for titles */
+    --label: 'Cinzel', Georgia, 'Times New Roman', serif;  /* engraved capitals for small labels */
+    --body: 'EB Garamond', Georgia, 'Times New Roman', serif;
+
+    --page: #0d1320;
+    --glow: #1f2f55;        /* moonlight at the top of the page */
+    --panel: #162038;       /* cards and bars */
+    --line: #34415c;
+    --gold: #d6aa52;
+    --gold-dim: #8f7536;    /* thin gold rules */
+    --text: #ece6d6;
+    --muted: #aeb6c7;       /* 7:1 on the panel */
+    --crimson: #8f2231;     /* wax and ribbons */
+    --crimson-text: #ff7b88;/* crimson that can be read on dark */
+    --azure: #4a8fef;
+    --on-gold: #1a1408;
+    --focus: #f3d98b;
+    --grain-opacity: 0.07;
+}
+
+/* The archive: a chronicle on aged vellum, written in dark ink. */
+body[data-page="archive"] {
+    --page: #d6cbb0; --glow: #e6dcc4; --panel: #e9e0cb; --line: #a79a73; --gold: #7a5a1c; --gold-dim: #9c8650;
+    --text: #2a1d14; --muted: #5a4a36; --crimson: #8c1f2c; --crimson-text: #8c1f2c; --azure: #2f68b8; --on-gold: #f6ecd2; --focus: #5a3a05;
+    --grain-opacity: 0.16;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+    margin: 0; color: var(--text); font: 400 1.12rem/1.5 var(--body);
+    background: radial-gradient(ellipse 1000px 520px at 50% 0, var(--glow), transparent) no-repeat, var(--page);
+}
+/* a faint paper grain over everything, drawn from an SVG filter: decoration only */
+body::before { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: var(--grain-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"); }
+body > * { position: relative; z-index: 1; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+
+/* ---------- top bar ---------- */
+.topbar { border-bottom: 1px solid var(--gold-dim); }
+.menu { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; width: min(1180px, 100% - 32px); margin-inline: auto; padding-block: 12px; }
+.brand { font: 700 0.95rem/1.2 var(--label); letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; color: var(--gold); }
+.nav-menu { display: flex; flex-wrap: wrap; gap: 4px 22px; margin: 0; padding: 0; list-style: none; }
+.nav-link { display: block; padding: 6px 2px; border-bottom: 2px solid transparent; font: 500 0.85rem/1.2 var(--label); letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; }
+.nav-link:hover { border-bottom-color: var(--gold-dim); }
+.nav-link.active { border-bottom-color: var(--gold); color: var(--gold); }
+
+/* ---------- hero: centred, like a coat of arms ---------- */
+.hero { display: grid; justify-items: center; gap: 4px; padding: 28px 16px 34px; text-align: center; }
+.crest { width: min(240px, 60vw); height: auto; }
+.hero h1 { margin: 0; font: 400 clamp(3.4rem, 12vw, 7.5rem)/1 var(--display); letter-spacing: 0.01em;
+    background: linear-gradient(180deg, #f6e3a8 10%, var(--gold) 55%, #9b7627); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.35)); }
+body[data-page="archive"] .hero h1 { background: none; color: var(--crimson); filter: none; }
+.lede { max-width: 34rem; margin: 6px 0 0; font-size: 1.3rem; font-style: italic; color: var(--muted); }
+
+/* ---------- next up: a sealed letter ---------- */
+.next-up { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 2px 14px; max-width: 46rem; margin: 0 auto; padding: 16px 70px 16px 24px; background: var(--panel); border: 1px solid var(--gold-dim); outline: 1px solid var(--gold-dim); outline-offset: -7px; text-align: center; }
+.next-up::after { content: ''; position: absolute; right: 14px; top: 50%; width: 42px; height: 42px; margin-top: -21px; border-radius: 50% 46% 52% 48%; background: radial-gradient(circle at 35% 30%, #c4384a, var(--crimson) 60%, #5b1019); box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.18), 0 2px 4px rgba(0, 0, 0, 0.5); }
+.next-up .label { flex: 1 1 100%; font: 500 0.8rem/1.2 var(--label); letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
+.next-up .when { order: 1; font: 400 clamp(1.9rem, 4.5vw, 2.6rem)/1 var(--display); color: var(--crimson-text); }
+.next-up .name { order: 2; font: 600 1.2rem/1.25 var(--body); }
+
+/* ---------- filters: the armoury ---------- */
+.loadout { display: flex; flex-wrap: wrap; align-items: end; justify-content: center; gap: 12px 24px; margin-top: 34px; padding: 16px 20px; background: var(--panel); border: 1px solid var(--gold-dim); outline: 1px solid var(--gold-dim); outline-offset: -7px; }
+#filters { display: flex; flex-wrap: wrap; align-items: end; justify-content: center; gap: 12px 16px; }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field-label { font: 500 0.72rem/1 var(--label); letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
+
+.seg { display: flex; gap: 6px; }
+.seg-item { position: relative; cursor: pointer; }
+.seg-item input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.seg-item span { display: flex; align-items: center; gap: 7px; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); background: transparent; font: 500 0.85rem/1 var(--label); letter-spacing: 0.04em; transition: background-color 0.15s, border-color 0.15s; }
+.seg-item:hover span { border-color: var(--gold); }
+.seg-item input:checked + span { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.seg-item input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 3px; }
+/* a tiny shield in front of each weapon name, in its heraldic colour */
+.seg-item:has(input[name="weapon"]:not([value="all"])) span::before { content: ''; width: 11px; height: 13px; background: var(--w); clip-path: polygon(0 0, 100% 0, 100% 55%, 50% 100%, 0 55%); }
+.seg-item:has(input[value="foil"]) { --w: var(--azure); }
+.seg-item:has(input[value="epee"]) { --w: var(--crimson-text); }
+.seg-item:has(input[value="saber"]) { --w: var(--gold); }
+.seg-item:has(input[value="saber"]) input:checked + span::before { background: var(--on-gold); }
+
+select { min-width: 7.5rem; min-height: 44px; padding: 0 34px 0 12px; border: 1px solid var(--line); border-radius: 0; background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0h12L6 8z' fill='%23d6aa52'/%3E%3C/svg%3E") no-repeat right 12px center; color: var(--text); font: 500 0.85rem var(--label); appearance: none; cursor: pointer; }
+select option { background: var(--panel); color: var(--text); }
+select:hover { border-color: var(--gold); }
+select:not(:has(option[value="all"]:checked)) { border-color: var(--gold); background-color: rgba(214, 170, 82, 0.14); }
+body[data-page="archive"] select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0h12L6 8z' fill='%237a5a1c'/%3E%3C/svg%3E"); }
+
+.filters-foot { display: flex; align-items: center; gap: 14px; flex: 1 1 100%; justify-content: center; }
+.count { margin: 0; font-style: italic; color: var(--muted); }
+#reset-filters { display: none; min-height: 40px; padding: 0 14px; border: 1px solid var(--crimson-text); background: none; color: var(--crimson-text); font: 500 0.8rem var(--label); letter-spacing: 0.06em; cursor: pointer; }
+#reset-filters:hover { background: var(--crimson-text); color: var(--page); }
+.is-filtering #reset-filters { display: inline-block; }
+
+/* ---------- months: ribbon banners ---------- */
+main { padding: 8px 0 90px; }
+.month-block { margin-top: 44px; }
+.month-header { display: flex; align-items: baseline; justify-content: center; gap: 4px 16px; margin: 0 0 26px; padding: 8px 42px 10px; background: var(--crimson); color: #f6ecd2; font: 400 clamp(1.9rem, 5vw, 2.9rem)/1.1 var(--display);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 22px) 50%, 100% 100%, 0 100%, 22px 50%); }
+.month-header small { font: 500 0.8rem/1 var(--label); letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; }
+.month-events { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); gap: 20px; }
+
+/* ---------- an event: a duel scroll ---------- */
+.item-container {
+    --logo-opacity: 0.34;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 4.6rem minmax(0, 1fr) auto;
+    grid-template-areas: "date info info" "date weapons meta";
+    align-items: start;
+    gap: 6px 14px;
+    min-height: 9rem;
+    padding: 18px 18px 16px;
+    background: var(--panel);
+    border: 1px solid var(--gold-dim);
+    outline: 1px solid var(--gold-dim);
+    outline-offset: -7px;
+    transition: border-color 0.15s, box-shadow 0.2s;
+}
+.item-container:hover { border-color: var(--gold); box-shadow: 0 0 26px rgba(214, 170, 82, 0.22); }
+/* a small gold diamond on the top edge */
+.item-container::before { content: ''; position: absolute; top: -5px; left: 50%; width: 9px; height: 9px; margin-left: -5px; background: var(--gold); transform: rotate(45deg); }
+
+/* the date is a wax seal (the ::before circle); a date range is written under it */
+.event-date { position: relative; grid-area: date; display: grid; justify-items: center; align-content: start; width: 4.4rem; padding-top: 0.85rem; color: #f6ecd2; text-align: center; line-height: 1; }
+.event-date::before { content: ''; position: absolute; top: 0; left: 0; z-index: -1; width: 4.4rem; height: 4.4rem; border-radius: 50% 47% 53% 49%;
+    background: radial-gradient(circle at 35% 30%, #c4384a, var(--crimson) 62%, #5b1019); box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.45); }
+.event-date b { font: 400 2.2rem/0.9 var(--display); }
+.event-date .weekday { margin-top: 2px; font: 500 0.6rem/1 var(--label); letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.9; }
+.event-date small { margin-top: 1.05rem; font: italic 400 0.85rem/1.1 var(--body); color: var(--muted); }
+
+.event-info { grid-area: info; min-width: 0; }
+.title { margin: 0; font: 700 1.05rem/1.25 var(--label); letter-spacing: 0.02em; overflow-wrap: break-word; }
+.info { margin: 3px 0 0; font-style: italic; color: var(--muted); }
+.type-tag { display: inline-block; margin: 0 6px 6px 0; padding: 1px 9px; border: 1px solid var(--gold); color: var(--gold); font: 500 0.68rem/1.5 var(--label); letter-spacing: 0.1em; text-transform: uppercase; }
+.status-notice { display: inline-block; margin: 0 0 6px; padding: 1px 9px; background: var(--crimson); color: #f6ecd2; font: 500 0.72rem/1.5 var(--label); letter-spacing: 0.06em; text-transform: uppercase; }
+.is-postponed .status-notice { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
+.is-cancelled { background: linear-gradient(to top right, transparent calc(50% - 1.5px), var(--crimson-text) 50%, transparent calc(50% + 1.5px)), var(--panel); }  /* a blade-cut slash across the card */
+.is-cancelled .title { text-decoration: line-through; text-decoration-thickness: 1px; opacity: 0.7; }
+.is-cancelled .event-date { filter: grayscale(1) brightness(0.7); }
+
+/* F E S: heraldic shields, filled in the weapon's colour when the event uses it */
+.weapons { grid-area: weapons; display: flex; gap: 4px; align-self: end; margin: 0; }
+.weapons span { display: grid; place-items: start center; width: 1.7rem; height: 2rem; padding-top: 0.3rem; background: var(--line); color: var(--muted); font: 700 0.75rem/1 var(--label); clip-path: polygon(0 0, 100% 0, 100% 58%, 50% 100%, 0 58%); }
+.weapons .on { color: var(--on-gold); }
+.weapons [data-w="foil"].on { background: var(--azure); }
+.weapons [data-w="epee"].on { background: var(--crimson-text); }
+.weapons [data-w="saber"].on { background: var(--gold); }
+body[data-page="archive"] .weapons .on { color: #f6ecd2; }
+
+.meta { grid-area: meta; align-self: end; display: grid; margin: 0; text-align: right; font-size: 0.95rem; line-height: 1.25; font-style: italic; color: var(--muted); }
+
+/* the organiser's crest: a large medallion behind the text. Where there is a pointer, a sword slash reveals it on hover */
+.img-container { position: absolute; top: -12%; right: 0; bottom: -12%; width: 62%; z-index: -1; display: flex; align-items: center; justify-content: flex-end; padding: 14px; pointer-events: none; opacity: var(--logo-opacity); overflow: hidden; }
+.img-container img { height: 100%; width: auto; max-width: 100%; aspect-ratio: 1; padding: 8px; border: 3px solid var(--gold); border-radius: 50%; background: #fff; object-fit: contain; } /* a round medallion */
+@media (hover: hover) {
+    .img-container { opacity: 0; transition: opacity 0.2s; }
+    .item-container:hover .img-container, .item-container:has(.action:focus-visible) .img-container { opacity: var(--logo-opacity); animation: slash 0.45s ease-out; }
+    .item-container:hover .img-container::after, .item-container:has(.action:focus-visible) .img-container::after { content: ''; position: absolute; inset: 0 auto 0 0; width: 18%; background: linear-gradient(100deg, transparent, rgba(255, 244, 205, 0.9), transparent); animation: glint 0.45s ease-out both; }
+}
+@keyframes slash { from { clip-path: polygon(0 0, 0 0, -25% 100%, 0 100%); } to { clip-path: polygon(0 0, 125% 0, 100% 100%, 0 100%); } }
+@keyframes glint { from { transform: translateX(-120%); } to { transform: translateX(620%); opacity: 0; } }
+
+/* the whole card is the link; only the arrow shows */
+.action { position: absolute; inset: 0; display: block; font-size: 0; text-decoration: none; }
+.action i { position: absolute; top: 12px; right: 14px; font-size: 0.9rem; color: var(--gold); }
+.action:focus-visible { outline: none; }
+.action:focus-visible::after { content: ''; position: absolute; inset: 0; outline: 3px solid var(--focus); outline-offset: -3px; }
+
+.message { margin: 0; padding: 24px; background: var(--panel); border: 1px solid var(--gold-dim); text-align: center; font-style: italic; font-size: 1.25rem; }
+
+/* ---------- About page: a letter ---------- */
+.content { max-width: 44rem; margin-top: 8px; margin-bottom: 90px; padding: 30px 34px 34px; background: var(--panel); border: 1px solid var(--gold-dim); outline: 1px solid var(--gold-dim); outline-offset: -8px; }
+.content p { margin: 0 0 1.1em; line-height: 1.65; text-wrap: pretty; }
+.button { display: inline-block; padding: 12px 26px; background: var(--gold); border: 1px solid var(--gold); color: var(--on-gold); font: 700 0.85rem/1 var(--label); letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: background-color 0.15s; }
+.button:hover { background: transparent; color: var(--gold); }
+
+@media (max-width: 599px) {
+    .loadout { padding: 14px 12px; }
+    .field-weapon, .field-weapon .seg { width: 100%; }
+    .seg-item { flex: 1; }
+    .seg-item span { justify-content: center; padding: 0 6px; }
+    .field:not(.field-weapon) { flex: 1 1 8rem; }
+    select { width: 100%; }
+    .month-header { padding-inline: 34px; }
+    .next-up { padding-right: 62px; }
+    .content { padding: 22px 20px 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}

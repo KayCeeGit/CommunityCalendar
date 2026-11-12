@@ -1,0 +1,293 @@
+/* style.css: the "hybrid" look. Piste's page layout (top bar, headline with the scoring box beside it,
+   one row of filters, month names pinned on the left) wearing Terminal's clothes (black, violet, huge
+   blocky type, hazard stripes, corner brackets, F/E/S weapon blocks, a logo that glitches in on hover).
+   Each weapon has its own colour everywhere: foil cyan, epee magenta, saber yellow.
+   Colours are tokens at the top. The calendar is dark; the archive is a light "paper" page. */
+
+:root {
+    --display: 'Archivo', 'Arial Black', system-ui, sans-serif;
+    --body: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'Martian Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+    --bg: #0b0b0c;
+    --panel: #151517;       /* event cards */
+    --hover: #1e1a35;       /* the card colour while hovered */
+    --text: #f1efe8;
+    --muted: #9a9aa1;
+    --line: #2d2d32;
+    --control: #3a3a41;     /* borders of buttons and dropdowns */
+    --accent: #a78bfa;      /* ultraviolet: selected things, brackets, the scoring box */
+    --on-accent: #0b0b0c;
+    --foil: #00e5ff;
+    --epee: #ff2d95;
+    --saber: #ffd400;
+    --red: #ff3b30;
+    --warn: #ff8a1f;        /* postponed */
+    --glyph-off: #5d5d65;
+    --focus: #a78bfa;
+    --wrap: 1240px;
+    --gutter: clamp(16px, 4vw, 40px);
+}
+
+/* The archive is light paper. */
+body[data-page="archive"] {
+    --bg: #e6e4d9; --panel: #f6f5ee; --hover: #e3dcf8; --text: #0b0b0c; --muted: #52524c; --line: #bdbbb0; --control: #8d8b80;
+    --accent: #0b0b0c; --on-accent: #a78bfa; --focus: #0b0b0c; --glyph-off: #8d8b80;
+    --foil: #00b8d0; --epee: #e0147d; --saber: #f2c200; --warn: #c25400;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body { min-height: 100vh; background-color: var(--bg); background-image: radial-gradient(circle, var(--line) 1px, transparent 1.5px); background-size: 24px 24px;
+    color: var(--text); font: 400 1rem/1.5 var(--body); }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+/* ---------- top bar (always dark) ---------- */
+.navbar { --text: #f1efe8; --muted: #9a9aa1; --line: #2d2d32; --accent: #a78bfa; --on-accent: #0b0b0c; --focus: #a78bfa;
+    background: #0b0b0c; color: var(--text); border-bottom: 1px solid var(--line); }
+.nav-container { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; max-width: var(--wrap); margin: 0 auto; padding: 12px var(--gutter); }
+.nav-logo { display: flex; align-items: center; gap: 12px; font: 800 1rem/1.15 var(--display); font-stretch: 112%; text-transform: uppercase; text-decoration: none; }
+.brand-mark { flex: none; width: 30px; height: 30px; background: var(--accent); clip-path: polygon(0 0, 70% 0, 100% 30%, 100% 100%, 0 100%); }
+.nav-menu { display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.nav-link { display: block; padding: 8px 12px; border: 1px solid var(--line); font: 800 0.85rem/1.2 var(--display); font-stretch: 112%; text-transform: uppercase; text-decoration: none; }
+.nav-link:hover { border-color: var(--accent); color: var(--accent); }
+.nav-link.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* ---------- hero ---------- */
+.wrap { width: 100%; max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gutter); }
+.hero { display: grid; gap: 18px; padding-block: clamp(28px, 5vw, 48px) 28px; }
+.hero h1 { max-width: 14ch; font: 900 clamp(2.5rem, 7.5vw, 5rem)/0.9 var(--display); font-stretch: 125%; text-transform: uppercase; letter-spacing: -0.02em; text-wrap: balance; }
+.lede { max-width: 34rem; font-size: 1.1rem; color: var(--muted); }
+
+/* The scoring box: a violet block with a chamfered corner, a lamp at each end, and every event going ahead on the next day. */
+.next-up { display: flex; align-items: center; gap: 16px; max-width: 100%; margin: 0; padding: 14px 20px; background: var(--accent); color: var(--on-accent);
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%); }
+.next-up[hidden] { display: none; }
+.next-up .text { min-width: 0; }
+.next-toggle, .next-count { display: none; }   /* phones only */
+.next-up .next-label { display: block; font: 600 0.72rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
+.next-up .when { display: block; margin-top: 4px; font: 900 clamp(1.6rem, 4vw, 2.4rem)/1 var(--display); font-stretch: 125%; text-transform: uppercase; white-space: nowrap; }
+.next-events { margin: 8px 0 0; padding: 0; list-style: none; }
+.next-events li + li { margin-top: 4px; }
+.next-events strong { font: 700 1.15rem/1.2 var(--display); }
+.lamp { flex: none; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--on-accent); }
+.lamp.red { background: var(--red); }
+.lamp.green { background: #2bf09a; }
+
+/* ---------- filters: one row ---------- */
+.filters { max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gutter); }
+#filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px; padding-block: 14px; border-block: 1px solid var(--line); }
+.filter-row { display: grid; gap: 5px; }
+.filter-label { font: 600 0.68rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.chip-set { display: flex; gap: 4px; }
+
+/* weapon buttons, in the same colours as the cards */
+.chip { position: relative; cursor: pointer; }
+.chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.chip span { display: grid; place-items: center; min-height: 40px; padding: 0 14px; background: var(--bg); border: 1px solid var(--control); font: 800 0.8rem/1 var(--mono); text-transform: uppercase; transition: background-color 0.1s, color 0.1s; }
+.chip:hover span { border-color: var(--accent); }
+.chip input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chip input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
+.chip:has(input[value="foil"]) { --w: var(--foil); }
+.chip:has(input[value="epee"]) { --w: var(--epee); }
+.chip:has(input[value="saber"]) { --w: var(--saber); }
+.chip:has(input[name="weapon"]:not([value="all"])) span { border-color: var(--w); color: var(--w); }
+.chip:has(input[name="weapon"]:not([value="all"])) input:checked + span { background: var(--w); color: #0b0b0c; }
+
+select { min-height: 40px; padding: 0 28px 0 10px; border: 1px solid var(--control); border-radius: 0; color: var(--text); font: 600 0.8rem var(--mono); appearance: none; cursor: pointer;
+    background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23a78bfa'/%3E%3C/svg%3E") no-repeat right 10px center; }
+select:hover { border-color: var(--accent); }
+select:not(:has(option[value="all"]:checked)) { border-color: var(--accent); color: var(--accent); }
+
+.filters-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 20px; padding-block: 10px 0; }
+.count { margin-right: auto; font: 600 0.75rem/1.4 var(--mono); color: var(--muted); }
+#reset-filters { min-height: 34px; padding: 0 12px; border: 1px solid var(--text); background: none; color: var(--text); font: 600 0.75rem var(--mono); cursor: pointer; visibility: hidden; }
+#reset-filters:hover { background: var(--text); color: var(--bg); }
+.is-filtering #reset-filters { visibility: visible; }
+
+/* the Compact view switch: a real checkbox drawn as a square toggle */
+.switch { position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 34px; font: 600 0.75rem var(--mono); text-transform: uppercase; cursor: pointer; }
+.switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.switch-track { position: relative; flex: none; width: 42px; height: 22px; border: 1px solid var(--control); background: var(--bg); transition: background-color 0.1s; }
+.switch-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; background: var(--muted); transition: transform 0.1s, background-color 0.1s; }
+.switch input:checked + .switch-track { background: var(--accent); border-color: var(--accent); }
+.switch input:checked + .switch-track::after { transform: translateX(20px); background: var(--on-accent); }
+.switch input:focus-visible + .switch-track { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+/* ---------- months ---------- */
+.container { max-width: var(--wrap); margin: 0 auto; padding: 8px var(--gutter) 80px; }
+.month-block { padding-top: 32px; }
+.month-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; font: 900 clamp(1.8rem, 6vw, 3rem)/1 var(--display); font-stretch: 125%; text-transform: uppercase; letter-spacing: -0.01em; }
+.month-header::after { content: ''; order: 1; flex: 1; height: 14px; background: repeating-linear-gradient(135deg, var(--text) 0 6px, transparent 6px 12px); opacity: 0.85; }
+.month-header .year { white-space: nowrap; }
+.month-header small { order: 2; font: 600 0.75rem/1 var(--mono); letter-spacing: 0; text-transform: none; color: var(--muted); white-space: nowrap; }
+.month-events { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap: 12px; }
+
+/* ---------- an event ---------- */
+.item-container { position: relative; isolation: isolate; --logo-opacity: 0.38;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto 1fr auto; grid-template-areas: "serial serial" "date date" "info info" "weapons meta";
+    gap: 0 12px; padding: 14px 16px 16px; background: var(--panel); border: 1px solid var(--line); transition: border-color 0.1s, background-color 0.1s; }
+/* corner brackets */
+.item-container::before, .item-container::after { content: ''; position: absolute; width: 14px; height: 14px; pointer-events: none; }
+.item-container::before { top: -1px; left: -1px; border-top: 3px solid var(--accent); border-left: 3px solid var(--accent); }
+.item-container::after { right: -1px; bottom: -1px; border-right: 3px solid var(--accent); border-bottom: 3px solid var(--accent); }
+.item-container:hover { border-color: var(--accent); background: var(--hover); }
+
+.serial { grid-area: serial; align-self: center; font: 600 0.7rem/1 var(--mono); color: var(--muted); }
+.event-date { grid-area: date; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 10px; margin: 10px 0 6px; }
+.event-date b { font: 900 4.4rem/0.9 var(--display); font-stretch: 125%; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.event-date .weekday, .event-date small { font: 600 0.78rem/1.3 var(--mono); text-transform: uppercase; color: var(--muted); }
+.event-info { grid-area: info; min-width: 0; padding-bottom: 14px; }
+.title { font: 800 1.2rem/1.2 var(--display); overflow-wrap: break-word; }
+.info { margin-top: 4px; font: 400 0.78rem/1.4 var(--mono); color: var(--muted); }
+.type-tag { display: inline-block; margin-bottom: 6px; padding: 3px 7px; background: var(--text); color: var(--bg); font: 600 0.7rem/1 var(--mono); text-transform: uppercase; }
+
+.status-notice { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font: 600 0.75rem/1.3 var(--mono); text-transform: uppercase; color: var(--red); }
+.status-notice::before { content: ''; flex: none; width: 34px; height: 10px; background: repeating-linear-gradient(135deg, currentColor 0 4px, transparent 4px 8px); }
+.is-postponed { --accent: var(--warn); border-color: var(--warn); }   /* brackets and hover border turn orange too */
+.is-postponed .status-notice, .is-postponed .event-date { color: var(--warn); }
+.is-cancelled { --logo-opacity: 0.18; }
+.is-cancelled .title { text-decoration: line-through; text-decoration-thickness: 2px; }
+.is-cancelled .event-date, .is-cancelled .weapons, .is-cancelled .meta { opacity: 0.5; }
+
+/* F E S: a block lights up in the weapon's colour when the event uses it */
+.weapons { grid-area: weapons; display: flex; gap: 3px; align-self: end; }
+.weapons span { display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border: 1px solid var(--glyph-off); color: var(--glyph-off); font: 800 0.85rem/1 var(--mono); }
+.weapons .on { color: #0b0b0c; border-color: transparent; }
+.weapons [data-w="foil"].on { background: var(--foil); }
+.weapons [data-w="epee"].on { background: var(--epee); }
+.weapons [data-w="saber"].on { background: var(--saber); }
+.meta { grid-area: meta; align-self: end; display: grid; text-align: right; font: 400 0.72rem/1.4 var(--mono); color: var(--muted); }
+
+/* the organiser's logo: a big ghost behind the text; with a pointer it glitches in on hover, on touch screens it stays as a faint watermark */
+.img-container { position: absolute; top: 0; right: 0; bottom: 0; width: 66%; z-index: -1; padding: 14px; pointer-events: none;
+    opacity: var(--logo-opacity); -webkit-mask-image: linear-gradient(to right, transparent, #000 45%); mask-image: linear-gradient(to right, transparent, #000 45%); }
+.img-container img { width: 100%; height: 100%; object-fit: contain; object-position: right center; }
+@media (hover: hover) {
+    .img-container { opacity: 0; transition: opacity 0.2s; }
+    .item-container:hover .img-container, .item-container:has(.action:focus-visible) .img-container { opacity: var(--logo-opacity); animation: glitch-in 0.55s steps(1, end); }
+}
+@keyframes glitch-in {
+    0%   { opacity: 0; }
+    10%  { opacity: 0.9; transform: translateX(-14px) skewX(8deg); clip-path: inset(10% 0 70% 0); filter: drop-shadow(6px 0 0 #ff2d95) drop-shadow(-6px 0 0 #00e5ff); }
+    22%  { opacity: 0.6; transform: translateX(12px); clip-path: inset(55% 0 12% 0); filter: hue-rotate(90deg) saturate(3); }
+    34%  { opacity: 0; transform: none; clip-path: none; filter: none; }
+    44%  { opacity: 0.8; transform: translateX(8px) skewX(-6deg); clip-path: inset(30% 0 35% 0); filter: drop-shadow(-5px 0 0 #ff2d95) drop-shadow(5px 0 0 #00e5ff); }
+    58%  { opacity: 0.5; transform: translateX(-6px); clip-path: inset(0 0 78% 0); filter: hue-rotate(-60deg) saturate(2); }
+    72%  { opacity: 1; transform: translateX(3px); clip-path: none; filter: drop-shadow(3px 0 0 #ff2d95) drop-shadow(-3px 0 0 #00e5ff); }
+    86%  { opacity: 1; transform: none; filter: hue-rotate(40deg); }
+    100% { opacity: var(--logo-opacity); transform: none; clip-path: none; filter: none; }
+}
+
+/* the whole card is the link; only the arrow shows */
+.action { position: absolute; inset: 0; display: block; font-size: 0; text-decoration: none; }
+.action i { position: absolute; top: 50px; right: 16px; font-size: 1rem; color: var(--accent); transition: transform 0.12s; }
+.item-container:hover .action i { transform: translate(3px, -3px); }
+.action:focus-visible { outline: none; }
+.action:focus-visible::after { content: ''; position: absolute; inset: 0; outline: 3px solid var(--focus); outline-offset: 3px; }
+
+.message { padding: 56px 0; font-size: 1.15rem; }
+
+/* Compact view (wide screens only: on phones the cards are already small, so the switch is hidden and this is ignored) */
+@media (min-width: 720px) {
+    .is-compact .month-events { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    .is-compact .item-container { grid-template-columns: 5.5rem minmax(0, 1fr) auto; grid-template-rows: auto; grid-template-areas: "date info weapons"; align-items: center; gap: 0 14px; padding: 10px 44px 10px 14px; }
+    .is-compact .serial, .is-compact .meta, .is-compact .img-container { display: none; }
+    .is-compact .event-date { margin: 0; flex-direction: column; align-items: flex-start; }
+    .is-compact .event-date b { font-size: 2.2rem; }
+    .is-compact .event-info { padding-bottom: 0; }
+    .is-compact .action i { top: 50%; margin-top: -0.5em; }
+}
+
+/* ---------- About page ---------- */
+.content { max-width: 46rem; margin: 0 auto; padding: clamp(32px, 7vw, 64px) var(--gutter) 96px; }
+.content h1 { margin-bottom: 28px; font: 900 clamp(2.2rem, 6vw, 4rem)/0.95 var(--display); font-stretch: 125%; text-transform: uppercase; text-wrap: balance; }
+.content p { margin-bottom: 1.1em; line-height: 1.65; text-wrap: pretty; }
+.button { display: inline-block; margin-top: 8px; padding: 14px 24px; background: var(--accent); color: var(--on-accent); font: 800 0.95rem/1 var(--display); font-stretch: 112%; text-transform: uppercase; text-decoration: none;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%); }
+.button:hover { background: var(--text); color: var(--bg); }
+
+/* ---------- wide screens ---------- */
+@media (min-width: 900px) {
+    /* headline on the left, the scoring box on the right */
+    .hero { grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 40px; }
+    .hero h1, .lede { grid-column: 1; }
+    .next-up { grid-column: 2; grid-row: 1 / span 2; max-width: 380px; }
+
+    /* each month's name stays in view on the left while you scroll through its events */
+    .month-block { display: grid; grid-template-columns: 15rem minmax(0, 1fr); column-gap: 28px; padding-top: 36px; }
+    .month-header { position: sticky; top: 16px; align-self: start; display: block; font-size: 1.9rem; white-space: nowrap; }
+    .month-header .year { display: block; margin-top: 6px; font: 600 0.9rem/1 var(--mono); letter-spacing: 0; color: var(--muted); }
+    .month-header::after { display: block; margin-top: 12px; }
+    .month-header small { display: block; margin-top: 10px; }
+}
+
+@media (max-width: 719px) {
+    /* top bar on one short line: the brand mark (still the home link) and the three pages */
+    body { overflow-x: clip; }   /* safety net: if a wider font ever pushes something past the screen edge, the page still never scrolls sideways */
+    .nav-container { gap: 4px 8px; padding-block: 6px; }
+    .brand-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }   /* hidden but still read by screen readers */
+    .nav-logo { flex: none; min-height: 44px; }
+    .nav-menu { flex: 1 1 auto; justify-content: flex-end; gap: 3px; min-width: 0; }
+    .nav-link { display: grid; place-items: center; min-height: 44px; padding: 0 clamp(5px, 2vw, 9px); font-size: clamp(0.58rem, 2.9vw, 0.72rem); white-space: nowrap; }   /* shrinks with the screen; wraps to a second line only on the very narrowest phones */
+
+    /* a shorter heading area */
+    .hero { grid-template-columns: minmax(0, 1fr); gap: 10px; padding-block: 16px 14px; }
+    .hero h1 { font-size: 2.1rem; }
+    .lede { font-size: 0.95rem; }
+
+    /* "Next up": one line (label, when, what), tap anywhere on it to show every event that day */
+    .next-up { position: relative; padding: 0; clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%); }
+    .next-up .lamp { display: none; }
+    .next-up .text { flex: 1; padding: 6px 4px 6px 14px; }
+    .next-head { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+    .next-up .when { margin: 0; font-size: 1.05rem; }
+    .next-up .next-label { white-space: nowrap; }
+    .next-count { display: block; min-width: 0; overflow: hidden; font: 600 0.75rem/1.2 var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+    .next-up.is-open .next-count { display: none; }
+    .next-events { display: none; margin-top: 6px; }
+    .next-up.is-open .next-events { display: block; }
+    .next-events strong { font-size: 1rem; }
+    .next-toggle { position: static; display: grid; flex: none; place-items: center; width: 44px; align-self: stretch; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+    .next-toggle::before { content: ''; width: 9px; height: 9px; margin-top: -4px; border: solid currentColor; border-width: 0 3px 3px 0; transform: rotate(45deg); transition: transform 0.15s; }
+    .next-up.is-open .next-toggle::before { margin-top: 4px; transform: rotate(-135deg); }
+    .next-toggle::after { content: ''; position: absolute; inset: 0; }   /* the whole box is the button */
+    .next-toggle:focus-visible { outline: none; }
+    .next-toggle:focus-visible::after { outline: 3px solid var(--on-accent); outline-offset: -4px; }
+
+    /* filters, kept small: weapon buttons on their own row, then the dropdowns three to a row, then the count and Clear on one line */
+    .switch { display: none; }   /* no Compact view on phones */
+    #filters { gap: 6px 8px; padding-block: 8px; }
+    .filter-row { gap: 3px; }
+    .filter-label { font-size: 0.6rem; }
+    .filter-row:has(.chip-set) { order: -1; flex-basis: 100%; }
+    .filter-row:not(:has(.chip-set)) { flex: 1 1 6.5rem; min-width: 0; }
+    select { width: 100%; min-height: 38px; padding: 0 22px 0 8px; font-size: 0.75rem; background-position: right 8px center; }
+    .chip span { min-height: 38px; padding: 0 12px; font-size: 0.75rem; }
+    .chip-set { flex-wrap: wrap; gap: 3px; }
+    .filters-foot { padding-block: 4px 0; }
+    #reset-filters { min-height: 32px; padding: 0 10px; font-size: 0.7rem; }
+
+    .month-block { padding-top: 20px; }
+    .month-header { flex-wrap: wrap; gap: 4px 12px; margin-bottom: 10px; font-size: clamp(1.25rem, 5.8vw, 1.6rem); }
+    .month-header::after { min-width: 24px; }
+
+    /* small cards: the date on the left, the name beside it, the F/E/S blocks and format along the bottom */
+    .item-container { --logo-opacity: 0.12; grid-template-columns: 3.4rem minmax(0, 1fr) auto; grid-template-rows: auto auto; grid-template-areas: "date info info" "date weapons meta"; gap: 4px 12px; padding: 10px 14px 10px 12px; }
+    .serial { display: none; }
+    .img-container { width: 50%; }
+    .event-date { margin: 0; flex-direction: column; align-items: flex-start; gap: 2px; }
+    .event-date b { font-size: 2.3rem; }
+    .event-info { padding-bottom: 0; }
+    .title { font-size: 1.05rem; }
+    .info { margin-top: 2px; font-size: 0.72rem; }
+    .meta { font-size: 0.68rem; line-height: 1.3; }
+    .weapons span { width: 1.5rem; height: 1.5rem; font-size: 0.72rem; }
+    .action i { top: 12px; right: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}

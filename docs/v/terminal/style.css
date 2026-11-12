@@ -1,0 +1,214 @@
+/* style.css: the "terminal" look.
+   A fixed rail on the left (pages and filters) and a stage on the right (the events).
+   Flat neon on black, huge blocky type, hazard stripes, small technical readouts.
+   Each weapon has its own colour everywhere it appears: foil cyan, epee magenta, saber yellow.
+   Colours are tokens: the rail is always dark; the stage is dark, except on the archive, which is a light "paper" stage. */
+
+:root {
+    --display: 'Archivo', 'Arial Black', system-ui, sans-serif;
+    --body: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'Martian Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+    --bg: #0b0b0c;          /* stage */
+    --panel: #151517;       /* event cards */
+    --text: #f1efe8;
+    --muted: #9a9aa1;       /* 6:1 on the stage */
+    --line: #2d2d32;
+    --accent: #a78bfa;      /* the brand colour (ultraviolet): selected things, next up, focus */
+    --on-accent: #0b0b0c;
+    --hover: #1e1a35;       /* the card colour while hovered: a violet-tinted dark */
+    --foil: #00e5ff;
+    --epee: #ff2d95;
+    --saber: #ffd400;
+    --red: #ff3b30;
+    --warn: #ff8a1f;        /* postponed: orange, so it reads differently from cancelled red and the violet accent */
+    --glyph-off: #5d5d65;
+    --focus: #a78bfa;
+}
+
+/* The archive's stage is light. The rail (below) keeps the dark tokens. */
+body[data-page="archive"] .stage {
+    --bg: #e6e4d9; --panel: #f6f5ee; --text: #0b0b0c; --muted: #52524c; --line: #bdbbb0;
+    --accent: #0b0b0c; --on-accent: #a78bfa; --glyph-off: #8d8b80; --focus: #0b0b0c; --hover: #e3dcf8;
+    --foil: #00b8d0; --epee: #e0147d; --saber: #f2c200; --warn: #c25400;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: #0b0b0c; color: var(--text); font: 400 1rem/1.5 var(--body); }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+.shell { display: grid; grid-template-columns: 19rem minmax(0, 1fr); min-height: 100vh; }
+
+/* ---------- the rail ---------- */
+.rail { --hover: #1e1a35; --text: #f1efe8; --muted: #9a9aa1; --line: #2d2d32; --accent: #a78bfa; --on-accent: #0b0b0c; --focus: #a78bfa;
+    position: sticky; top: 0; align-self: start; display: flex; flex-direction: column; gap: 22px; height: 100vh; overflow-y: auto; padding: 20px 18px;
+    background: #0b0b0c; color: var(--text); border-right: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 12px; font: 800 1rem/1.15 var(--display); font-stretch: 112%; text-transform: uppercase; text-decoration: none; }
+.brand-mark { flex: none; width: 34px; height: 34px; background: var(--accent); clip-path: polygon(0 0, 70% 0, 100% 30%, 100% 100%, 0 100%); }
+
+.nav-menu { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.nav-link { display: block; padding: 10px 12px; border: 1px solid var(--line); font: 800 0.95rem/1.2 var(--display); font-stretch: 112%; text-transform: uppercase; text-decoration: none; }
+.nav-link:hover { border-color: var(--accent); color: var(--accent); }
+.nav-link.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+.filters { display: grid; gap: 12px; }
+#filters { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.filter-row { display: grid; gap: 5px; min-width: 0; }
+.filter-row.wide { grid-column: 1 / -1; }
+.filter-label { font: 600 0.7rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+/* weapon: one row of four buttons, in the same colours as the cards */
+.seg { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 4px; }
+.seg-item { position: relative; cursor: pointer; }
+.seg-item input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.seg-item span { display: grid; place-items: center; min-height: 40px; border: 1px solid #3a3a41; font: 800 0.85rem/1 var(--mono); transition: background-color 0.1s, color 0.1s; }
+.seg-item:hover span { border-color: var(--accent); }
+.seg-item input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.seg-item input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
+.seg-item:has(input[value="foil"]) { --w: var(--foil); }
+.seg-item:has(input[value="epee"]) { --w: var(--epee); }
+.seg-item:has(input[value="saber"]) { --w: var(--saber); }
+.seg-item:has(input[name="weapon"]:not([value="all"])) span { border-color: var(--w); color: var(--w); }
+.seg-item:has(input[name="weapon"]:not([value="all"])) input:checked + span { background: var(--w); color: #0b0b0c; }
+
+/* the other filters are compact dropdowns; one that is set to something shows in the accent colour */
+select { width: 100%; min-height: 40px; padding: 0 28px 0 10px; border: 1px solid #3a3a41; border-radius: 0; background: #0b0b0c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z' fill='%23a78bfa'/%3E%3C/svg%3E") no-repeat right 10px center; color: var(--text); font: 600 0.8rem var(--mono); appearance: none; cursor: pointer; }
+select:hover { border-color: var(--accent); }
+select:not(:has(option[value="all"]:checked)) { border-color: var(--accent); color: var(--accent); }
+
+.filters-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; }
+.count { margin: 0; font: 600 0.75rem/1.4 var(--mono); color: var(--muted); }
+#reset-filters { display: none; min-height: 36px; padding: 0 10px; border: 1px solid var(--text); background: none; color: var(--text); font: 600 0.75rem var(--mono); cursor: pointer; }
+#reset-filters:hover { background: var(--text); color: var(--bg); }
+.is-filtering #reset-filters { display: inline-block; }
+
+/* a barcode to fill the foot of the rail: decoration only */
+.rail::after { content: ''; flex: none; height: 38px; margin-top: auto; background: repeating-linear-gradient(90deg, var(--text) 0 2px, transparent 2px 5px, var(--text) 5px 6px, transparent 6px 9px, var(--text) 9px 12px, transparent 12px 14px); opacity: 0.55; }
+
+/* ---------- the stage ---------- */
+.stage { min-width: 0; color: var(--text); background-color: var(--bg); background-image: radial-gradient(circle, var(--line) 1px, transparent 1.5px); background-size: 24px 24px; }
+.hero { container-type: inline-size; display: grid; gap: 18px; padding: 36px clamp(16px, 3vw, 40px) 32px; border-bottom: 1px solid var(--line); background: var(--bg); }
+.hero h1 { margin: 0; font: 900 15cqi/0.84 var(--display); font-stretch: 125%; text-transform: uppercase; letter-spacing: -0.02em; }
+@container (min-width: 640px) { .hero h1 { font-size: min(9cqi, 8rem); } }
+.lede { margin: 0; max-width: 36rem; font-size: 1.1rem; color: var(--muted); }
+
+.next-up { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; margin: 6px 0 0; padding: 14px 18px; background: var(--accent); color: var(--on-accent); clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%); }
+.next-up .label { order: 0; font: 600 0.75rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
+.next-up .when { order: 1; font: 900 clamp(1.6rem, 4cqi, 2.6rem)/1 var(--display); font-stretch: 125%; text-transform: uppercase; }
+.next-up .name { order: 2; font: 700 1.25rem/1.2 var(--display); }
+
+main { padding: 8px clamp(16px, 3vw, 40px) 80px; }
+
+/* ---------- months ---------- */
+.month-block { margin-top: 36px; }
+.month-header { display: flex; align-items: center; gap: 16px; margin: 0 0 16px; font: 900 clamp(1.9rem, 5.4vw, 3.6rem)/1 var(--display); font-stretch: 125%; text-transform: uppercase; letter-spacing: -0.01em; }
+.month-header::after { content: ''; order: 1; flex: 1; height: 14px; background: repeating-linear-gradient(135deg, var(--text) 0 6px, transparent 6px 12px); opacity: 0.85; }
+.month-header small { order: 2; font: 600 0.75rem/1 var(--mono); letter-spacing: 0; color: var(--muted); text-transform: none; white-space: nowrap; }
+.month-events { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 12px; }
+
+/* ---------- an event ---------- */
+.item-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-areas: "serial serial" "date date" "info info" "weapons meta";
+    gap: 0 12px;
+    padding: 14px 16px 16px;
+    isolation: isolate;
+    --logo-opacity: 0.38;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    transition: border-color 0.1s, background-color 0.1s;
+}
+/* corner brackets */
+.item-container::before, .item-container::after { content: ''; position: absolute; width: 14px; height: 14px; pointer-events: none; transition: border-color 0.1s; }
+.item-container::before { top: -1px; left: -1px; border-top: 3px solid var(--accent); border-left: 3px solid var(--accent); }
+.item-container::after { right: -1px; bottom: -1px; border-right: 3px solid var(--accent); border-bottom: 3px solid var(--accent); }
+.item-container:hover { border-color: var(--accent); background: var(--hover); }
+
+.serial { grid-area: serial; align-self: center; margin: 0; font: 600 0.7rem/1 var(--mono); color: var(--muted); }
+/* the organiser's logo is a large ghost image on the right of the card, behind the text, fading out towards the text */
+.img-container { position: absolute; top: 0; right: 0; bottom: 0; width: 66%; z-index: -1; padding: 14px; pointer-events: none;
+    opacity: var(--logo-opacity); -webkit-mask-image: linear-gradient(to right, transparent, #000 45%); mask-image: linear-gradient(to right, transparent, #000 45%); }
+.img-container img { width: 100%; height: 100%; object-fit: contain; object-position: right center; }
+/* where there is a pointer the logo is hidden until you hover (or tab to) the event, then it glitches into view; on touch screens it stays as a faint watermark */
+@media (hover: hover) {
+    .img-container { opacity: 0; transition: opacity 0.2s; }
+    .item-container:hover .img-container, .item-container:has(.action:focus-visible) .img-container { opacity: var(--logo-opacity); animation: glitch-in 0.55s steps(1, end); }
+}
+@keyframes glitch-in {
+    0%   { opacity: 0; }
+    10%  { opacity: 0.9; transform: translateX(-14px) skewX(8deg); clip-path: inset(10% 0 70% 0); filter: drop-shadow(6px 0 0 #ff2d95) drop-shadow(-6px 0 0 #00e5ff); }
+    22%  { opacity: 0.6; transform: translateX(12px); clip-path: inset(55% 0 12% 0); filter: hue-rotate(90deg) saturate(3); }
+    34%  { opacity: 0; transform: none; clip-path: none; filter: none; }
+    44%  { opacity: 0.8; transform: translateX(8px) skewX(-6deg); clip-path: inset(30% 0 35% 0); filter: drop-shadow(-5px 0 0 #ff2d95) drop-shadow(5px 0 0 #00e5ff); }
+    58%  { opacity: 0.5; transform: translateX(-6px); clip-path: inset(0 0 78% 0); filter: hue-rotate(-60deg) saturate(2); }
+    72%  { opacity: 1; transform: translateX(3px); clip-path: none; filter: drop-shadow(3px 0 0 #ff2d95) drop-shadow(-3px 0 0 #00e5ff); }
+    86%  { opacity: 1; transform: none; filter: hue-rotate(40deg); }
+    100% { opacity: var(--logo-opacity); transform: none; clip-path: none; filter: none; }
+}
+
+.event-date { grid-area: date; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 10px; margin: 10px 0 6px; }
+.event-date b { font: 900 4.4rem/0.9 var(--display); font-stretch: 125%; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.event-date .weekday, .event-date small { font: 600 0.78rem/1.3 var(--mono); text-transform: uppercase; color: var(--muted); }
+
+.event-info { grid-area: info; min-width: 0; padding-bottom: 14px; }
+.title { margin: 0; font: 800 1.2rem/1.2 var(--display); font-stretch: 100%; overflow-wrap: break-word; }
+.info { margin: 4px 0 0; font: 400 0.78rem/1.4 var(--mono); color: var(--muted); }
+
+.type-tag { display: inline-block; margin: 0 0 6px; padding: 3px 7px; background: var(--text); color: var(--bg); font: 600 0.7rem/1 var(--mono); text-transform: uppercase; }
+.status-notice { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font: 600 0.75rem/1.3 var(--mono); text-transform: uppercase; color: var(--red); }
+.status-notice::before { content: ''; flex: none; width: 34px; height: 10px; background: repeating-linear-gradient(135deg, currentColor 0 4px, transparent 4px 8px); }
+.is-postponed { --accent: var(--warn); border-color: var(--warn); } /* the corner brackets and hover border turn orange too */
+.is-postponed .status-notice { color: var(--warn); }
+.is-postponed .event-date { color: var(--warn); }
+.is-cancelled .title { text-decoration: line-through; text-decoration-thickness: 2px; }
+.is-cancelled .event-date, .is-cancelled .weapons, .is-cancelled .meta { opacity: 0.5; }
+.is-cancelled { --logo-opacity: 0.18; }
+
+/* F E S: a block lights up in the weapon's colour when the event uses it */
+.weapons { grid-area: weapons; display: flex; gap: 3px; align-self: end; margin: 0; }
+.weapons span { display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border: 1px solid var(--glyph-off); color: var(--glyph-off); font: 800 0.85rem/1 var(--mono); }
+.weapons .on { color: #0b0b0c; border-color: transparent; }
+.weapons [data-w="foil"].on { background: var(--foil); }
+.weapons [data-w="epee"].on { background: var(--epee); }
+.weapons [data-w="saber"].on { background: var(--saber); }
+
+.meta { grid-area: meta; align-self: end; display: grid; margin: 0; text-align: right; font: 400 0.72rem/1.4 var(--mono); color: var(--muted); }
+
+/* the whole card is the link; only the arrow shows */
+.action { position: absolute; inset: 0; display: block; font-size: 0; text-decoration: none; }
+.action i { position: absolute; top: 50px; right: 16px; font-size: 1rem; color: var(--accent); transition: transform 0.12s; }
+.item-container:hover .action i { transform: translate(3px, -3px); }
+.action:focus-visible { outline: none; }
+.action:focus-visible::after { content: ''; position: absolute; inset: 0; outline: 3px solid var(--focus); outline-offset: 3px; }
+
+.message { margin: 0; padding: 56px 0; font-size: 1.15rem; }
+
+/* ---------- About page ---------- */
+.content { max-width: 46rem; padding: 48px clamp(16px, 3vw, 40px) 96px; }
+.content h1 { margin: 0 0 28px; font: 900 clamp(2.2rem, 6vw, 4rem)/0.95 var(--display); font-stretch: 125%; text-transform: uppercase; text-wrap: balance; }
+.content p { margin: 0 0 1.1em; line-height: 1.65; text-wrap: pretty; }
+.button { display: inline-block; margin-top: 8px; padding: 14px 24px; background: var(--accent); color: var(--on-accent); font: 800 0.95rem/1 var(--display); font-stretch: 112%; text-transform: uppercase; text-decoration: none; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%); }
+.button:hover { background: var(--text); }
+
+/* ---------- smaller screens: the rail becomes a header ---------- */
+@media (max-width: 999px) {
+    .shell { display: block; }
+    .rail { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 16px; border-right: 0; border-bottom: 1px solid var(--line); }
+    .rail::after { display: none; }
+    .brand { flex: 1 1 14rem; }
+    .rail nav { flex: 1 1 100%; overflow-x: auto; }
+    .nav-menu { display: flex; }
+    .nav-link { white-space: nowrap; padding: 10px 14px; }
+    .filters { flex: 1 1 100%; }
+    .seg-item span, select { min-height: 44px; }
+    #reset-filters { min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}

@@ -345,7 +345,8 @@
     ],
     "venue": "The Gold Netball Centre WA, Jolimont",
     "organiser": "aff",
-    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-3/"
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-3/",
+    "status": "cancelled"
   },
   {
     "id": "evt-0016",
@@ -419,7 +420,9 @@
     ],
     "venue": "Sydney Academy of Fencing, Alexandria",
     "organiser": "sifl",
-    "url": "https://nswfencing.org.au/public/schedule/events/88148-sydney-intervarsity-fencing-league-round-6"
+    "url": "https://nswfencing.org.au/public/schedule/events/88148-sydney-intervarsity-fencing-league-round-6",
+    "status": "postponed",
+    "status_note": "New dates to be announced"
   },
   {
     "id": "evt-0020",
@@ -463,7 +466,9 @@
       "u15"
     ],
     "organiser": "saf",
-    "url": "https://www.facebook.com/photo?fbid=122222487230354527&set=a.122119067408354527"
+    "url": "https://www.facebook.com/photo?fbid=122222487230354527&set=a.122119067408354527",
+    "status": "postponed",
+    "status_note": "New dates to be announced"
   },
   {
     "id": "evt-0024",

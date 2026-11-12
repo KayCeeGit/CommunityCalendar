@@ -59,7 +59,7 @@ function render() {
   // Only show the year in month headings when the list spans more than one year.
   const spansYears = new Set(shown.map(yearOf)).size > 1;
   container.innerHTML = groupByMonth(shown)
-    .map(({ key, events }) => `<section class="month-block">${monthHeaderHtml(monthLabel(key, spansYears), events.length)}<div class="month-events">${
+    .map(({ key, events }, i) => `<section class="month-block">${monthHeaderHtml(monthLabel(key, spansYears), events.length, i + 1)}<div class="month-events">${
       events.map((e) => cardHtml(e, organisersById.get(e.organiser))).join('')}</div></section>`)
     .join('');
 }
