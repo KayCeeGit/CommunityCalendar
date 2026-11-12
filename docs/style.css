@@ -313,3 +313,9 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--main);  /* Gold highlight for current page */
     font-weight: bold;
 }
+
+/* Event type and status labels (camps, training; postponed, cancelled) */
+.type-tag { display: inline-block; margin: 0 0 8px; padding: 2px 10px; background-color: var(--stroke); color: var(--primaryBackground); font-size: 0.8em; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+.status-notice { margin: 0 0 10px; padding: 6px 10px; background-color: var(--tertiary); color: var(--secondary); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+.is-cancelled .title { text-decoration: line-through; }
+.is-cancelled .body-container { opacity: 0.7; }

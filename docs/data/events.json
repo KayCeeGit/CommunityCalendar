@@ -445,5 +445,41 @@
     "venue": "Singleton PCYC",
     "organiser": "nsfa",
     "url": "https://www.facebook.com/events/1059707093466028/"
+  },
+  {
+    "id": "evt-0023",
+    "name": "Youth Summer Epee Camp",
+    "type": "camp",
+    "start_date": "2026-12-14",
+    "end_date": "2026-12-16",
+    "weapons": [
+      "epee"
+    ],
+    "level": [
+      "u14",
+      "u12",
+      "u11",
+      "u13",
+      "u15"
+    ],
+    "organiser": "saf",
+    "url": "https://www.facebook.com/photo?fbid=122222487230354527&set=a.122119067408354527"
+  },
+  {
+    "id": "evt-0024",
+    "name": "2027 Sydney International Fencing Camp",
+    "type": "camp",
+    "start_date": "2027-01-03",
+    "end_date": "2027-01-11",
+    "weapons": [
+      "foil",
+      "epee"
+    ],
+    "level": [
+      "open"
+    ],
+    "venue": "Sydney Uni Sport, Darlington",
+    "organiser": "usyd",
+    "url": "https://nswfencing.org.au/public/schedule/events/91015-join-us-for-the-2027-sydney-international-fencing-camp"
   }
 ]

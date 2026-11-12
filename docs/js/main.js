@@ -18,6 +18,7 @@ const selects = {
   month: byId('filter-month'),
   weapon: byId('filter-weapon'),
   format: byId('filter-format'),
+  type: byId('filter-type'),
   year: byId('filter-year'), // only exists on the archive page
 };
 const resetButton = byId('reset-filters');
@@ -46,6 +47,7 @@ function render() {
     year: selects.year ? selects.year.value : 'all',
     weapon: selects.weapon.value,
     format: selects.format.value,
+    type: selects.type.value,
   });
 
   if (pageEvents.length === 0) {

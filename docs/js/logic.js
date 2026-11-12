@@ -32,7 +32,7 @@ export function isValidEvent(e) {
     e && typeof e === 'object' &&
     typeof e.name === 'string' && e.name.trim() &&
     isRealDate(e.start_date) && isRealDate(e.end_date) && e.end_date >= e.start_date &&
-    Array.isArray(e.weapons) && Array.isArray(e.format) && Array.isArray(e.gender)
+    ['weapons', 'format', 'gender'].every((k) => e[k] === undefined || Array.isArray(e[k])) // a camp may leave these out
   );
 }
 
@@ -67,16 +67,19 @@ export function monthLabel(key, withYear = true) {
 }
 
 /**
- * Filters by month ("01" to "12"), year ("2026"), weapon, and format.
+ * Filters by month ("01" to "12"), year ("2026"), weapon, format and type (competition, camp, training).
  * Each filter is "all" (or missing) to mean "don't filter on this".
  * Month and year are separate, so month "01" + year "2027" means January 2027.
  */
-export function filterEvents(events, { month = 'all', year = 'all', weapon = 'all', format = 'all' } = {}) {
+export const typeOf = (e) => e.type ?? 'competition'; // an event with no type is a competition
+
+export function filterEvents(events, { month = 'all', year = 'all', weapon = 'all', format = 'all', type = 'all' } = {}) {
   return events.filter((e) =>
     (month === 'all' || monthOf(e) === month) &&
     (year === 'all' || yearOf(e) === year) &&
-    (weapon === 'all' || e.weapons.includes(weapon)) &&
-    (format === 'all' || e.format.includes(format)));
+    (weapon === 'all' || e.weapons?.includes(weapon)) &&
+    (format === 'all' || e.format?.includes(format)) &&
+    (type === 'all' || typeOf(e) === type));
 }
 
 /** Groups an already-sorted list into [{ key: "2026-12", events: [...] }, ...]. */

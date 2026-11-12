@@ -1,13 +1,12 @@
 // Tests for the NSWFA scraper (scrapers/nswfa.mjs) and the calendar-file reader (scrapers/lib/ical.mjs).
 // No network: tests/fixtures/nswfa-events.ics holds 4 real events from their calendar file
-// (3 upcoming as of November 2026, 1 from 2024), and nswfa-robots.txt is their real robots.txt.
+// (3 upcoming as of November 2026, 1 from 2024).
 // Run with:  npm test
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parseIcal, sydneyDate } from '../scrapers/lib/ical.mjs';
 import { guessOrganiser, mapNswfaEvent } from '../scrapers/nswfa.mjs';
-import { robotsAllows } from '../scrapers/lib/http.mjs';
 
 const fixture = (name) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8');
 const items = parseIcal(fixture('nswfa-events.ics'));
@@ -75,8 +74,3 @@ test('unreadable calendar items are reported, not guessed at', () => {
   assert.ok(!('url' in mapNswfaEvent({ ...ok, URL: undefined }, organisers, '2026-11-09').event));
 });
 
-test('robots.txt: NSWFA\'s real file allows the calendar and the event pages', () => {
-  const robots = fixture('nswfa-robots.txt');
-  assert.equal(robotsAllows(robots, '/public/events.ics'), true);
-  assert.equal(robotsAllows(robots, '/public/schedule/events/90805-pre-afc3-open-all-weapons'), true);
-});

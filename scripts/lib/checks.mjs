@@ -13,7 +13,7 @@ import { isRealDate } from '../../docs/js/logic.js'; // the site needs this chec
  *   candidate  an event ready to approve: same rules, but NO id yet,
  *              because the id is only assigned when an event is approved
  *   draft      an event a scraper couldn't finish: like candidate, except weapons,
- *              format, gender and level may be missing (a person fills them in
+ *              format, gender and level may be missing even for a competition (a person fills them in
  *              before approving). Anything that IS present must still be valid.
  * and the allowed values for the form's checkboxes, read from the schema.
  */
@@ -29,9 +29,10 @@ export function compileValidators(schema) {
 
   const draft = structuredClone(candidate);
   delete draft.$id;
-  draft.required = draft.required.filter((k) => !CATEGORIES.includes(k));
+  delete draft.if; // the "a competition needs weapons, format, gender and level" rule
+  delete draft.else;
 
-  const choices = Object.fromEntries(CATEGORIES.map((k) => [k, schema.properties[k].items.enum]));
+  const choices = { ...Object.fromEntries(CATEGORIES.map((k) => [k, schema.properties[k].items.enum])), type: schema.properties.type.enum, status: schema.properties.status.enum };
   return { full: compile(schema), candidate: compile(candidate), draft: compile(draft), choices };
 }
 
@@ -94,8 +95,8 @@ const overlappingCategories = (a, b) => {
   return known.length > 0 && CATEGORIES.every((k) => !(a[k]?.length && b[k]?.length) || share(a[k], b[k]));
 };
 
-/** Which of weapons / format / gender / level this event doesn't have yet. */
-export const missingCategories = (e) => CATEGORIES.filter((k) => !e[k]?.length);
+/** Which of weapons / format / gender / level this event doesn't have yet. Only competitions need them. */
+export const missingCategories = (e) => (e.type && e.type !== 'competition' ? [] : CATEGORIES.filter((k) => !e[k]?.length));
 
 const dayNumber = (s) => Date.parse(`${s}T00:00:00Z`) / 86400000; // whole days since 1970
 const datesOverlap = (a, b) => a.start_date <= b.end_date && b.start_date <= a.end_date; // ISO dates compare correctly as text
@@ -115,6 +116,32 @@ function organiserMatcher(organisers) {
   if (!idOf.size) return null;
   const names = [...idOf.keys()].sort((a, b) => b.length - a.length).map(escapeRegex).join('|');
   return { idOf, regex: new RegExp(`(?<![a-z0-9])(?:${names})(?![a-z0-9])`, 'gi') };
+}
+
+// ---------- organiser entries ----------
+
+/**
+ * What is wrong with one organisers.json entry, given the ones before it ("others").
+ * Used by validate.mjs (checking the whole file) and the admin tool (before saving),
+ * so both apply the same rules. Whether the logo file exists is checked by the caller.
+ */
+export function organiserProblems(o, others) {
+  if (!o || typeof o !== 'object' || Array.isArray(o)) return ['must be an object'];
+  const problems = [];
+  if (typeof o.id !== 'string' || !/^[a-z0-9-]+$/.test(o.id)) problems.push('id must be lowercase letters, numbers and hyphens');
+  else if (others.some((x) => x.id === o.id)) problems.push(`duplicate organiser id "${o.id}"`);
+  if (typeof o.name !== 'string' || !o.name.trim()) problems.push('missing name');
+  if (typeof o.image !== 'string' || !/^img\/[\w\-. ]+$/.test(o.image)) problems.push('image must be a file in img/ (e.g. "img/aff.jpg")');
+  if (!Array.isArray(o.aliases)) problems.push('aliases must be a list (can be empty)');
+  else {
+    const owner = new Map(); // lowercase name or alias -> the organiser that already uses it
+    for (const x of others) for (const term of [x.name, ...(x.aliases ?? [])]) if (typeof term === 'string') owner.set(term.trim().toLowerCase(), x.id);
+    for (const term of [o.name, ...o.aliases].filter((t) => typeof t === 'string')) {
+      const taken = owner.get(term.trim().toLowerCase());
+      if (taken) problems.push(`"${term}" is also used by "${taken}". Scrapers couldn't tell them apart`);
+    }
+  }
+  return problems;
 }
 
 /** The ids of the organisers named in a title, without repeats. */
@@ -205,14 +232,15 @@ export function findDuplicates(event, pool, organisers = []) {
 
 // ---------- sanity warnings (not duplicates, just "does this look like a typo?") ----------
 
-const MAX_EVENT_DAYS = 5;
+const MAX_EVENT_DAYS = 5;  // a competition
+const MAX_CAMP_DAYS = 14; // a camp or training block
 const MAX_DAYS_AHEAD = 548; // about 18 months
 
 /** Plain-sentence warnings for an event that is valid but looks odd. `today` is YYYY-MM-DD. */
 export function sanityWarnings(e, today) {
   const warnings = [];
   const days = dayNumber(e.end_date) - dayNumber(e.start_date) + 1;
-  if (days > MAX_EVENT_DAYS) warnings.push(`Lasts ${days} days. Check the end date`);
+  if (days > (e.type ? MAX_CAMP_DAYS : MAX_EVENT_DAYS)) warnings.push(`Lasts ${days} days. Check the end date`);
   if (dayNumber(e.start_date) - dayNumber(today) > MAX_DAYS_AHEAD) warnings.push('Starts more than 18 months from now. Check the year');
   return warnings;
 }

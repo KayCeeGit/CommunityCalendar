@@ -16,11 +16,28 @@ const schemaValidators = compileValidators(JSON.parse(readFileSync(new URL('../s
 const afc3 = fixture('afc3-schedule.html'); // the "Tournament Schedule" block of two real event pages
 const ayc2 = fixture('ayc2-schedule.html');
 
-test('html entities in feed text become real characters', () => {
+test('html text helpers: entities are decoded, tags and scripts are dropped', () => {
   assert.equal(decodeEntities('Lights &#8211; Adelaide'), 'Lights – Adelaide');
   assert.equal(decodeEntities('A &amp; B &#x26; C'), 'A & B & C');
   assert.equal(decodeEntities('&unknown; &#0; stays'), '&unknown; &#0; stays');
   assert.equal(decodeEntities(undefined), '');
+  // entities are decoded after tags are removed, so an encoded "<b>" stays text
+  assert.deepEqual(htmlToLines('<p>A&nbsp;&nbsp;B<br>C &amp; D</p><script>x()</script><p>&lt;b&gt;</p>'), ['A B', 'C & D', '<b>']);
+});
+
+test('robots.txt rules: longest match wins, wildcards, agent groups, comments', () => {
+  const aff = 'User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n';
+  assert.equal(robotsAllows(aff, '/wp-json/tribe/events/v1/events'), true);
+  assert.equal(robotsAllows(aff, '/wp-admin/options.php'), false);
+  assert.equal(robotsAllows(aff, '/wp-admin/admin-ajax.php'), true); // the longer Allow wins
+  assert.equal(robotsAllows('', '/anything'), true);
+  assert.equal(robotsAllows('User-agent: *\nDisallow:\n', '/anything'), true);          // empty Disallow = allow all
+  assert.equal(robotsAllows('User-agent: *\nDisallow: /\n', '/events'), false);
+  assert.equal(robotsAllows('User-agent: *\nDisallow: /*.pdf$\n', '/files/a.pdf'), false);
+  assert.equal(robotsAllows('User-agent: *\nDisallow: /*.pdf$\n', '/files/a.pdf.html'), true);
+  assert.equal(robotsAllows('User-agent: BadBot\nDisallow: /\n\nUser-agent: *\nDisallow: /private\n', '/events'), true); // BadBot's group is not ours
+  assert.equal(robotsAllows('User-agent: BadBot\nUser-agent: *\nDisallow: /x\n', '/x/1'), false); // stacked agents share a group
+  assert.equal(robotsAllows('# comment\nUser-agent: * # everyone\nDisallow: /x # no\n', '/x'), false);
 });
 
 test('feed items become partial events, dates taken as written', () => {
@@ -56,28 +73,6 @@ test('the feed is read page by page until the last page', async () => {
   });
   assert.deepEqual(items, [{ id: 1 }, { id: 2 }]);
   assert.equal(asked.length, 2);
-});
-
-test('robots.txt: AFF\'s real file', () => {
-  const aff = 'User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n\nSitemap: https://www.ausfencing.org/sitemap.xml\n';
-  assert.equal(robotsAllows(aff, '/wp-json/tribe/events/v1/events'), true);
-  assert.equal(robotsAllows(aff, '/wp-admin/options.php'), false);
-  assert.equal(robotsAllows(aff, '/wp-admin/admin-ajax.php'), true); // the longer Allow wins
-});
-
-test('robots.txt: other shapes', () => {
-  assert.equal(robotsAllows('', '/anything'), true);
-  assert.equal(robotsAllows('User-agent: *\nDisallow:\n', '/anything'), true);          // empty Disallow = allow all
-  assert.equal(robotsAllows('User-agent: *\nDisallow: /\n', '/events'), false);
-  assert.equal(robotsAllows('User-agent: *\nDisallow: /*.pdf$\n', '/files/a.pdf'), false);
-  assert.equal(robotsAllows('User-agent: *\nDisallow: /*.pdf$\n', '/files/a.pdf.html'), true);
-  assert.equal(robotsAllows('User-agent: BadBot\nDisallow: /\n\nUser-agent: *\nDisallow: /private\n', '/events'), true); // BadBot's group is not ours
-  assert.equal(robotsAllows('User-agent: BadBot\nUser-agent: *\nDisallow: /x\n', '/x/1'), false); // stacked agents share a group
-  assert.equal(robotsAllows('# comment\nUser-agent: * # everyone\nDisallow: /x # no\n', '/x'), false);
-});
-
-test('html becomes plain lines; entities are decoded after tags are removed', () => {
-  assert.deepEqual(htmlToLines('<p>A&nbsp;&nbsp;B<br>C &amp; D</p><script>x()</script><p>&lt;b&gt;</p>'), ['A B', 'C & D', '<b>']);
 });
 
 test('the schedule block is found, and only that block', () => {

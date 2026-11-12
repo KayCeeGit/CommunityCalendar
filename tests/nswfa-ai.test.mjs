@@ -48,12 +48,12 @@ test('the reason a reply was unusable is spelled out, with the start and end of 
 
 test('a page goes through the model and the answer comes back unchanged', async () => {
   let sent;
-  const ask = async (prompt) => { sent = prompt; return reply('{"is_competition": true, "weapons": ["epee"]}')(); };
+  const ask = async (prompt) => { sent = prompt; return reply('{"type": "competition", "weapons": ["epee"]}')(); };
   const result = await readEventPage(page, choices, ask);
-  assert.deepEqual(result.answer, { is_competition: true, weapons: ['epee'] });
+  assert.deepEqual(result.answer, { type: 'competition', weapons: ['epee'] });
   assert.deepEqual(result.usage, { input_tokens: 900, output_tokens: 80 });
   assert.match(sent.user, /<event_page>\nSydney Intervarsity Fencing League - Round 6/); // the model sees the cut-down page
-  assert.match(sent.system, /is_competition/);
+  assert.match(sent.system, /"type"/);
 });
 
 test('problems are reported, not thrown or guessed at', async () => {
@@ -92,7 +92,7 @@ test('askModel fails clearly: no key, API errors, empty replies', async () => {
   await assert.rejects(askModel({ system: 'S', user: 'U' }, { apiKey: 'k', fetchImpl: empty }), /no text/);
 });
 
-// ---------- checking the answer (step 4) ----------
+// ---------- checking the answer ----------
 
 const preText = 'Male Epee Open\nFemale Foil Open\nMen\u2019s & Women\u2019s\nSydney Academy of Fencing\nBldg 2/190 Bourke Rd, Alexandria NSW 2015, Australia';
 
@@ -108,14 +108,13 @@ test('answers are kept only when the value is allowed and the quote is on the pa
   assert.ok(!('level' in fields) && notes.some((n) => /^level: left blank/.test(n)));   // quote not on the page
   assert.ok(!('format' in fields) && notes.some((n) => /^format: left blank/.test(n))); // no quote at all
   assert.ok(notes.some((n) => n.includes('"laser"')));
-});
 
-test('a nonsense answer yields nothing, not an error', () => {
+  // nonsense yields nothing, not an error
   assert.deepEqual(checkAnswer({}, preText, choices), { fields: {}, notes: [] });
   assert.deepEqual(checkAnswer({ weapons: 'epee', venue: 42, evidence: 'x' }, preText, choices), { fields: {}, notes: [] });
 });
 
-// ---------- the whole run (step 5) ----------
+// ---------- the whole run ----------
 
 const calendar = parseIcal(readFileSync(new URL('./fixtures/nswfa-events.ics', import.meta.url), 'utf8'));
 const pageFor = (url) => {
@@ -126,12 +125,12 @@ const pageFor = (url) => {
 const answers = (prompt) => {
   const body = prompt.user;
   const json = body.includes('PRE AFC3')
-    ? { is_competition: true, reason: 'State points event.', weapons: ['epee', 'foil', 'saber'], format: [], gender: ['mens', 'womens'], level: ['open'], venue: 'Sydney Academy of Fencing, Alexandria',
+    ? { type: 'competition', reason: 'State points event.', weapons: ['epee', 'foil', 'saber'], format: [], gender: ['mens', 'womens'], level: ['open'], venue: 'Sydney Academy of Fencing, Alexandria',
         evidence: { weapons: 'Male Epee Open', gender: 'Men\u2019s & Women\u2019s', level: 'Senior / Open', venue: 'Bldg 2/190 Bourke Rd, Alexandria NSW 2015, Australia' } }
     : body.includes('Intervarsity')
-      ? { is_competition: true, reason: 'League round.', weapons: ['epee', 'saber'], format: ['individual', 'team'], gender: [], level: ['novice'], venue: '',
+      ? { type: 'competition', reason: 'League round.', weapons: ['epee', 'saber'], format: ['individual', 'team'], gender: [], level: ['novice'], venue: '',
           evidence: { weapons: 'novice sabre and epee competitions', format: 'individual, team', level: 'novice' } }
-      : { is_competition: false, reason: 'A camp, not a competition.' };
+      : { type: 'other', reason: 'A camp, not a competition.' };
   return Promise.resolve({ text: JSON.stringify(json), usage: {} });
 };
 const orgs = [{ id: 'nswfa', name: 'NSWFA', aliases: ['NSWFA'] }, { id: 'sifl', name: 'Sydney Intervarsity Fencing League', aliases: ['SIFL'] }];
@@ -141,7 +140,7 @@ const run = (state, over = {}) => processNswfa(calendar, state, { getPage: async
 test('a run queues competitions (complete or draft), sets aside the camp and ignores finished events', async () => {
   const state = freshState();
   const results = await run(state);
-  assert.deepEqual(results.map((r) => r.outcome), ['queued', 'queued', 'not-competition', 'past']);  // calendar order: PRE AFC3, SIFL, camp, 2024
+  assert.deepEqual(results.map((r) => r.outcome), ['queued', 'queued', 'set-aside', 'past']);  // calendar order: PRE AFC3, SIFL, camp, 2024
   assert.equal(state.pending.length, 2);
 
   const [pre, sifl] = state.pending;
@@ -163,7 +162,7 @@ test('events we already hold are not fetched or asked about again', async () => 
   await run(state);
   let fetched = 0;
   const again = await run(state, { getPage: async (u) => { fetched++; return pageFor(u); } });
-  assert.deepEqual(again.map((r) => r.outcome), ['known', 'known', 'not-competition', 'past']);
+  assert.deepEqual(again.map((r) => r.outcome), ['known', 'known', 'set-aside', 'past']);
   assert.equal(fetched, 1);        // only the camp, which is never recorded; it costs a fraction of a cent to re-check
   assert.equal(state.pending.length, 2);
 });
@@ -171,7 +170,7 @@ test('events we already hold are not fetched or asked about again', async () => 
 test('a failure on one event does not stop the others', async () => {
   const state = freshState();
   const results = await run(state, { ask: async (p) => { if (p.user.includes('PRE AFC3')) throw new Error('the model API said 500'); return answers(p); } });
-  assert.deepEqual(results.map((r) => r.outcome), ['needs-person', 'queued', 'not-competition', 'past']);
+  assert.deepEqual(results.map((r) => r.outcome), ['needs-person', 'queued', 'set-aside', 'past']);
   assert.match(results[0].notes[0], /500/);
   const badReply = await run(freshState(), { ask: async () => ({ text: 'Sorry, no.', usage: {} }) });
   assert.match(badReply[0].notes[0], /wasn't JSON/);

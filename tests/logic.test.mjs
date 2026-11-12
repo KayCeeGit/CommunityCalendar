@@ -26,51 +26,32 @@ test('a multi-day event stays upcoming until its last day is over', () => {
   assert.equal(splitEvents([afc], '2026-11-23').past.length, 1);     // day after
 });
 
-test('sorting crosses year boundaries correctly', () => {
-  const jan = ev({ name: 'Jan', start_date: '2027-01-10', end_date: '2027-01-10' });
-  const dec = ev({ name: 'Dec', start_date: '2026-12-12', end_date: '2026-12-12' });
-  assert.deepEqual(sortEvents([jan, dec]).map((e) => e.name), ['Dec', 'Jan']);
-});
-
-test('month grouping keeps Jan 2026 and Jan 2027 apart', () => {
+test('sorting, month groups and the year list keep different years apart', () => {
   const list = sortEvents([
-    ev({ start_date: '2026-12-12', end_date: '2026-12-12' }),
-    ev({ start_date: '2027-01-10', end_date: '2027-01-10' }),
     ev({ start_date: '2027-01-24', end_date: '2027-01-24' }),
+    ev({ start_date: '2025-03-01', end_date: '2025-03-01' }),
+    ev({ start_date: '2027-01-10', end_date: '2027-01-10' }),
+    ev({ start_date: '2026-12-12', end_date: '2026-12-12' }),
   ]);
-  assert.deepEqual(groupByMonth(list).map((g) => [g.key, g.events.length]), [['2026-12', 1], ['2027-01', 2]]);
+  assert.deepEqual(list.map((e) => e.start_date), ['2025-03-01', '2026-12-12', '2027-01-10', '2027-01-24']);
+  assert.deepEqual(groupByMonth(list).map((g) => [g.key, g.events.length]), [['2025-03', 1], ['2026-12', 1], ['2027-01', 2]]);
+  assert.deepEqual(yearsIn(list), ['2027', '2026', '2025']); // each once, newest first
   assert.equal(monthLabel('2027-01'), 'January 2027');
   assert.equal(monthLabel('2027-01', false), 'January');
 });
 
-test('year dropdown lists each year once, newest first', () => {
-  const list = [
-    ev({ start_date: '2025-03-01', end_date: '2025-03-01' }),
-    ev({ start_date: '2027-01-10', end_date: '2027-01-10' }),
-    ev({ start_date: '2026-12-12', end_date: '2026-12-12' }),
-    ev({ start_date: '2026-05-01', end_date: '2026-05-01' }),
-  ];
-  assert.deepEqual(yearsIn(list), ['2027', '2026', '2025']);
-});
-
-test('filters', () => {
-  const a = ev({ weapons: ['epee', 'foil'], format: ['individual'] });                                  // Dec 2026
-  const b = ev({ start_date: '2027-01-10', end_date: '2027-01-10', weapons: ['saber'], format: ['team'] }); // Jan 2027
-  assert.equal(filterEvents([a, b], { weapon: 'epee' }).length, 1);
-  assert.equal(filterEvents([a, b], { format: 'team' }).length, 1);
-  assert.equal(filterEvents([a, b], { year: '2026' }).length, 1);
-  assert.equal(filterEvents([a, b], { weapon: 'foil', format: 'team' }).length, 0);
-  assert.equal(filterEvents([a, b], {}).length, 2);
-});
-
-test('month and year filters work independently and together', () => {
-  const dec26 = ev({ start_date: '2026-12-12', end_date: '2026-12-12' });
-  const jan26 = ev({ start_date: '2026-01-10', end_date: '2026-01-10' });
-  const jan27 = ev({ start_date: '2027-01-10', end_date: '2027-01-10' });
-  const all = [dec26, jan26, jan27];
-  assert.equal(filterEvents(all, { month: '01' }).length, 2);                // any January
-  assert.equal(filterEvents(all, { year: '2026' }).length, 2);               // anything in 2026
-  assert.deepEqual(filterEvents(all, { month: '01', year: '2027' }), [jan27]); // January 2027 only
+test('weapon, format, month and year filters work alone and together', () => {
+  const a = ev({ weapons: ['epee', 'foil'], format: ['individual'] });                                              // Dec 2026
+  const b = ev({ start_date: '2027-01-10', end_date: '2027-01-10', weapons: ['saber'], format: ['team'] });         // Jan 2027
+  const c = ev({ start_date: '2026-01-10', end_date: '2026-01-10' });                                               // Jan 2026
+  const all = [a, b, c];
+  assert.equal(filterEvents(all, {}).length, 3);
+  assert.deepEqual(filterEvents(all, { weapon: 'foil' }), [a]);
+  assert.deepEqual(filterEvents(all, { format: 'team' }), [b]);
+  assert.equal(filterEvents(all, { weapon: 'foil', format: 'team' }).length, 0);
+  assert.equal(filterEvents(all, { month: '01' }).length, 2);                    // any January
+  assert.equal(filterEvents(all, { year: '2026' }).length, 2);                   // anything in 2026
+  assert.deepEqual(filterEvents(all, { month: '01', year: '2027' }), [b]);       // January 2027 only
   assert.equal(filterEvents(all, { month: '12', year: '2027' }).length, 0);
 });
 
@@ -86,7 +67,7 @@ test('bad events are rejected', () => {
   assert.ok(!isValidEvent(ev({ start_date: '2026-02-31', end_date: '2026-02-31' })));
   assert.ok(!isValidEvent(ev({ end_date: '2026-12-01' })));
   assert.ok(!isValidEvent(ev({ weapons: 'epee' })));
-  assert.ok(!isValidEvent(ev({ gender: undefined })));
+  assert.ok(!isValidEvent(ev({ gender: 'mens' })));
   assert.ok(!isValidEvent(ev({ name: '' })));
   assert.ok(!isValidEvent(null));
 });

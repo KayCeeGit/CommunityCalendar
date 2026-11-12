@@ -1,5 +1,5 @@
 /**
- * NSWFA event pages, step 3 of the AI stage: put a page through the model. (Checking the answer
+ * NSWFA event pages, the AI stage: put a page through the model. (Checking the answer
  * is lib/check-answer.mjs, shared with the pasted-post reader.)
  *
  * readEventPage(html, choices, ask) -> { answer, usage, text } or { problem }

@@ -15,7 +15,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { SOURCES } from './lib/store.mjs';
-import { compileValidators, eventProblems, findDuplicates, sanityWarnings } from './lib/checks.mjs';
+import { compileValidators, eventProblems, findDuplicates, organiserProblems, sanityWarnings } from './lib/checks.mjs';
 import { todaySydney } from '../docs/js/logic.js';
 
 const root = resolve(process.argv[2] ?? '.');
@@ -45,25 +45,11 @@ if (organisers !== null) {
   if (!Array.isArray(organisers)) {
     error('docs/data/organisers.json', 'must be a list ([ ... ])');
   } else {
-    const aliasOwner = new Map();
     organisers.forEach((o, i) => {
       const where = `organisers[${i}]${o?.id ? ` "${o.id}"` : ''}`;
-      if (!o || typeof o !== 'object') return error(where, 'must be an object');
-      if (typeof o.id !== 'string' || !/^[a-z0-9-]+$/.test(o.id)) error(where, 'id must be lowercase letters, numbers and hyphens');
-      else if (organiserIds.has(o.id)) error(where, `duplicate organiser id "${o.id}"`);
-      else organiserIds.add(o.id);
-      if (typeof o.name !== 'string' || !o.name.trim()) error(where, 'missing name');
-      if (typeof o.image !== 'string' || !/^img\/[\w\-. ]+$/.test(o.image)) error(where, 'image must be a file in img/ (e.g. "img/aff.jpg")');
-      else if (!existsSync(join(root, 'docs', o.image))) error(where, `logo file ${o.image} does not exist`);
-      if (!Array.isArray(o.aliases)) error(where, 'aliases must be a list (can be empty)');
-      else {
-        for (const a of [o.name, ...o.aliases].filter((x) => typeof x === 'string')) {
-          const key = a.trim().toLowerCase();
-          if (aliasOwner.has(key) && aliasOwner.get(key) !== o.id) {
-            error(where, `"${a}" is also used by "${aliasOwner.get(key)}". Scrapers couldn't tell them apart`);
-          } else aliasOwner.set(key, o.id);
-        }
-      }
+      organiserProblems(o, organisers.slice(0, i)).forEach((m) => error(where, m));
+      if (typeof o?.id === 'string') organiserIds.add(o.id);
+      if (typeof o?.image === 'string' && /^img\/[\w\-. ]+$/.test(o.image) && !existsSync(join(root, 'docs', o.image))) error(where, `logo file ${o.image} does not exist`);
     });
   }
 }

@@ -5,7 +5,10 @@
   "description": "One entry in data/events.json.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "name", "start_date", "end_date", "weapons", "format", "gender", "level",  "organiser"],
+  "required": ["id", "name", "start_date", "end_date", "organiser"],
+  "dependencies": { "status_note": ["status"] },
+  "if": { "required": ["type"], "properties": { "type": { "enum": ["camp", "training"] } } },
+  "else": { "required": ["weapons", "format", "gender", "level"], "properties": { "weapons": true, "format": true, "gender": true, "level": true } },
   "properties": {
     "id": {
       "description": "Permanent label like evt-0042. Assigned when an event is approved; never reused or changed.",
@@ -15,6 +18,10 @@
     "name": {
       "type": "string",
       "minLength": 1
+    },
+    "type": {
+      "description": "Left out for a competition (the default). A competition must have weapons, format, gender and level; a camp or training session may leave them out.",
+      "enum": ["competition", "camp", "training"]
     },
     "start_date": {
       "description": "YYYY-MM-DD",
@@ -64,6 +71,16 @@
       "description": "Where visitors go for details. web link",
       "type": "string",
       "pattern": "^https?://\\S+$"
+    },
+    "status": {
+      "description": "Left out for an event going ahead. A postponed or cancelled event stays on the calendar with a notice.",
+      "enum": ["postponed", "cancelled"]
+    },
+    "status_note": {
+      "description": "Optional short note shown with the notice, like \"New date to be announced\". Needs a status.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
     }
   }
 }

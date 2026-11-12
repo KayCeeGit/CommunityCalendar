@@ -23,7 +23,7 @@ import { todaySydney } from '../docs/js/logic.js';
 import { getText, sleep } from './lib/http.mjs';
 import { askModel } from './lib/llm.mjs';
 import { parseIcal, sydneyDate } from './lib/ical.mjs';
-import { checkAnswer } from './lib/check-answer.mjs';
+import { checkAnswer, setAside } from './lib/check-answer.mjs';
 import { readEventPage } from './nswfa-ai.mjs';
 
 const CALENDAR_URL = 'https://nswfencing.org.au/public/events.ics';
@@ -66,7 +66,7 @@ export function mapNswfaEvent(item, organisers, today) {
  * Returns one result per item, saying what happened:
  *   queued           added to the queue (notes = warnings and anything the checks threw away)
  *   known            we already hold it: not touched, its page not even fetched
- *   not-competition  the AI says it isn't a competition (a camp, an open day...): not queued
+ *   set-aside        the AI says it isn't a competition, camp or training session (a meeting, a social...): not queued
  *   needs-person     the page or the AI's answer couldn't be used
  *   skipped          the calendar item itself was unusable
  *   past             already finished
@@ -94,7 +94,7 @@ export async function processNswfa(items, state, { getPage = getText, ask = askM
     if (read.problem) { fail(read.problem); continue; }
 
     const reason = String(read.answer.reason ?? '').trim().slice(0, 300);
-    if (read.answer.is_competition === false) { results.push({ outcome: 'not-competition', name: partial.name, notes: [reason] }); continue; }
+    if (setAside(read.answer)) { results.push({ outcome: 'set-aside', name: partial.name, notes: [reason] }); continue; }
 
     const { fields, notes } = checkAnswer(read.answer, read.text, state.validators.choices);
     const event = { ...partial, ...fields };
@@ -128,7 +128,7 @@ async function main() {
   const results = await processNswfa(items, state);
   saveState(state); // writes data/pending.json only if something was queued
 
-  const label = { queued: 'QUEUED', known: 'KNOWN', 'not-competition': 'NOT A COMP', 'needs-person': 'NEEDS YOU', skipped: 'SKIPPED' };
+  const label = { queued: 'QUEUED', known: 'KNOWN', 'set-aside': 'SET ASIDE', 'needs-person': 'NEEDS YOU', skipped: 'SKIPPED' };
   for (const r of results.filter((x) => x.outcome !== 'past')) {
     console.log(`${label[r.outcome].padEnd(10)} ${r.name}${r.pid ? `  (${r.pid})` : ''}`);
     if (r.event) {
@@ -144,7 +144,7 @@ async function main() {
 
   const count = (outcome) => results.filter((r) => r.outcome === outcome).length;
   console.log(`${items.length} events in the calendar, ${count('past')} already finished (ignored).`);
-  console.log(`${count('queued')} queued, ${count('known')} already known, ${count('not-competition')} not competitions, ${count('needs-person')} need you, ${count('skipped')} skipped.`);
+  console.log(`${count('queued')} queued, ${count('known')} already known, ${count('set-aside')} set aside, ${count('needs-person')} need you, ${count('skipped')} skipped.`);
   if (count('queued')) console.log('Review them with:  npm run admin');
 }
 

@@ -13,7 +13,7 @@
 import { isRealDate, todaySydney } from '../docs/js/logic.js';
 import { enqueue, flagsFor, Problem } from '../scripts/lib/store.mjs';
 import { askModel, extractJson, whyNotJson } from './lib/llm.mjs';
-import { checkAnswer, quoteOnPage } from './lib/check-answer.mjs';
+import { checkAnswer, quoteOnPage, setAside } from './lib/check-answer.mjs';
 import { buildPostPrompt } from './post-prompt.mjs';
 
 const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -58,7 +58,7 @@ export async function readPost(state, input, ask = askModel, today = todaySydney
  */
 export function queuePost(state, input, { answer, source }) {
   const reason = String(answer.reason ?? '').trim().slice(0, 300);
-  if (answer.is_competition === false) return { message: `The AI says this isn't a competition: ${reason}` };
+  if (setAside(answer)) return { message: `The AI says this isn't a competition, camp or training session: ${reason}` };
 
   const { fields, notes } = checkAnswer(answer, source, state.validators.choices);
   const text = (v) => (typeof v === 'string' ? v.trim() : '');

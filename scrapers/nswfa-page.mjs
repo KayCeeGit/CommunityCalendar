@@ -1,5 +1,5 @@
 /**
- * NSWFA event pages, step 1 of the AI stage: cut a page down to the text worth reading.
+ * NSWFA event pages, the AI stage: cut a page down to the text worth reading.
  *
  * A TidyHQ event page is mostly menus, login boxes and ticket forms. The event itself sits in
  * three places, and these are the parts we keep:

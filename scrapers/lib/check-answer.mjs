@@ -15,6 +15,9 @@ export function quoteOnPage(quote, text) {
   return typeof quote === 'string' && quote.trim() !== '' && plain(text).includes(plain(quote));
 }
 
+/** True when the model says the text isn't an event to list (type "other"). Anything unclear counts as a competition. */
+export const setAside = (answer) => String(answer.type).trim().toLowerCase() === 'other';
+
 /**
  * answer = the model's JSON; text = what it was shown; choices = the allowed values.
  * Returns { fields, notes }: `fields` holds only what survived, ready to merge into an event,
@@ -34,6 +37,17 @@ export function checkAnswer(answer, text, choices) {
     if (!good.length) continue;
     if (!supported(field)) { notes.push(`${field}: left blank, the AI's supporting quote isn't in the text (it said ${good.join(', ')})`); continue; }
     fields[field] = good;
+  }
+
+  // A competition is the default, so only "camp" and "training" are recorded.
+  const type = String(answer.type).trim().toLowerCase();
+  if (type !== 'competition' && choices.type.includes(type)) fields.type = type;
+
+  const status = String(answer.status ?? '').trim().toLowerCase();
+  if (status) {
+    if (!choices.status.includes(status)) notes.push(`status: ignored "${status}" (not an allowed value)`);
+    else if (!supported('status')) notes.push(`status: left blank, the AI's supporting quote isn't in the text (it said ${status})`);
+    else fields.status = status;
   }
 
   const venue = typeof answer.venue === 'string' ? answer.venue.trim() : '';

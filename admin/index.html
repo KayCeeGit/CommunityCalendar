@@ -15,6 +15,7 @@
             <button data-tab="post">From a post</button>
             <button data-tab="form">Add event</button>
             <button data-tab="published">Published <span id="count-published"></span></button>
+            <button data-tab="organisers">Organisers</button>
         </nav>
     </header>
 
@@ -26,7 +27,8 @@
 
         <section id="tab-post" hidden>
             <h2>Add from a post</h2>
-            <p class="note">Crop a screenshot of the post or paste post text.</p>
+            <p class="note">Crop a screenshot to just the post (Win+Shift+S), click "See more" first so the whole caption shows, then press Ctrl+V on this page.
+                Paste several for a carousel. Pasted text works too.</p>
             <ul id="post-errors" class="errors" hidden></ul>
 
             <form id="post-form" novalidate>
@@ -60,6 +62,10 @@
                     <input name="name" autocomplete="off">
                 </label>
 
+                <label>Type
+                    <select name="type"></select>
+                </label>
+
                 <div class="row">
                     <label>Start date
                         <input type="date" name="start_date">
@@ -69,6 +75,7 @@
                     </label>
                 </div>
 
+                <p class="note">Weapons, format, gender and level are required for competitions. A camp or training session can leave them empty.</p>
                 <!-- The checkboxes are filled in from the schema, so the options can't drift from the rules -->
                 <fieldset data-field="weapons"><legend>Weapons</legend></fieldset>
                 <fieldset data-field="format"><legend>Format</legend></fieldset>
@@ -87,11 +94,55 @@
                     <input type="url" name="url" placeholder="https://" autocomplete="off">
                 </label>
 
+                <div class="row">
+                    <label>Status
+                        <select name="status"></select>
+                    </label>
+                    <label>Notice <small>(optional, shown with a postponed or cancelled event)</small>
+                        <input name="status_note" maxlength="200" autocomplete="off" placeholder="e.g. New date to be announced">
+                    </label>
+                </div>
+
                 <div class="buttons" id="form-buttons"></div>
             </form>
         </section>
 
         <section id="tab-published" hidden></section>
+
+        <section id="tab-organisers" hidden>
+            <h2 id="org-title">Add organiser</h2>
+            <p class="note">The logo shows on the event cards. Aliases are other names the scrapers might see (SIFL, USYD Fencing, ...).</p>
+            <ul id="org-errors" class="errors" hidden></ul>
+
+            <form id="org-form" novalidate>
+                <div class="row">
+                    <label>Id <small>(lowercase letters, numbers, hyphens. Can't be changed later)</small>
+                        <input name="id" autocomplete="off">
+                    </label>
+                    <label>Name
+                        <input name="name" autocomplete="off">
+                    </label>
+                </div>
+
+                <label>Aliases <small>(separate with commas)</small>
+                    <input name="aliases" autocomplete="off">
+                </label>
+
+                <div class="row">
+                    <label>Logo
+                        <select name="image"></select>
+                    </label>
+                    <label>or upload a new one <small>(PNG, JPEG or WebP, up to 1 MB)</small>
+                        <input type="file" name="upload" accept="image/png,image/jpeg,image/webp">
+                    </label>
+                </div>
+
+                <div class="buttons" id="org-buttons"></div>
+            </form>
+
+            <h2>Organisers</h2>
+            <div id="org-list"></div>
+        </section>
     </main>
 
     <script type="module" src="admin.js"></script>

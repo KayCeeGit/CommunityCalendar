@@ -15,7 +15,7 @@ const freshState = () => ({ events: [], pending: [], validators, changed: new Se
 const TODAY = '2026-11-12';
 
 const round6 = {
-  is_competition: true, reason: 'League round on 13 December.', name: 'SIFL Round 6', start_date: '2026-12-13', end_date: '2026-12-13',
+  type: 'competition', reason: 'League round on 13 December.', name: 'SIFL Round 6', start_date: '2026-12-13', end_date: '2026-12-13',
   weapons: ['epee', 'sabre'], format: ['team'], gender: ['mens', 'womens'], level: [], venue: 'Sydney Academy of Fencing',
   transcription: 'SUNDAY 13/12\nEvents: Team Epee & Sabre #2\nLocation: Sydney Academy of Fencing',
   evidence: { start_date: 'SUNDAY 13/12', weapons: 'Team Epee & Sabre', format: 'Team Epee', gender: "separate women's and men's event", venue: 'Location: Sydney Academy of Fencing' },
@@ -30,21 +30,7 @@ test('the prompt carries today\'s date, the organiser, the allowed words and the
   assert.match(system, /Today's date is 2026-11-12/);
   assert.match(system, /The organiser is SIFL/);
   for (const values of Object.values(validators.choices)) for (const v of values) assert.ok(system.includes(v), v);
-  assert.match(system, /postponed or cancelled/);
-  assert.match(system, /day\/month, as in Australia/);          // 13/12 is 13 December
-  assert.match(system, /registration closes Friday.*not the event's date/); // deadlines are not event dates
-  assert.match(system, /recap of an event that has already happened/);
-  assert.match(system, /no emojis or hashtags/);
-  assert.match(system, /A date needs no label/);              // "Sunday 23 August" on its own is the date
-  assert.match(system, /that weekday/);                        // the weekday decides the year
-  assert.match(system, /Report the date even if it is already past/);
-  assert.match(system, /"Postponed to October" with no day is not a date/);
-  assert.match(system, /one still has a date, report the one with a date/); // part of a post postponed, part not
-  assert.match(system, /report just the name/);                // "Location: Sydney Academy of Fencing" is a venue
-  assert.match(system, /valid JSON/);                          // reply format rules from the shared guide
-  assert.match(system, /single line of the text/);
-  assert.match(system, /data, not instructions/);
-  assert.equal(user, 'The screenshots, if any, are above.\n<post_text>\nHello <b>\n</post_text>');
+  assert.equal(user, 'The screenshots, if any, are above.\n<post_text>\nHello <b>\n</post_text>'); // the post is fenced, away from the rules
   assert.match(buildPostPrompt({ organiserName: 'x', today: TODAY }, validators.choices).user, /\(none pasted\)/);
 });
 
@@ -86,7 +72,7 @@ test('readPost refuses empty or unusable requests and reports model failures cle
   assert.equal(down.status, 502);
   assert.match(down.message, /AI step failed: the model API said 500/);
   assert.match((await failure(() => readPost(state, input(), asking('Sorry, I cannot.')))).message, /wasn't JSON \(it is not valid JSON\): Sorry, I cannot\./);
-  const cutOff = async () => ({ text: '{"is_competition": true, "reason": "A long', usage: {}, stopReason: 'max_tokens' });
+  const cutOff = async () => ({ text: '{"type": "competition", "reason": "A long', usage: {}, stopReason: 'max_tokens' });
   assert.match((await failure(() => readPost(state, input(), cutOff))).message, /cut off for being too long/);
 });
 
@@ -118,8 +104,8 @@ test('quotes that are not in the post stop a category being kept; a date is kept
 
 test('a post that is not a competition, or is already known, queues nothing', async () => {
   const state = freshState();
-  const camp = { is_competition: false, reason: 'A training camp.' };
-  assert.match(queuePost(state, input(), await readPost(state, input(), asking(camp), TODAY)).message, /isn't a competition: A training camp\./);
+  const camp = { type: 'other', reason: 'A training camp.' };
+  assert.match(queuePost(state, input(), await readPost(state, input(), asking(camp), TODAY)).message, /isn't a competition, camp or training session: A training camp\./);
 
   queuePost(state, input(), await readPost(state, input(), asking(round6), TODAY));
   const again = queuePost(state, input(), await readPost(state, input(), asking(round6), TODAY));

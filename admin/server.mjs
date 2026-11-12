@@ -19,6 +19,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as store from '../scripts/lib/store.mjs';
 import { queuePost, readPost } from '../scrapers/post.mjs';
+import { decodeLogo, deleteLogo, listLogos, logoFile, saveLogo } from './logos.mjs';
 import { decodeImages, deleteScreenshots, saveScreenshots, screenshotFile } from './screenshots.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -32,6 +33,16 @@ const PAGES = {
   '/admin.js': ['admin.js', 'text/javascript; charset=utf-8'],
   '/admin.css': ['admin.css', 'text/css; charset=utf-8'],
 };
+
+/** The host part of an Origin header. Some pages send the text "null", which isn't a URL. */
+function hostOf(origin) {
+  try { return new URL(origin).host; } catch { return null; }
+}
+
+/** decodeURIComponent, but a broken % sequence gives `fallback` instead of an error. */
+function decodeOr(text, fallback) {
+  try { return decodeURIComponent(text); } catch { return fallback; }
+}
 
 function send(res, status, body, type = 'application/json; charset=utf-8') {
   res.writeHead(status, { 'Content-Type': type, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
@@ -63,16 +74,16 @@ async function handleApi(req, res, path) {
     // we recognise without our permission, so this blocks cross-site attacks.
     const origin = req.headers.origin;
     if (!String(req.headers['content-type']).startsWith('application/json') ||
-        (origin && !ALLOWED_HOSTS.has(new URL(origin).host))) {
+        (origin && !ALLOWED_HOSTS.has(hostOf(origin)))) {
       throw new store.Problem(['Request refused'], 403);
     }
   }
-  // Only the "From a post" route takes screenshots, so only it gets a big limit.
-  const body = method === 'GET' ? {} : await readBody(req, path === '/api/post' ? 10_000_000 : 100_000);
+  // Only the routes that take images get a big limit.
+  const body = method === 'GET' ? {} : await readBody(req, path === '/api/post' ? 10_000_000 : path.startsWith('/api/organisers') ? 2_000_000 : 100_000);
   const state = store.loadState(root);
   let m;
 
-  if (method === 'GET' && path === '/api/state') return send(res, 200, store.view(state));
+  if (method === 'GET' && path === '/api/state') return send(res, 200, { ...store.view(state), logos: listLogos(root) });
 
   // Add to the queue (manual entries only; scrapers call store.enqueue directly)
   if (method === 'POST' && path === '/api/queue') {
@@ -116,6 +127,24 @@ async function handleApi(req, res, path) {
     return send(res, 200, result);
   }
 
+  // Organisers: add one, or change a name / logo / aliases. A new logo file is saved first (the store
+  // checks the file exists) and removed again if the organiser is then refused.
+  if ((m = path.match(/^\/api\/organisers(?:\/([a-z0-9-]+))?$/)) && (method === 'POST') === !m[1]) {
+    const id = m[1] ?? String(body.organiser?.id ?? '').trim();
+    const logo = body.logo ? decodeLogo(body.logo, id) : null;
+    const organiser = { ...body.organiser, ...(logo && { image: `img/${logo.name}` }) };
+    if (logo) saveLogo(root, logo);
+    try {
+      if (m[1]) store.updateOrganiser(state, id, organiser);
+      else store.addOrganiser(state, organiser);
+    } catch (err) {
+      if (logo) deleteLogo(root, logo);
+      throw err;
+    }
+    store.saveState(state);
+    return send(res, m[1] ? 200 : 201, {});
+  }
+
   if ((m = path.match(/^\/api\/events\/(evt-\d+)$/))) {
     if (method === 'PUT') store.updateEvent(state, m[1], body.event);
     else if (method === 'DELETE') store.deleteEvent(state, m[1]);
@@ -137,9 +166,11 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, readFileSync(join(here, file)), type);
     }
     const shot = req.method === 'GET' && pathname.startsWith('/api/screenshots/') ? screenshotFile(root, pathname.slice('/api/screenshots/'.length)) : null;
-    if (shot) {
+    const logo = req.method === 'GET' && pathname.startsWith('/api/logos/') ? logoFile(root, decodeOr(pathname.slice('/api/logos/'.length), '')) : null;
+    const file = shot ?? logo;
+    if (file) {
       try {
-        return send(res, 200, readFileSync(shot.path), shot.type);
+        return send(res, 200, readFileSync(file.path), file.type);
       } catch {
         throw new store.Problem(['Not found'], 404);
       }

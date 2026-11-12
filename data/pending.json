@@ -251,5 +251,57 @@
       "organiser": "saf"
     },
     "event_id": "evt-0022"
+  },
+  {
+    "pid": "q-0009",
+    "status": "approved",
+    "source": "post",
+    "source_url": "https://www.facebook.com/photo?fbid=122222487230354527&set=a.122119067408354527",
+    "source_note": "Pasted post. AI note: Youth epee camp on 14–16 December 2026, checked as Monday to Wednesday; the U11–U15 range is entered as levels u11 to u15.",
+    "added": "2026-11-12",
+    "event": {
+      "name": "Youth Summer Epee Camp",
+      "type": "camp",
+      "start_date": "2026-12-14",
+      "end_date": "2026-12-16",
+      "weapons": [
+        "epee"
+      ],
+      "level": [
+        "u14",
+        "u12",
+        "u11",
+        "u13",
+        "u15"
+      ],
+      "organiser": "saf",
+      "url": "https://www.facebook.com/photo?fbid=122222487230354527&set=a.122119067408354527"
+    },
+    "event_id": "evt-0023"
+  },
+  {
+    "pid": "q-0010",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://nswfencing.org.au/public/schedule/events/91015-join-us-for-the-2027-sydney-international-fencing-camp",
+    "source_note": "NSWFA events calendar. AI note: A multi-day fencing training camp; the age range \"Ages 12 to Veteran\" is not a named level list, so level is left empty.",
+    "added": "2026-11-12",
+    "event": {
+      "name": "Join Us for the 2027 Sydney International Fencing Camp!",
+      "type": "camp",
+      "start_date": "2027-01-03",
+      "end_date": "2027-01-11",
+      "weapons": [
+        "foil",
+        "epee"
+      ],
+      "level": [
+        "open"
+      ],
+      "venue": "Sydney Uni Sport, Darlington",
+      "organiser": "nswfa",
+      "url": "https://nswfencing.org.au/public/schedule/events/91015-join-us-for-the-2027-sydney-international-fencing-camp"
+    },
+    "event_id": "evt-0024"
   }
 ]

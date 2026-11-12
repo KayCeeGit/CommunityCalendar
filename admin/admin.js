@@ -1,5 +1,5 @@
 // admin.js: the screen of the local admin tool. It asks server.mjs for the data
-// and draws four tabs: Queue (review), From a post (paste screenshots), Add event (the form) and Published.
+// and draws five tabs: Queue (review), From a post (paste screenshots), Add event (the form), Published and Organisers.
 //
 // Everything that comes from the data is put on the page as plain text, never
 // as HTML, because scraped content can't be trusted not to contain markup.
@@ -51,6 +51,7 @@ let editing = null; // null = adding; { pid } = a queued event; { id } = a publi
 const SOURCE_LABEL = { manual: 'Manual', scraper: 'Scraper', post: 'Post' };
 const NICE = { mens: 'Mens', womens: 'Womens', u14: 'U14', u18: 'U18' };
 const nice = (v) => NICE[v] ?? v.charAt(0).toUpperCase() + v.slice(1);
+const CATEGORIES = ['weapons', 'format', 'gender', 'level']; // the checkbox groups (state.choices also holds type and status)
 const list = (values = []) => (values.length ? values.map(nice).join(', ') : '— missing');
 
 const day = (iso) => new Date(`${iso}T00:00:00`).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -104,14 +105,13 @@ function queueCard(p) {
   const e = p.event;
   const rows = [
     ['When', dates(e)],
-    ['Weapons', list(e.weapons)],
-    ['Format', list(e.format)],
-    ['Gender', list(e.gender)],
-    ['Level', list(e.level)],
+    e.type ? ['Type', nice(e.type)] : null,
+    e.status ? ['Status', nice(e.status) + (e.status_note ? `: ${e.status_note}` : '')] : null,
+    ...CATEGORIES.filter((c) => !e.type || e[c]?.length).map((c) => [nice(c), list(e[c])]), // a camp needn't have them
     ['Venue', e.venue || '—'],
     ['Organiser', organiserName(e.organiser)],
     ['Link', e.url ? link(e.url) : '—'],
-  ];
+  ].filter(Boolean);
   return h('article', { class: 'card' },
     h('div', { class: 'card-head' },
       h('h3', {}, e.name),
@@ -156,7 +156,7 @@ function renderPublished() {
       h('thead', {}, h('tr', {}, ...['Date', 'Name', 'Organiser', ''].map((t) => h('th', {}, t)))),
       h('tbody', {}, ...rows.map((e) => h('tr', { class: e.end_date < state.today ? 'past' : '' },
         h('td', {}, dates(e)),
-        h('td', {}, e.name, ' ', h('span', { class: 'pid' }, e.id)),
+        h('td', {}, e.name, ' ', h('span', { class: 'pid' }, [e.id, e.type, e.status].filter(Boolean).join(' · '))),
         h('td', {}, organiserName(e.organiser)),
         h('td', { class: 'actions' },
           h('button', { onclick: () => startEdit({ id: e.id }, e) }, 'Edit'), ' ',
@@ -264,15 +264,17 @@ function fillOrganisers(selected, select = form().elements.organiser) {
 function readForm() {
   const data = new FormData(form());
   const event = {};
-  for (const field of ['name', 'start_date', 'end_date', 'venue', 'organiser', 'url']) event[field] = data.get(field) ?? '';
-  for (const field of Object.keys(state.choices)) event[field] = data.getAll(field);
+  for (const field of ['name', 'type', 'start_date', 'end_date', 'venue', 'organiser', 'url', 'status', 'status_note']) event[field] = data.get(field) ?? '';
+  for (const field of CATEGORIES) event[field] = data.getAll(field);
   return event;
 }
 
 function fillForm(event) {
   const f = form();
-  for (const field of ['name', 'start_date', 'end_date', 'venue', 'url']) f.elements[field].value = event[field] ?? '';
-  for (const field of Object.keys(state.choices)) {
+  for (const field of ['name', 'start_date', 'end_date', 'venue', 'url', 'status_note']) f.elements[field].value = event[field] ?? '';
+  f.elements.type.value = event.type ?? 'competition';
+  f.elements.status.value = event.status ?? '';
+  for (const field of CATEGORIES) {
     for (const box of f.querySelectorAll(`input[name=${field}]`)) box.checked = (event[field] ?? []).includes(box.value);
   }
   fillOrganisers(event.organiser);
@@ -347,6 +349,76 @@ async function submit(kind) {
   }
 }
 
+// ---------- organisers tab ----------
+
+const orgForm = () => $('#org-form');
+let editingOrganiser = null; // null = adding; an id = changing that organiser
+
+const showOrgErrors = (errors) => {
+  const box = $('#org-errors');
+  box.replaceChildren(...errors.map((e) => h('li', {}, e)));
+  box.hidden = errors.length === 0;
+};
+
+/** A chosen file -> base64 text (the part after "data:...;base64,"). */
+const readBase64 = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(String(reader.result).split(',')[1]);
+  reader.onerror = reject;
+  reader.readAsDataURL(file);
+});
+
+function drawOrganiserForm() {
+  const f = orgForm().elements;
+  const adding = editingOrganiser === null;
+  $('#org-title').textContent = adding ? 'Add organiser' : `Edit ${editingOrganiser}`;
+  f.id.disabled = !adding;
+  showOrgErrors([]);
+  $('#org-buttons').replaceChildren(
+    h('button', { type: 'submit', class: 'primary' }, adding ? 'Add organiser' : 'Save changes'),
+    adding ? null : h('button', { type: 'button', onclick: () => { editingOrganiser = null; orgForm().reset(); drawOrganiserForm(); } }, 'Cancel'));
+}
+
+function renderOrganisers() {
+  const select = orgForm().elements.image;
+  const chosen = select.value;
+  select.replaceChildren(h('option', { value: '' }, 'Choose a logo…'), ...state.logos.map((n) => h('option', { value: `img/${n}` }, n)));
+  select.value = chosen;
+  $('#org-list').replaceChildren(...state.organisers.map((o) => h('div', { class: 'org' },
+    h('img', { src: `/api/logos/${encodeURIComponent(o.image.replace(/^img\//, ''))}`, alt: '' }),
+    h('div', {}, h('strong', {}, o.name), ` (${o.id})`, h('br'), h('small', {}, o.aliases.length ? o.aliases.join(', ') : 'no aliases')),
+    h('button', { onclick: () => {
+      const f = orgForm().elements;
+      editingOrganiser = o.id;
+      f.id.value = o.id;
+      f.name.value = o.name;
+      f.aliases.value = o.aliases.join(', ');
+      f.image.value = o.image;
+      f.upload.value = '';
+      drawOrganiserForm();
+      window.scrollTo(0, 0);
+    } }, 'Edit'))));
+}
+
+async function submitOrganiser(ev) {
+  ev.preventDefault();
+  const f = orgForm().elements;
+  const file = f.upload.files[0];
+  try {
+    const organiser = { id: f.id.value, name: f.name.value, image: f.image.value, aliases: f.aliases.value.split(',') };
+    const logo = file ? { data: await readBase64(file) } : undefined;
+    const adding = editingOrganiser === null;
+    await api(adding ? 'POST' : 'PUT', adding ? '/api/organisers' : `/api/organisers/${editingOrganiser}`, { organiser, logo });
+    editingOrganiser = null;
+    orgForm().reset();
+    await refresh();
+    drawOrganiserForm();
+    toast(`${adding ? 'Added' : 'Saved'} ${organiser.name.trim()}.`);
+  } catch (err) {
+    showOrgErrors(err.errors ?? [err.message]);
+  }
+}
+
 // ---------- start-up ----------
 
 async function refresh() {
@@ -356,6 +428,9 @@ async function refresh() {
   $('#count-published').textContent = `(${state.events.length})`;
   renderQueue();
   renderPublished();
+  renderOrganisers();
+  // A newly added organiser appears in the event and post forms, keeping whatever was chosen
+  for (const select of [form().elements.organiser, postForm().elements.organiser]) fillOrganisers(select.value, select);
 }
 
 async function init() {
@@ -371,7 +446,10 @@ async function init() {
     $('#tab-queue').replaceChildren(h('p', { class: 'errors' }, err.message));
     return;
   }
-  // The checkboxes come from the schema, so they always match the rules.
+  // The type and status dropdowns and the checkboxes come from the schema, so they always match the rules.
+  const fillSelect = (name, values, first) => form().elements[name].replaceChildren(...[first, ...values.map((v) => [v, nice(v)])].map(([value, text]) => h('option', { value }, text)));
+  fillSelect('type', state.choices.type.filter((t) => t !== 'competition'), ['competition', 'Competition']);
+  fillSelect('status', state.choices.status, ['', 'Going ahead']);
   for (const fieldset of document.querySelectorAll('fieldset[data-field]')) {
     const field = fieldset.dataset.field;
     fieldset.append(...state.choices[field].map((v) =>
@@ -380,6 +458,8 @@ async function init() {
   form().addEventListener('submit', (ev) => { ev.preventDefault(); submit(editing ? 'save' : 'queue'); });
   fillOrganisers(lastOrganiser(), postForm().elements.organiser);
   postForm().addEventListener('submit', submitPost);
+  orgForm().addEventListener('submit', submitOrganiser);
+  drawOrganiserForm();
   document.addEventListener('paste', pasteShots);
   resetForm();
   showTab(state.pending.some((p) => p.status === 'pending') ? 'queue' : 'form');

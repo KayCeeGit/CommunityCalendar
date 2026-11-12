@@ -21,11 +21,11 @@
 
 import { readFileSync, writeFileSync, renameSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { CATEGORIES, compileValidators, eventProblems, findDuplicates, fingerprint, missingCategories, sanityWarnings } from './checks.mjs';
+import { CATEGORIES, compileValidators, eventProblems, findDuplicates, fingerprint, missingCategories, organiserProblems, sanityWarnings } from './checks.mjs';
 import { todaySydney } from '../../docs/js/logic.js';
 
 
-const FIELD_ORDER = ['name', 'start_date', 'end_date', 'weapons', 'format', 'gender', 'level', 'venue', 'organiser', 'url'];
+const FIELD_ORDER = ['name', 'type', 'start_date', 'end_date', 'weapons', 'format', 'gender', 'level', 'venue', 'organiser', 'url', 'status', 'status_note'];
 export const SOURCES = ['manual', 'scraper', 'post'];
 
 /** An error the caller should show to a person: a list of plain sentences. */
@@ -60,7 +60,7 @@ export function loadState(root) {
     pending: readList(dataFile(root, 'pending.json')),
     organisers: readList(dataFile(root, 'organisers.json')),
     validators: compileValidators(schema),
-    changed: new Set(), // which of 'events' / 'pending' need writing
+    changed: new Set(), // which of 'events' / 'pending' / 'organisers' need writing
   };
 }
 
@@ -76,7 +76,8 @@ function normalise(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return raw;
   const e = {};
   for (const [k, v] of Object.entries(raw)) e[k] = typeof v === 'string' ? v.trim() : v;
-  for (const k of ['venue', 'url']) if (e[k] === '') delete e[k];
+  for (const k of ['venue', 'url', 'status', 'status_note']) if (e[k] === '') delete e[k];
+  if (e.type === 'competition' || e.type === '') delete e.type; // a competition is the default, so published events don't carry it
   for (const k of CATEGORIES) if (Array.isArray(e[k]) && e[k].length === 0) delete e[k]; // nothing ticked = not filled in
   if (e.end_date === '' || e.end_date == null) e.end_date = e.start_date;
   const known = FIELD_ORDER.filter((k) => k in e);
@@ -230,6 +231,37 @@ export function deleteEvent(state, id) {
   return removed;
 }
 
+// ---------- organisers ----------
+
+/** Tidy fields in a fixed order; aliases are trimmed with blanks and repeats dropped. */
+function normaliseOrganiser(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return raw;
+  const text = (v) => (typeof v === 'string' ? v.trim() : v);
+  const aliases = Array.isArray(raw.aliases) ? [...new Set(raw.aliases.map(text).filter((a) => a !== ''))] : raw.aliases;
+  return { id: text(raw.id), name: text(raw.name), image: text(raw.image), aliases };
+}
+
+/** Checks an organiser against the shared rules (and that its logo file exists), then stores it at `index`. */
+function putOrganiser(state, index, raw) {
+  const organiser = normaliseOrganiser(raw);
+  const others = state.organisers.filter((_, i) => i !== index);
+  const problems = organiserProblems(organiser, others);
+  if (!problems.length && !existsSync(join(state.root, 'docs', organiser.image))) problems.push(`logo file ${organiser.image} does not exist`);
+  if (problems.length) throw new Problem(problems);
+  state.organisers[index === -1 ? state.organisers.length : index] = organiser;
+  touch(state, 'organisers');
+  return organiser;
+}
+
+export const addOrganiser = (state, raw) => putOrganiser(state, -1, raw);
+
+/** Changes an organiser's name, logo or aliases. The id stays, because events refer to it. */
+export function updateOrganiser(state, id, raw) {
+  const index = state.organisers.findIndex((o) => o.id === id);
+  if (index === -1) throw new Problem([`No organiser ${id}`], 404);
+  return putOrganiser(state, index, { ...raw, id });
+}
+
 // ---------- warnings for the reviewer ----------
 
 /** Things worth a second look before approving. Never blocks anything. */
@@ -255,7 +287,7 @@ export function view(state) {
   return {
     today: todaySydney(),
     choices: state.validators.choices,
-    organisers: state.organisers.map(({ id, name }) => ({ id, name })),
+    organisers: state.organisers,
     events: state.events,
     pending: state.pending.map((p) => (p.status === 'pending' ? { ...p, flags: flagsFor(state, p) } : p)),
   };
