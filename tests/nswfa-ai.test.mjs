@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { compileValidators } from '../scripts/lib/checks.mjs';
 import { approve, flagsFor, Problem } from '../scripts/lib/store.mjs';
-import { askModel, extractJson, MODEL } from '../scrapers/lib/llm.mjs';
+import { askModel, extractJson, whyNotJson, MODEL } from '../scrapers/lib/llm.mjs';
 import { checkAnswer } from '../scrapers/lib/check-answer.mjs';
 import { readEventPage } from '../scrapers/nswfa-ai.mjs';
 import { parseIcal } from '../scrapers/lib/ical.mjs';
@@ -31,6 +31,21 @@ test('the model\'s reply is read as JSON, even with fences or chatter around it'
   for (const bad of ['', 'no json here', '{broken', '[1, 2]', '{"a": 1} {"b": 2}']) assert.equal(extractJson(bad), null, bad);
 });
 
+test('a reply with real line breaks inside a quoted text is repaired, not rejected', () => {
+  assert.deepEqual(extractJson('{"transcription": "SUNDAY 13/12\nEvents: Team Epee\n\tLocation", "n": 1}'), { transcription: 'SUNDAY 13/12\nEvents: Team Epee\n\tLocation', n: 1 });
+  assert.deepEqual(extractJson('```json\n{"a": "x\r\ny", "b": "say \\"hi\\"\nthere"}\n```'), { a: 'x\ny', b: 'say "hi"\nthere' });
+  assert.equal(extractJson('{"a": "unterminated\n'), null);
+  assert.equal(extractJson('{"a": 1,}'), null); // other mistakes are still refused, not guessed at
+});
+
+test('the reason a reply was unusable is spelled out, with the start and end of it', () => {
+  assert.match(whyNotJson('{"a": "cut', 'max_tokens'), /^The AI's reply wasn't JSON \(it was cut off for being too long\): \{"a": "cut$/);
+  assert.match(whyNotJson('oops', 'end_turn'), /\(it is not valid JSON\): oops$/);
+  const long = `START${'x'.repeat(2000)}END`;
+  const shown = whyNotJson(long, 'end_turn');
+  assert.ok(shown.includes('START') && shown.endsWith('END') && shown.includes(' ... ') && shown.length < 700);
+});
+
 test('a page goes through the model and the answer comes back unchanged', async () => {
   let sent;
   const ask = async (prompt) => { sent = prompt; return reply('{"is_competition": true, "weapons": ["epee"]}')(); };
@@ -50,10 +65,11 @@ test('askModel sends the right request and reads the reply', async () => {
   let call;
   const fetchImpl = async (url, options) => {
     call = { url, options, body: JSON.parse(options.body) };
-    return { ok: true, status: 200, json: async () => ({ content: [{ type: 'text', text: '{"ok": true}' }], usage: { input_tokens: 5, output_tokens: 3 } }) };
+    return { ok: true, status: 200, json: async () => ({ content: [{ type: 'text', text: '{"ok": true}' }], stop_reason: 'end_turn', usage: { input_tokens: 5, output_tokens: 3 } }) };
   };
   const result = await askModel({ system: 'S', user: 'U' }, { apiKey: 'test-key', fetchImpl });
   assert.equal(result.text, '{"ok": true}');
+  assert.equal(result.stopReason, 'end_turn');
   assert.deepEqual(result.usage, { input_tokens: 5, output_tokens: 3 });
   assert.equal(call.url, 'https://api.anthropic.com/v1/messages');
   assert.equal(call.options.headers['x-api-key'], 'test-key');

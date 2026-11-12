@@ -15,7 +15,7 @@ const imageBlock = ({ mediaType, data }) => ({ type: 'image', source: { type: 'b
 /**
  * Sends { system, user, images } to the model. `images` is optional: a list of
  * { mediaType: 'image/jpeg', data: <base64> }, shown to the model before the text.
- * Returns { text, usage } (usage = token counts).
+ * Returns { text, usage, stopReason } (usage = token counts; stopReason is "max_tokens" if the reply was cut off).
  * The key is read from the ANTHROPIC_API_KEY environment variable, never from a file,
  * so it can't end up on GitHub. `fetchImpl` is replaced in tests.
  */
@@ -25,7 +25,7 @@ export async function askModel({ system, user, images = [] }, { apiKey = process
   const response = await fetchImpl(API_URL, {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({ model, max_tokens: 1500, system, messages: [{ role: 'user', content: images.length ? [...images.map(imageBlock), { type: 'text', text: user }] : user }] }),
+    body: JSON.stringify({ model, max_tokens: 3000, system, messages: [{ role: 'user', content: images.length ? [...images.map(imageBlock), { type: 'text', text: user }] : user }] }),
     signal: AbortSignal.timeout(60_000),
   });
   const body = await response.json().catch(() => ({}));
@@ -33,22 +33,52 @@ export async function askModel({ system, user, images = [] }, { apiKey = process
 
   const text = (body.content ?? []).filter((part) => part.type === 'text').map((part) => part.text).join('');
   if (!text) throw new Error('the model returned no text');
-  return { text, usage: body.usage ?? {} };
+  return { text, usage: body.usage ?? {}, stopReason: body.stop_reason };
 }
+
+/** Inside JSON strings, a real line break or tab is illegal; write it as \n or \t instead. Everything else is left alone. */
+function escapeControlCharsInStrings(json) {
+  let out = '';
+  let inString = false;
+  let escaped = false;
+  for (const ch of json) {
+    if (inString && ch === '\n') out += '\\n';
+    else if (inString && ch === '\t') out += '\\t';
+    else if (inString && ch === '\r') continue;
+    else out += ch;
+    if (escaped) escaped = false;
+    else if (ch === '\\') escaped = inString;
+    else if (ch === '"') inString = !inString;
+  }
+  return out;
+}
+
+const parse = (text) => {
+  try {
+    const value = JSON.parse(text);
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : null;
+  } catch {
+    return null;
+  }
+};
 
 /**
  * The model's reply -> a JSON object, or null if it isn't one.
  * We asked for JSON only, but models sometimes wrap it in ```json fences or add a sentence,
- * so this takes everything from the first { to the last }.
+ * so this takes everything from the first { to the last }. A common slip, real line breaks
+ * inside a long quoted text, is repaired before giving up.
  */
 export function extractJson(text) {
   const start = text.indexOf('{');
   const end = text.lastIndexOf('}');
   if (start < 0 || end < start) return null;
-  try {
-    const value = JSON.parse(text.slice(start, end + 1));
-    return value && typeof value === 'object' && !Array.isArray(value) ? value : null;
-  } catch {
-    return null;
-  }
+  const json = text.slice(start, end + 1);
+  return parse(json) ?? parse(escapeControlCharsInStrings(json));
+}
+
+/** For error messages: why a reply wasn't usable, with the start and end of what the model said. */
+export function whyNotJson(text, stopReason) {
+  const cause = stopReason === 'max_tokens' ? 'it was cut off for being too long' : 'it is not valid JSON';
+  const shown = text.length > 500 ? `${text.slice(0, 250)} ... ${text.slice(-250)}` : text;
+  return `The AI's reply wasn't JSON (${cause}): ${shown}`;
 }

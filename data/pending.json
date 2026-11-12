@@ -193,5 +193,63 @@
       "url": "https://www.facebook.com/events/1059707093466028/"
     },
     "event_id": "evt-0020"
+  },
+  {
+    "pid": "q-0007",
+    "status": "approved",
+    "source": "post",
+    "source_url": "https://www.instagram.com/p/DfQznLqGDTR/?img_index=1",
+    "source_note": "Pasted post. AI note: A team epee and sabre tournament on 13 December 2026; the slide's \"#2\" conflicts with the post's \"Round 6\", and no suburb is given for the venue.",
+    "added": "2026-11-12",
+    "event": {
+      "name": "test",
+      "start_date": "2026-12-13",
+      "end_date": "2026-12-13",
+      "weapons": [
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open"
+      ],
+      "organiser": "sifl",
+      "url": "https://www.instagram.com/p/DfQznLqGDTR/?img_index=1"
+    },
+    "event_id": "evt-0021"
+  },
+  {
+    "pid": "q-0008",
+    "status": "approved",
+    "source": "post",
+    "source_url": null,
+    "source_note": "Pasted post. AI note: Sabre was postponed to October with no date, so only epee and foil are dated; 23 August 2026 is a Sunday as stated.",
+    "added": "2026-11-12",
+    "event": {
+      "name": "test",
+      "start_date": "2026-08-23",
+      "end_date": "2026-08-23",
+      "weapons": [
+        "foil",
+        "epee"
+      ],
+      "format": [
+        "individual"
+      ],
+      "gender": [
+        "mens"
+      ],
+      "level": [
+        "open"
+      ],
+      "organiser": "saf"
+    },
+    "event_id": "evt-0022"
   }
 ]

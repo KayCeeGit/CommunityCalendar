@@ -12,9 +12,18 @@
  */
 import { isRealDate, todaySydney } from '../docs/js/logic.js';
 import { enqueue, flagsFor, Problem } from '../scripts/lib/store.mjs';
-import { askModel, extractJson } from './lib/llm.mjs';
+import { askModel, extractJson, whyNotJson } from './lib/llm.mjs';
 import { checkAnswer, quoteOnPage } from './lib/check-answer.mjs';
 import { buildPostPrompt } from './post-prompt.mjs';
+
+const WEEKDAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+/** A note if the post says "Sunday" but the date the model chose is not a Sunday (a likely wrong year). */
+function weekdayNote(date, quote) {
+  const said = WEEKDAYS.find((day) => new RegExp(`\\b${day}\\b`, 'i').test(quote ?? ''));
+  const actual = WEEKDAYS[new Date(`${date}T00:00:00Z`).getUTCDay()];
+  return said && said !== actual ? `start_date: check the year, the post says ${said} but ${date} is a ${actual}` : null;
+}
 
 /**
  * input = { text, images: [{ mediaType, data }], organiser: "sifl" }.
@@ -28,7 +37,8 @@ export async function readPost(state, input, ask = askModel, today = todaySydney
   const images = input.images ?? [];
   if (!text.trim() && !images.length) throw new Problem(['Paste a screenshot or some text first']);
 
-  const prompt = buildPostPrompt({ text, organiserName: organiser.name, today }, state.validators.choices);
+  const knownVenues = [...new Set(state.events.map((e) => e.venue).filter(Boolean))].slice(0, 60); // so a bare "Sydney Academy of Fencing" is written the way the calendar already has it
+  const prompt = buildPostPrompt({ text, organiserName: organiser.name, today, knownVenues }, state.validators.choices);
   let reply;
   try {
     reply = await ask({ ...prompt, images });
@@ -36,7 +46,7 @@ export async function readPost(state, input, ask = askModel, today = todaySydney
     throw new Problem([`The AI step failed: ${err.message}`], 502);
   }
   const answer = extractJson(reply.text);
-  if (!answer) throw new Problem([`The AI's reply wasn't JSON: ${reply.text.slice(0, 200)}`], 502);
+  if (!answer) throw new Problem([whyNotJson(reply.text, reply.stopReason)], 502);
   return { answer, source: `${answer.transcription ?? ''}\n${text}` };
 }
 
@@ -60,6 +70,8 @@ export function queuePost(state, input, { answer, source }) {
     else notes.push(`${key}: ignored "${value}" (not a real date)`);
   }
   if (event.start_date && !quoteOnPage(answer.evidence?.start_date, source)) notes.push("start_date: check it, the AI's supporting quote isn't in the post");
+  const weekday = event.start_date && weekdayNote(event.start_date, answer.evidence?.start_date);
+  if (weekday) notes.push(weekday);
   if (input.url) event.url = input.url;
 
   let queued;

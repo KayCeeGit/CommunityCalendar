@@ -29,5 +29,11 @@ level
 venue
   The place name plus its suburb, short, like "Sydney Academy of Fencing, Alexandria". No street address, state or postcode.
   Take the suburb from an address given in the text, never from what you know about the place.
-  If the text names several venues, or none, leave the venue empty.`;
+  If the text gives only the place's name ("Location: Sydney Academy of Fencing"), report just the name; a person can add the suburb.
+  If the text names several venues, or none, leave the venue empty. "TBA" and "online" count as none.
+
+Reply format
+  The reply must be valid JSON: write a line break inside a string as \\n, and escape any double quote inside a string.
+  Keep "reason" to one sentence of under 25 words.
+  A quote in "evidence" is a short piece copied exactly from a single line of the text: no "..." and no joining of lines.`;
 }

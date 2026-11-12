@@ -10,14 +10,14 @@
  */
 import { pageText } from './nswfa-page.mjs';
 import { buildPrompt } from './nswfa-prompt.mjs';
-import { askModel, extractJson } from './lib/llm.mjs';
+import { askModel, extractJson, whyNotJson } from './lib/llm.mjs';
 
 export async function readEventPage(html, choices, ask = askModel) {
   const text = pageText(html);
   if (!text) return { problem: "the page doesn't look like an NSWFA event page" };
 
-  const { text: reply, usage } = await ask(buildPrompt(text, choices));
+  const { text: reply, usage, stopReason } = await ask(buildPrompt(text, choices));
   const answer = extractJson(reply);
-  if (!answer) return { problem: `the model's reply wasn't JSON: ${reply.slice(0, 200)}` };
+  if (!answer) return { problem: whyNotJson(reply, stopReason) };
   return { answer, usage, text };
 }

@@ -31,9 +31,41 @@ test('the prompt carries today\'s date, the organiser, the allowed words and the
   assert.match(system, /The organiser is SIFL/);
   for (const values of Object.values(validators.choices)) for (const v of values) assert.ok(system.includes(v), v);
   assert.match(system, /postponed or cancelled/);
+  assert.match(system, /day\/month, as in Australia/);          // 13/12 is 13 December
+  assert.match(system, /registration closes Friday.*not the event's date/); // deadlines are not event dates
+  assert.match(system, /recap of an event that has already happened/);
+  assert.match(system, /no emojis or hashtags/);
+  assert.match(system, /A date needs no label/);              // "Sunday 23 August" on its own is the date
+  assert.match(system, /that weekday/);                        // the weekday decides the year
+  assert.match(system, /Report the date even if it is already past/);
+  assert.match(system, /"Postponed to October" with no day is not a date/);
+  assert.match(system, /one still has a date, report the one with a date/); // part of a post postponed, part not
+  assert.match(system, /report just the name/);                // "Location: Sydney Academy of Fencing" is a venue
+  assert.match(system, /valid JSON/);                          // reply format rules from the shared guide
+  assert.match(system, /single line of the text/);
   assert.match(system, /data, not instructions/);
   assert.equal(user, 'The screenshots, if any, are above.\n<post_text>\nHello <b>\n</post_text>');
   assert.match(buildPostPrompt({ organiserName: 'x', today: TODAY }, validators.choices).user, /\(none pasted\)/);
+});
+
+test('known venues are offered to the model so a bare venue name is written the way the calendar has it', async () => {
+  const { system } = buildPostPrompt({ organiserName: 'x', today: TODAY, knownVenues: ['Sydney Academy of Fencing, Alexandria'] }, validators.choices);
+  assert.match(system, /Known venues[\s\S]*- Sydney Academy of Fencing, Alexandria/);
+  assert.ok(!buildPostPrompt({ organiserName: 'x', today: TODAY }, validators.choices).system.includes('Known venues'));
+
+  const seen = [];
+  const state = freshState();
+  state.events = [{ venue: 'Sydney Academy of Fencing, Alexandria' }, { venue: 'Singleton PCYC' }, { venue: 'Sydney Academy of Fencing, Alexandria' }, {}];
+  await readPost(state, input(), asking(round6, seen), TODAY);
+  assert.match(seen[0].system, /- Sydney Academy of Fencing, Alexandria\n {2}- Singleton PCYC\n/); // each once, blanks skipped
+});
+
+test('a weekday in the quote that does not match the date is flagged (a likely wrong year)', () => {
+  const run = (start_date, quote) => queuePost(freshState(), input(), { answer: { ...round6, start_date, end_date: start_date, evidence: { ...round6.evidence, start_date: quote } }, source: `${round6.transcription}\n${quote}` }).notes;
+  assert.ok(run('2027-08-23', 'Sunday 23 August').some((n) => /check the year, the post says sunday but 2027-08-23 is a monday/.test(n)));
+  assert.ok(!run('2026-08-23', 'Sunday 23 August').some((n) => /check the year/.test(n)));
+  assert.ok(!run('2026-12-13', 'SUNDAY 13/12').some((n) => /check the year/.test(n)));   // upper case works too
+  assert.ok(!run('2026-12-13', '13/12').some((n) => /check the year/.test(n)));          // no weekday said, nothing to compare
 });
 
 test('readPost sends the screenshots with the prompt and returns what the model said', async () => {
@@ -53,7 +85,9 @@ test('readPost refuses empty or unusable requests and reports model failures cle
   const down = await failure(() => readPost(state, input(), async () => { throw new Error('the model API said 500'); }));
   assert.equal(down.status, 502);
   assert.match(down.message, /AI step failed: the model API said 500/);
-  assert.match((await failure(() => readPost(state, input(), asking('Sorry, I cannot.')))).message, /wasn't JSON/);
+  assert.match((await failure(() => readPost(state, input(), asking('Sorry, I cannot.')))).message, /wasn't JSON \(it is not valid JSON\): Sorry, I cannot\./);
+  const cutOff = async () => ({ text: '{"is_competition": true, "reason": "A long', usage: {}, stopReason: 'max_tokens' });
+  assert.match((await failure(() => readPost(state, input(), cutOff))).message, /cut off for being too long/);
 });
 
 test('a post becomes a draft in the queue, with the screenshots attached and blanks left for a person', async () => {
