@@ -1,0 +1,296 @@
+/* style.css: the "tactical" look. A competitive-shooter menu: deep navy, one hot red, bone-white type, condensed
+   uppercase headings, and angular panels with cut corners. Nothing is a plain rectangle. Hovering an event wipes a
+   red slab across it; the headline cuts in on load. The archive flips to the bone-white palette.
+   Original shapes and colours only (no logos, characters or artwork from any game).
+   Colours are tokens at the top. All motion is switched off for reduced-motion users (bottom of the file). */
+
+:root {
+    --display: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
+    --body: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    --ink: #0a1a1f;        /* deep teal-black: the page */
+    --panel: #112a31;      /* raised panels */
+    --bone: #e8f1ef;      /* cool white text */
+    --accent: #2ee6c8;     /* mint: the highlight colour */
+    --on-accent: #04201c;  /* text sitting on the accent */
+    --warn: #ffb020;       /* postponed: events that are postponed use this instead of the accent */
+    --cut: 18px;           /* size of the cut corners on big panels */
+
+    --page: var(--ink);
+    --fg: var(--bone);
+    --sub: rgba(232, 241, 239, 0.64);
+    --rule: rgba(232, 241, 239, 0.16);
+    --grid: rgba(232, 241, 239, 0.045);
+
+    /* an event: resting / hovered (an accent slab wipes in) */
+    --card: var(--panel);  --card-fg: var(--bone); --card-sub: rgba(232, 241, 239, 0.64);
+    --date-bg: var(--accent); --date-fg: var(--on-accent);
+    --wipe: var(--accent);    --wipe-fg: var(--on-accent);  --wipe-sub: rgba(4, 32, 28, 0.78);
+    --date-bg-h: var(--ink); --date-fg-h: var(--bone);
+
+    --wrap: 1240px;
+    --gutter: clamp(16px, 4vw, 40px);
+}
+
+/* The archive: a pale mint page with a deeper teal highlight. */
+body[data-page="archive"] {
+    --page: #e3ece9; --fg: var(--ink); --sub: rgba(10, 26, 31, 0.64); --rule: rgba(10, 26, 31, 0.2); --grid: rgba(10, 26, 31, 0.06);
+    --accent: #0b8f7e; --on-accent: #ffffff; --warn: #d97706;
+    --card: #fff; --card-fg: var(--ink); --card-sub: rgba(10, 26, 31, 0.64);
+    --date-bg: var(--ink); --date-fg: var(--bone);
+    --wipe: var(--ink); --wipe-fg: var(--bone); --wipe-sub: rgba(232, 241, 239, 0.8);
+    --date-bg-h: var(--accent); --date-fg-h: var(--on-accent);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body { min-height: 100vh; background-color: var(--page);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 48px 48px;
+    color: var(--fg); font: 500 1rem/1.5 var(--body); overflow-x: clip; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--warn); outline-offset: 3px; }
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* ---------- top bar ---------- */
+.navbar { position: relative; z-index: 3; background: var(--ink); color: var(--bone); border-bottom: 1px solid rgba(232, 241, 239, 0.16); }
+.navbar::after { content: ''; position: absolute; left: 0; bottom: -1px; width: min(32vw, 420px); height: 3px; background: var(--accent); clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%); }
+.nav-container { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 28px; max-width: var(--wrap); margin: 0 auto; padding: 10px var(--gutter); }
+.nav-logo { display: flex; align-items: center; gap: 12px; font: 800 1.35rem/1 var(--display); letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; }
+/* an angular mark: a red blade cut by a bone slash */
+.brand-mark { display: none; }   /* phones show a plain square instead (see the phone section) */
+.nav-menu { display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.nav-link { position: relative; display: block; padding: 10px 18px; font: 700 1.05rem/1 var(--display); letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; color: rgba(236, 232, 225, 0.72); transition: color 0.15s; }
+.nav-link::after { content: ''; position: absolute; left: 18px; right: 18px; bottom: 2px; height: 3px; background: var(--accent); clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%); transform: scaleX(0); transform-origin: left; transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.nav-link:hover { color: var(--bone); }
+.nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
+.nav-link.active { color: var(--bone); }
+
+/* ---------- hero ---------- */
+.hero { position: relative; display: grid; gap: 18px; padding-block: clamp(30px, 5vw, 56px) 34px; }
+.hero h1 { display: grid; justify-items: start; gap: 4px; max-width: 100%; font-weight: 800; text-transform: uppercase; }
+.hero h1 span { display: block; font: 800 clamp(3rem, 10vw, 7.4rem)/0.86 var(--display); letter-spacing: -0.005em; }
+.hero h1 .l2 { padding: 0.02em 0.22em 0.04em 0.12em; background: var(--accent); color: var(--on-accent); clip-path: polygon(0 0, 100% 0, calc(100% - 0.2em) 100%, 0 100%); }
+body[data-page="archive"] .hero h1 .l2 { background: var(--ink); color: var(--bone); }
+.lede { max-width: 34rem; padding-left: 14px; border-left: 3px solid var(--accent); color: var(--sub); font-size: 1.1rem; }
+/* the headline cuts in once on load */
+.hero h1 .l1, .hero h1 .l2, .lede { animation: cut-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.hero h1 .l2 { animation-delay: 0.12s; }
+.lede { animation-delay: 0.24s; }
+@keyframes cut-in { from { opacity: 0; transform: translateX(-28px); clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); } }
+
+/* "Next up": a red panel with cut corners, and every event on the day as a bone-white tile */
+.next-up { position: relative; display: block; max-width: 100%; margin: 0; padding: 14px 18px 18px; background: var(--accent); color: var(--on-accent);
+    clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 26px 100%, 0 calc(100% - 26px)); }
+.next-up[hidden] { display: none; }
+.lamp, .next-count, .next-toggle { display: none; }   /* the count and toggle are for phones */
+.next-up .next-label { display: block; font: 700 0.9rem/1 var(--display); letter-spacing: 0.22em; text-transform: uppercase; }
+.next-up .when { display: block; margin-top: 4px; font: 800 clamp(2.2rem, 5vw, 3.4rem)/0.95 var(--display); text-transform: uppercase; white-space: nowrap; }
+.next-events { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.next-events li { padding: 6px 12px 7px 14px; background: var(--bone); color: var(--ink); box-shadow: inset 5px 0 0 var(--ink); clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%); }
+.next-events strong { font: 700 1.2rem/1.15 var(--display); letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* ---------- filters ---------- */
+.filters { max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gutter); }
+#filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 22px; padding-block: 16px; border-block: 1px solid var(--rule); }
+.filter-row { display: grid; gap: 6px; }
+.filter-label { font: 700 0.8rem/1 var(--display); letter-spacing: 0.2em; text-transform: uppercase; color: var(--sub); }
+.chip-set { display: flex; gap: 6px; }
+.chip { position: relative; cursor: pointer; }
+.chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.chip span { display: grid; place-items: center; min-height: 42px; padding: 0 20px; box-shadow: inset 0 0 0 1px var(--rule); background: transparent; font: 700 1.05rem/1 var(--display); letter-spacing: 0.14em; text-transform: uppercase;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); transition: background-color 0.15s, color 0.15s, box-shadow 0.15s; }
+.chip:hover span { box-shadow: inset 0 0 0 2px var(--fg); }
+.chip input:checked + span { background: var(--accent); box-shadow: none; color: var(--on-accent); }
+.chip input:focus-visible + span { outline: 3px solid var(--warn); outline-offset: -3px; }
+
+select { min-height: 42px; padding: 0 32px 0 16px; border: 0; border-radius: 0; box-shadow: inset 0 0 0 1px var(--rule); color: var(--fg); font: 700 1.05rem var(--display); letter-spacing: 0.12em; text-transform: uppercase; appearance: none; cursor: pointer;
+    background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0h12L6 8z' fill='%2315b8a0'/%3E%3C/svg%3E") no-repeat right 12px center;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); transition: box-shadow 0.15s; }
+select option { background: var(--ink); color: var(--bone); font: 600 1rem var(--body); letter-spacing: 0; text-transform: none; }
+select:hover { box-shadow: inset 0 0 0 2px var(--fg); }
+select:not(:has(option[value="all"]:checked)) { background-color: var(--accent); box-shadow: none; color: var(--on-accent); }
+
+.filters-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; padding-block: 12px 0; }
+.count { margin-right: auto; color: var(--sub); font: 700 1rem/1.4 var(--display); letter-spacing: 0.16em; text-transform: uppercase; }
+#reset-filters { min-height: 36px; padding: 0 18px; border: 0; background: var(--fg); color: var(--page); font: 700 1rem var(--display); letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; visibility: hidden;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+#reset-filters:hover { background: var(--accent); color: var(--on-accent); }
+.is-filtering #reset-filters { visibility: visible; }
+
+.switch { position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 36px; font: 700 1rem var(--display); letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; }
+.switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.switch-track { position: relative; flex: none; width: 46px; height: 22px; box-shadow: inset 0 0 0 1px var(--rule); clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); transition: background-color 0.15s; }
+.switch-track::after { content: ''; position: absolute; top: 4px; left: 8px; width: 14px; height: 14px; background: var(--sub); clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%); transition: transform 0.15s, background-color 0.15s; }
+.switch input:checked + .switch-track { background: var(--accent); box-shadow: none; }
+.switch input:checked + .switch-track::after { transform: translateX(16px); background: var(--on-accent); }
+.switch input:focus-visible + .switch-track { outline: 3px solid var(--warn); outline-offset: 3px; }
+
+/* ---------- months ---------- */
+.container { max-width: var(--wrap); margin: 0 auto; padding: 8px var(--gutter) 90px; }
+.month-block { padding-top: 34px; }
+.month-header { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 14px; margin-bottom: 16px; padding-left: 14px; border-left: 6px solid var(--accent);
+    font: 800 clamp(2.6rem, 9vw, 4.4rem)/0.9 var(--display); letter-spacing: 0.01em; text-transform: uppercase; }
+.month-header .year { color: var(--accent); }
+.month-header small { margin-left: 6px; font: 700 1rem/1 var(--display); letter-spacing: 0.18em; color: var(--sub); }
+.month-events { display: grid; gap: 10px; }
+
+/* ---------- an event: a cut-corner row ---------- */
+.item-container { position: relative; isolation: isolate; overflow: hidden; --logo-opacity: 0.3;
+    display: grid; grid-template-columns: 5.6rem minmax(0, 1fr) auto auto; grid-template-areas: "date info weapons meta"; align-items: center; gap: 0 22px; padding: 0 64px 0 0;
+    background: var(--card); color: var(--card-fg);
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+    transition: color 0.2s, transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+/* the red slab that wipes across on hover */
+.item-container::before { content: ''; position: absolute; inset: 0 -30px 0 0; z-index: -1; background: var(--wipe); transform: translateX(-104%) skewX(-18deg); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.item-container:hover::before, .item-container:focus-within::before { transform: translateX(0) skewX(-18deg); }
+.item-container:hover, .item-container:focus-within { color: var(--wipe-fg); transform: translateX(6px); }
+
+.serial { display: none; }
+/* the date: a solid block at the left edge of the row */
+.event-date { grid-area: date; align-self: stretch; display: grid; place-content: center; justify-items: center; gap: 0; padding: 10px 6px; background: var(--date-bg); color: var(--date-fg); text-align: center;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%); transition: background-color 0.2s, color 0.2s; }
+.item-container:hover .event-date, .item-container:focus-within .event-date { background: var(--date-bg-h); color: var(--date-fg-h); }
+.event-date b { font: 800 3.4rem/0.88 var(--display); font-variant-numeric: tabular-nums; }
+.event-date .weekday, .event-date small { font: 700 0.85rem/1.15 var(--display); letter-spacing: 0.16em; text-transform: uppercase; }
+.event-info { grid-area: info; min-width: 0; padding-block: 14px; }
+.title { font: 800 clamp(1.5rem, 2.6vw, 2.1rem)/1.02 var(--display); letter-spacing: 0.02em; text-transform: uppercase; overflow-wrap: break-word; }
+.info { margin-top: 4px; color: var(--card-sub); font: 600 0.9rem/1.35 var(--body); }
+.item-container:hover .info, .item-container:hover .meta, .item-container:focus-within .info { color: var(--wipe-sub); }
+.type-tag { display: inline-block; margin-bottom: 6px; padding: 2px 10px 3px; background: var(--bone); color: var(--ink); font: 700 0.8rem/1.1 var(--display); letter-spacing: 0.16em; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
+body[data-page="archive"] .type-tag { background: var(--ink); color: var(--bone); }
+
+.status-notice { display: inline-block; margin-bottom: 6px; padding: 2px 12px 3px; background: var(--warn); color: var(--ink); font: 800 0.9rem/1.2 var(--display); letter-spacing: 0.14em; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, calc(100% - 7px) 100%, 0 100%); }
+/* a postponed event swaps the accent for the postponed colour: its date block, hover slab and arrow */
+.is-postponed { --date-bg: var(--warn); --date-fg: var(--ink); --wipe: var(--warn); --wipe-fg: var(--ink); --wipe-sub: rgba(10, 26, 31, 0.78); }
+.is-postponed .action i { color: var(--warn); }
+.is-postponed:hover .status-notice, .is-postponed:focus-within .status-notice { background: var(--ink); color: var(--warn); }   /* the notice stays visible on its own colour */
+.is-cancelled { --logo-opacity: 0.12; }
+.is-cancelled .title { text-decoration: line-through; text-decoration-thickness: 3px; }
+.is-cancelled .event-date, .is-cancelled .weapons, .is-cancelled .meta { opacity: 0.5; }
+
+/* F E S: cut-corner blocks; a solid block means the event uses that weapon */
+.weapons { grid-area: weapons; display: flex; gap: 5px; }
+.weapons span { display: grid; place-items: center; width: 2.1rem; height: 2.1rem; box-shadow: inset 0 0 0 1px currentColor; opacity: 0.38; font: 800 1.1rem/1 var(--display);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+.weapons .on { opacity: 1; background: var(--card-fg); box-shadow: none; color: var(--card); }
+.item-container:hover .weapons .on, .item-container:focus-within .weapons .on { background: var(--wipe-fg); color: var(--wipe); }
+.meta { grid-area: meta; display: grid; text-align: right; color: var(--card-sub); font: 600 0.8rem/1.35 var(--display); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* the organiser's logo: a big ghost on the right; it slides in on hover, and stays faint on touch screens */
+.img-container { position: absolute; top: 0; right: 0; bottom: 0; width: 34%; z-index: -1; padding: 8px 36px 8px 8px; pointer-events: none; opacity: var(--logo-opacity); }
+.img-container img { width: 100%; height: 100%; object-fit: contain; object-position: right center; }
+@media (hover: hover) {
+    .img-container { opacity: 0; transform: translateX(24px); transition: opacity 0.25s 0.05s, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .item-container:hover .img-container, .item-container:has(.action:focus-visible) .img-container { opacity: var(--logo-opacity); transform: none; }
+    .img-container img { mix-blend-mode: multiply; }   /* the logo's white corners disappear into the red slab */
+}
+
+/* the whole row is the link; a chevron shows on the right */
+.action { position: absolute; inset: 0; display: block; font-size: 0; text-decoration: none; }
+.action i { position: absolute; top: 50%; right: 26px; margin-top: -0.5em; font-size: 1.15rem; color: var(--accent); transition: transform 0.2s, color 0.2s; }
+.item-container:hover .action i { color: var(--wipe-fg); transform: translateX(5px); }
+.action:focus-visible { outline: none; }
+.action:focus-visible::after { content: ''; position: absolute; inset: 3px; outline: 3px solid var(--warn); }
+
+.message { padding: 56px 0; font: 700 1.6rem var(--display); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* Compact view (wide screens only) */
+@media (min-width: 720px) {
+    .is-compact .month-events { gap: 6px; }
+    .is-compact .item-container { grid-template-columns: 4.2rem minmax(0, 1fr) auto; grid-template-areas: "date info weapons"; }
+    .is-compact .meta, .is-compact .img-container, .is-compact .info, .is-compact .event-date .weekday { display: none; }
+    .is-compact .event-date { padding-block: 4px; }
+    .is-compact .event-date b { font-size: 2.2rem; }
+    .is-compact .event-info { padding-block: 8px; }
+    .is-compact .title { font-size: 1.35rem; }
+}
+
+/* ---------- About page ---------- */
+.content { max-width: 46rem; margin: 0 auto; padding: clamp(32px, 7vw, 64px) var(--gutter) 96px; }
+.content h1 { margin-bottom: 28px; padding-left: 14px; border-left: 6px solid var(--accent); font: 800 clamp(2.8rem, 8vw, 5rem)/0.9 var(--display); text-transform: uppercase; text-wrap: balance; }
+.content p { margin-bottom: 1.1em; line-height: 1.65; text-wrap: pretty; }
+.button { display: inline-block; margin-top: 8px; padding: 14px 30px; background: var(--accent); color: var(--on-accent); font: 800 1.2rem/1 var(--display); letter-spacing: 0.16em; text-transform: uppercase; text-decoration: none;
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); transition: background-color 0.15s; }
+.button:hover { background: var(--fg); color: var(--page); }
+
+/* ---------- wide screens ---------- */
+@media (min-width: 900px) {
+    .hero { grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 40px; }
+    .hero h1, .lede { grid-column: 1; }
+    .next-up { grid-column: 2; grid-row: 1 / span 2; max-width: 380px; }
+
+    /* each month's name stays in view on the left while you scroll through its events */
+    .month-block { display: grid; grid-template-columns: 15rem minmax(0, 1fr); column-gap: 28px; padding-top: 40px; }
+    .month-header { position: sticky; top: 16px; align-self: start; display: block; margin-bottom: 0; font-size: 3.2rem; }
+    .month-header .year { display: block; margin-top: 4px; font-size: 1.6rem; letter-spacing: 0.1em; }
+    .month-header small { display: block; margin: 12px 0 0; }
+}
+
+/* ---------- phones: same look, small rows ---------- */
+@media (max-width: 719px) {
+    .nav-container { gap: 2px 8px; padding-block: 4px; }
+    .brand-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .nav-logo { flex: none; min-height: 44px; }
+    .brand-mark { display: block; width: 26px; height: 26px; background: var(--accent); }   /* a plain square: the home link when the name is hidden */
+    .nav-menu { flex: 1 1 auto; justify-content: flex-end; gap: 0; min-width: 0; }
+    .nav-container { flex-wrap: nowrap; }
+    .nav-link { display: grid; place-items: center; min-height: 44px; padding: 0 clamp(4px, 1.8vw, 8px); font-size: clamp(0.72rem, 3.4vw, 0.92rem); letter-spacing: 0.05em; white-space: nowrap; }
+    .nav-link::after { left: clamp(4px, 1.8vw, 8px); right: clamp(4px, 1.8vw, 8px); }
+
+    .hero { grid-template-columns: minmax(0, 1fr); gap: 10px; padding-block: 18px 14px; }
+    .hero h1 span { font-size: clamp(2.5rem, 13vw, 3.4rem); }
+    .lede { font-size: 0.95rem; }
+
+    /* "Next up": one slim line; tap anywhere on it to show every event that day */
+    .next-up { display: flex; align-items: center; padding: 0; clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px)); }
+    .next-up .text { flex: 1; min-width: 0; padding: 8px 4px 8px 16px; }
+    .next-head { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+    .next-up .next-label { flex: none; white-space: nowrap; font-size: 0.78rem; }
+    .next-up .when { flex: none; margin: 0; font-size: 1.5rem; }
+    .next-count { display: block; min-width: 0; overflow: hidden; font: 700 0.9rem/1.2 var(--display); letter-spacing: 0.06em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+    .next-up.is-open .next-count { display: none; }
+    .next-events { display: none; margin-top: 8px; }
+    .next-up.is-open .next-events { display: grid; }
+    .next-events strong { font-size: 1.05rem; }
+    .next-toggle { position: static; display: grid; flex: none; place-items: center; width: 44px; align-self: stretch; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+    .next-toggle::before { content: ''; width: 9px; height: 9px; margin-top: -4px; border: solid currentColor; border-width: 0 3px 3px 0; transform: rotate(45deg); transition: transform 0.15s; }
+    .next-up.is-open .next-toggle::before { margin-top: 4px; transform: rotate(-135deg); }
+    .next-toggle::after { content: ''; position: absolute; inset: 0; }   /* the whole box is the button */
+    .next-toggle:focus-visible { outline: none; }
+    .next-toggle:focus-visible::after { outline: 3px solid var(--on-accent); outline-offset: -4px; }
+
+    /* filters: small */
+    #filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-block: 12px; }
+    .filter-row:has(.chip-set) { grid-column: 1 / -1; order: -1; }
+    .filter-label { font-size: 0.7rem; }
+    .chip-set { gap: 4px; justify-self: start; max-width: 100%; }
+    .chip span { min-height: 36px; padding: 0 clamp(9px, 3.4vw, 16px); font-size: clamp(0.9rem, 4vw, 1rem); letter-spacing: 0.1em; }
+    select { width: 100%; min-height: 38px; padding: 0 24px 0 10px; font-size: 0.95rem; letter-spacing: 0.08em; background-position: right 8px center; }
+    .filters-foot { padding-block: 10px 0; gap: 6px 12px; }
+    .switch { display: none; }
+
+    .container { padding-bottom: 96px; }
+    .month-block { padding-top: 24px; }
+    .month-header { margin-bottom: 10px; border-left-width: 5px; font-size: clamp(2.1rem, 10.5vw, 2.8rem); }
+    .month-events { gap: 8px; }
+    .item-container { grid-template-columns: 3.4rem minmax(0, 1fr) auto; grid-template-areas: "date info info" "date weapons meta"; gap: 2px 10px; padding: 0 34px 8px 0; --cut: 12px; }
+    .item-container:hover, .item-container:focus-within { transform: none; }
+    .event-date { grid-row: 1 / -1; padding: 6px 2px; }
+    .event-date b { font-size: 2.3rem; }
+    .event-date .weekday { font-size: 0.7rem; }
+    .event-date small { display: none; }
+    .event-info { padding-block: 8px 0; }
+    .title { font-size: 1.25rem; }
+    .info { margin-top: 1px; font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .type-tag { margin-bottom: 2px; font-size: 0.68rem; }
+    .weapons span { width: 1.6rem; height: 1.6rem; font-size: 0.95rem; }
+    .meta { font-size: 0.7rem; }
+    .img-container { width: 36%; --logo-opacity: 0.12; }
+    .action i { right: 10px; font-size: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .item-container:hover, .item-container:focus-within { transform: none; }
+}

@@ -120,13 +120,14 @@ export function dateParts(e) {
 export const daysBetween = (from, to) => Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000);
 
 /**
- * The event for the "Next up" box: the first one (events must be sorted) that is still going ahead,
- * with a plain-words "when". Postponed and cancelled events are skipped. Null if there isn't one.
+ * The events for the "Next up" box: the first one (events must be sorted) that is still going ahead,
+ * plus any other going-ahead events that start on the same day, with a plain-words "when".
+ * Postponed and cancelled events are skipped. Null if there isn't one.
  */
 export function nextUp(events, today) {
-  const event = events.find((e) => !e.status);
-  if (!event) return null;
-  const days = daysBetween(today, event.start_date);
+  const first = events.find((e) => !e.status);
+  if (!first) return null;
+  const days = daysBetween(today, first.start_date);
   const when = days < 0 ? 'on now' : days === 0 ? 'today' : days === 1 ? 'tomorrow' : `in ${days} days`;
-  return { event, when };
+  return { events: events.filter((e) => !e.status && e.start_date === first.start_date), when };
 }

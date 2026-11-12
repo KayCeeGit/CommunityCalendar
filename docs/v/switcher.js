@@ -3,7 +3,7 @@
 // just opens the current page (index, archive or about) in another folder.
 // For a demo only: delete docs/v/ when you have picked a design.
 
-const STYLES = [['piste', 'Piste'], ['fixtures', 'Fixtures'], ['terminal', 'Terminal'], ['stage', 'Stage'], ['duel', 'Duel'], ['clear', 'Clear'], ['hybrid', 'Hybrid'], ['board', 'Board']];
+const STYLES = [['piste', 'Piste'], ['fixtures', 'Fixtures'], ['terminal', 'Terminal'], ['stage', 'Stage'], ['duel', 'Duel'], ['clear', 'Clear'], ['hybrid', 'Hybrid'], ['board', 'Board'], ['persona', 'Persona'], ['crt', 'CRT'], ['terminal-mini', 'Mini'], ['tactical', 'Tactical'], ['nouveau', 'Nouveau'], ['touche', 'Touché']];
 
 const parts = location.pathname.split('/').filter(Boolean);
 const onFile = parts.at(-1)?.endsWith('.html');

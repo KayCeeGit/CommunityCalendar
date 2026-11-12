@@ -97,7 +97,10 @@ select:not(:has(option[value="all"]:checked)) { border-color: var(--accent); col
 .next-up { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; margin: 6px 0 0; padding: 14px 18px; background: var(--accent); color: var(--on-accent); clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%); }
 .next-up .label { order: 0; font: 600 0.75rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
 .next-up .when { order: 1; font: 900 clamp(1.6rem, 4cqi, 2.6rem)/1 var(--display); font-stretch: 125%; text-transform: uppercase; }
-.next-up .name { order: 2; font: 700 1.25rem/1.2 var(--display); }
+.next-events { order: 3; flex: 1 1 100%; margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+/* each event is its own dark tile with a violet bar on the left */
+.next-events li { padding: 6px 12px; background: var(--on-accent); box-shadow: inset 4px 0 0 var(--accent); }
+.next-up .name { font: 700 1.1rem/1.2 var(--display); color: var(--accent); }
 
 main { padding: 8px clamp(16px, 3vw, 40px) 80px; }
 
@@ -208,6 +211,52 @@ main { padding: 8px clamp(16px, 3vw, 40px) 80px; }
     .seg-item span, select { min-height: 44px; }
     #reset-filters { min-height: 44px; }
 }
+
+/* ---------- effects ----------
+   All CSS, no JavaScript. The reduced-motion rule at the bottom of this file switches every one of them off. */
+
+/* the headline glitches once as the page loads, then again every few seconds (a quick colour split and jolt) */
+.hero { position: relative; overflow: hidden; }
+.hero h1 { animation: glitch-once 0.7s steps(1, end) 0.2s 1, glitch 7s steps(1, end) 3s infinite; }
+.hero h1::after { content: '_'; margin-left: 0.04em; color: var(--accent); animation: cursor 1s steps(1, end) infinite; }   /* blinking cursor */
+@keyframes cursor { 50% { opacity: 0; } }
+@keyframes glitch-once {
+    0%   { text-shadow: -6px 0 var(--epee), 6px 0 var(--foil); transform: translateX(-6px) skewX(-4deg); }
+    25%  { text-shadow: 6px 0 var(--epee), -6px 0 var(--foil); transform: translateX(5px); clip-path: inset(30% 0 35% 0); }
+    50%  { text-shadow: -3px 0 var(--foil), 3px 0 var(--epee); transform: none; clip-path: none; }
+    75%  { text-shadow: 3px 0 var(--epee), -3px 0 var(--foil); transform: translateX(2px) skewX(2deg); }
+    100% { text-shadow: none; transform: none; }
+}
+@keyframes glitch {
+    0%, 93%, 100% { text-shadow: none; transform: none; clip-path: none; }
+    94% { text-shadow: -4px 0 var(--epee), 4px 0 var(--foil); transform: translateX(-3px) skewX(-3deg); }
+    95% { text-shadow: 4px 0 var(--epee), -4px 0 var(--foil); transform: translateX(4px); clip-path: inset(45% 0 20% 0); }
+    96% { text-shadow: -2px 0 var(--foil), 2px 0 var(--epee); transform: none; clip-path: none; }
+    97% { text-shadow: 3px 0 var(--epee), -3px 0 var(--foil); transform: translateX(2px) skewX(2deg); }
+}
+
+/* a thin violet scan line sweeps down the headline area every few seconds */
+.hero::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--accent); box-shadow: 0 0 14px 2px var(--accent); opacity: 0.8; pointer-events: none; animation: scan 6s ease-in-out 1s infinite; }
+@keyframes scan { 0% { top: 0; opacity: 0; } 8% { opacity: 0.8; } 40%, 100% { top: 100%; opacity: 0; } }
+
+/* "Next up": a blinking live dot and a shine that passes across the box */
+.next-up { background-image: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.4) 50%, transparent 58%); background-size: 300% 100%; background-repeat: no-repeat; animation: shine 5s ease-in-out 1.5s infinite; }
+.next-up .label::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--on-accent); animation: pulse 1.4s ease-in-out infinite; }
+@keyframes shine { 0% { background-position: 130% 0; } 35%, 100% { background-position: -30% 0; } }
+@keyframes pulse { 50% { opacity: 0.2; transform: scale(0.6); } }
+
+/* events: the first few "scan in" when the list is drawn (and again when you change a filter); hovering sweeps a light across the card */
+.month-events > .item-container { animation: scan-in 0.4s steps(8, end) backwards; }   /* backwards, not both: afterwards nothing keeps clipping the corner brackets */
+.month-events > .item-container:nth-child(2) { animation-delay: 0.05s; }
+.month-events > .item-container:nth-child(3) { animation-delay: 0.1s; }
+.month-events > .item-container:nth-child(4) { animation-delay: 0.15s; }
+.month-events > .item-container:nth-child(n+5) { animation-delay: 0.2s; }
+@keyframes scan-in { from { opacity: 0; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(0 0 0 0); } }
+.item-container { background-image: linear-gradient(100deg, transparent 35%, rgba(167, 139, 250, 0.22) 50%, transparent 65%); background-size: 260% 100%; background-position: 130% 0; background-repeat: no-repeat;
+    transition: border-color 0.1s, background-color 0.1s, background-position 0.7s ease-out; }
+.item-container:hover { background-position: -30% 0; }
+.item-container:hover .weapons .on { animation: pop 0.3s steps(3, end) 1; }
+@keyframes pop { 50% { transform: translateY(-3px); } }
 
 @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }

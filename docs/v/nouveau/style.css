@@ -1,0 +1,282 @@
+/* style.css: the "nouveau" look: Hybrid's structure (one row of filters, collapsible Next up, compact view)
+   dressed after Art Nouveau posters. Symmetry and arches; soft organic curves instead of straight cuts;
+   gold hairlines with double frames; a bottle-green and gold palette; soft serif type; sinuous vine and leaf
+   ornaments (original shapes, drawn as masks so they take their colour from the tokens below).
+   The calendar is dark green, the archive is parchment. All motion stops for reduced-motion users. */
+
+:root {
+    --display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+    --body: 'Crimson Pro', 'Iowan Old Style', Georgia, serif;
+
+    --bg: #0f2219;          /* bottle green */
+    --panel: #17332a;       /* event cards */
+    --hover: #1f4236;       /* the card while hovered */
+    --text: #f3ead0;        /* ivory */
+    --muted: #b7b08f;
+    --gold: #d4af5a;
+    --line: rgba(212, 175, 90, 0.38);
+    --accent: #d4af5a;      /* selected things */
+    --on-accent: #14271e;
+    --rose: #e6a4a2;
+    --foil: #5fd0bb;        /* verdigris */
+    --epee: #ef8fa6;        /* rose */
+    --saber: #eec65b;       /* gold */
+    --warn: #f08a5d;        /* postponed: terracotta */
+    --glyph-off: #6f7a62;
+    --focus: #f3ead0;
+    --pattern-opacity: 0.07;
+    --wrap: 1100px;
+    --gutter: clamp(16px, 4vw, 40px);
+}
+
+/* The archive is parchment. */
+body[data-page="archive"] {
+    --bg: #eadfc0; --panel: #f7efd8; --hover: #efe2bd; --text: #1f3a2c; --muted: #5d6a52; --gold: #9a7424; --line: rgba(154, 116, 36, 0.5);
+    --accent: #1f4d3a; --on-accent: #f3ead0; --rose: #a6475a; --foil: #1f8b78; --epee: #b83a5c; --saber: #a97f10; --warn: #b4501f; --glyph-off: #9aa08a; --focus: #1f3a2c;
+    --pattern-opacity: 0.1;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body { position: relative; min-height: 100vh; background: var(--bg); color: var(--text); font: 500 1.12rem/1.5 var(--body); overflow-x: clip; }
+/* a faint pattern of vines and leaves behind everything (a mask, so its colour is the gold token) */
+body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: var(--gold); opacity: var(--pattern-opacity);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22 viewBox=%220 0 200 200%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22%3E%0A%3Cpath d=%22M30 0 C 90 40, -10 90, 50 140 S 110 190, 90 200%22/%3E%0A%3Cpath d=%22M150 0 C 90 50, 190 100, 140 150 S 100 190, 120 200%22/%3E%0A%3Cpath d=%22M62 52 C 76 40, 92 42, 100 52 C 90 62, 74 62, 62 52Z%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3Cpath d=%22M138 112 C 124 100, 108 102, 100 112 C 110 122, 126 122, 138 112Z%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3Cpath d=%22M36 150 C 22 140, 12 146, 8 158 C 20 164, 30 162, 36 150Z%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3Cpath d=%22M164 40 C 178 32, 190 38, 194 50 C 182 56, 172 54, 164 40Z%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3Ccircle cx=%22100%22 cy=%22100%22 r=%223%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3C/svg%3E") 0 0 / 200px 200px; mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22 viewBox=%220 0 200 200%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22%3E%0A%3Cpath d=%22M30 0 C 90 40, -10 90, 50 140 S 110 190, 90 200%22/%3E%0A%3Cpath d=%22M150 0 C 90 50, 190 100, 140 150 S 100 190, 120 200%22/%3E%0A%3Cpath d=%22M62 52 C 76 40, 92 42, 100 52 C 90 62, 74 62, 62 52Z%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3Cpath d=%22M138 112 C 124 100, 108 102, 100 112 C 110 122, 126 122, 138 112Z%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3Cpath d=%22M36 150 C 22 140, 12 146, 8 158 C 20 164, 30 162, 36 150Z%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3Cpath d=%22M164 40 C 178 32, 190 38, 194 50 C 182 56, 172 54, 164 40Z%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3Ccircle cx=%22100%22 cy=%22100%22 r=%223%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3C/svg%3E") 0 0 / 200px 200px; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* the wavy gold rule used under the bar, above the filters, and beside month names */
+.nav-container::after, .filters::before, .month-header::before, .month-header::after, .hero::after {
+    content: ''; display: block; height: 16px; background: var(--gold); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%2216%22 viewBox=%220 0 120 16%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22%3E%0A%3Cpath d=%22M0 8 C 15 -2, 45 18, 60 8 S 105 -2, 120 8%22/%3E%0A%3Ccircle cx=%2260%22 cy=%228%22 r=%222%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3C/svg%3E") 0 center / 120px 16px repeat-x; mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%2216%22 viewBox=%220 0 120 16%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-linecap=%22round%22%3E%0A%3Cpath d=%22M0 8 C 15 -2, 45 18, 60 8 S 105 -2, 120 8%22/%3E%0A%3Ccircle cx=%2260%22 cy=%228%22 r=%222%22 fill=%22%23000%22 stroke=%22none%22/%3E%0A%3C/svg%3E") 0 center / 120px 16px repeat-x; }
+
+/* ---------- top bar: the name in the middle, the pages beneath ---------- */
+.navbar { position: relative; z-index: 3; background: var(--bg); }
+.nav-container { display: flex; flex-direction: column; align-items: center; gap: 6px; max-width: var(--wrap); margin: 0 auto; padding: 14px var(--gutter) 0; }
+.nav-container::after { order: 3; width: 100%; margin-top: 4px; }
+.nav-logo { display: flex; align-items: center; gap: 12px; font: 600 1.5rem/1 var(--display); font-style: italic; letter-spacing: 0.01em; text-decoration: none; }
+.brand-mark { flex: none; width: 34px; height: 34px; background: var(--gold); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.4%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%0A%3Cpath d=%22M20 36 C 10 28, 9 14, 20 3 C 31 14, 30 28, 20 36Z%22/%3E%0A%3Cpath d=%22M20 36 C 12 34, 4 28, 3 18 C 10 20, 16 26, 20 36Z%22/%3E%0A%3Cpath d=%22M20 36 C 28 34, 36 28, 37 18 C 30 20, 24 26, 20 36Z%22/%3E%0A%3Cpath d=%22M20 12 L20 30%22/%3E%0A%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.4%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%0A%3Cpath d=%22M20 36 C 10 28, 9 14, 20 3 C 31 14, 30 28, 20 36Z%22/%3E%0A%3Cpath d=%22M20 36 C 12 34, 4 28, 3 18 C 10 20, 16 26, 20 36Z%22/%3E%0A%3Cpath d=%22M20 36 C 28 34, 36 28, 37 18 C 30 20, 24 26, 20 36Z%22/%3E%0A%3Cpath d=%22M20 12 L20 30%22/%3E%0A%3C/svg%3E") center / contain no-repeat; }
+.nav-menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 6px; margin: 0; padding: 0; list-style: none; }
+.nav-link { position: relative; display: block; padding: 6px 16px; font: 500 1.05rem/1.2 var(--display); font-style: italic; text-decoration: none; color: var(--muted); transition: color 0.2s; }
+.nav-link::after { content: ''; position: absolute; left: 16px; right: 16px; bottom: 2px; height: 2px; border-radius: 2px; background: var(--gold); transform: scaleX(0); transition: transform 0.3s ease; }
+.nav-link:hover { color: var(--text); }
+.nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
+.nav-link.active { color: var(--gold); }
+
+/* ---------- hero: centred, like a poster ---------- */
+.hero { display: grid; justify-items: center; gap: 16px; padding-block: clamp(28px, 5vw, 52px) 20px; text-align: center; }
+.hero::after { order: 9; width: min(100%, 360px); margin-top: 6px; }
+.hero h1 { max-width: 16ch; font: 700 clamp(2.7rem, 8vw, 5.4rem)/0.98 var(--display); font-style: italic; letter-spacing: -0.015em; text-wrap: balance; }
+.lede { max-width: 32rem; color: var(--muted); font-size: 1.25rem; font-style: italic; }
+
+/* "Next up": an arched window in gold, with every event on the day as a pill */
+.next-up { position: relative; display: block; width: min(100%, 26rem); margin: 6px 0 0; padding: 38px 24px 22px; background: var(--gold); color: var(--on-accent); border-radius: 999px 999px 26px 26px / 150px 150px 26px 26px;
+    box-shadow: 0 0 0 4px var(--bg), 0 0 0 6px var(--gold), 0 18px 40px rgba(0, 0, 0, 0.3); }
+.next-up[hidden] { display: none; }
+.lamp { display: none; }
+.next-toggle, .next-count { display: none; }   /* phones only */
+.next-up .next-label { display: block; font: 600 0.95rem/1 var(--display); font-style: italic; letter-spacing: 0.04em; }
+.next-up .when { display: block; margin-top: 4px; font: 800 clamp(2.1rem, 5vw, 2.9rem)/1.05 var(--display); font-style: italic; white-space: nowrap; }
+.next-events { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.next-events li { padding: 7px 16px; background: rgba(20, 39, 30, 0.9); color: var(--text); border-radius: 999px; }
+.next-events strong { font: 600 1.05rem/1.2 var(--display); }
+
+/* ---------- filters ---------- */
+.filters { max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gutter); }
+.filters::before { margin-bottom: 14px; }
+#filters { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 10px 20px; padding-bottom: 6px; }
+.filter-row { display: grid; gap: 5px; justify-items: center; }
+.filter-label { font: 500 0.95rem/1 var(--display); font-style: italic; color: var(--muted); }
+.chip-set { display: flex; gap: 6px; }
+.chip { position: relative; cursor: pointer; }
+.chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.chip span { display: grid; place-items: center; min-height: 40px; padding: 0 18px; border: 1px solid var(--line); border-radius: 999px; font: 600 1rem/1 var(--display); transition: background-color 0.2s, color 0.2s, border-color 0.2s; }
+.chip:hover span { border-color: var(--gold); background: var(--hover); }
+.chip input:checked + span { background: var(--gold); border-color: var(--gold); color: var(--on-accent); }
+.chip input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
+.chip:has(input[value="foil"]) { --w: var(--foil); }
+.chip:has(input[value="epee"]) { --w: var(--epee); }
+.chip:has(input[value="saber"]) { --w: var(--saber); }
+.chip:has(input[name="weapon"]:not([value="all"])) span { border-color: var(--w); color: var(--w); }
+.chip:has(input[name="weapon"]:not([value="all"])) input:checked + span { background: var(--w); color: var(--on-accent); }
+
+select { min-height: 40px; padding: 0 32px 0 16px; border: 1px solid var(--line); border-radius: 999px; background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23d4af5a' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+    color: var(--text); font: 600 1rem var(--display); appearance: none; cursor: pointer; transition: border-color 0.2s; }
+select option { background: var(--bg); color: var(--text); font: 500 1rem var(--body); }
+select:hover { border-color: var(--gold); }
+select:not(:has(option[value="all"]:checked)) { background-color: var(--gold); border-color: var(--gold); color: var(--on-accent); }
+
+.filters-foot { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 22px; padding-block: 12px 4px; }
+.count { color: var(--muted); font: italic 500 1.05rem var(--display); }
+#reset-filters { min-height: 34px; padding: 0 16px; border: 1px solid var(--gold); border-radius: 999px; background: none; color: var(--gold); font: italic 600 0.95rem var(--display); cursor: pointer; visibility: hidden; transition: background-color 0.2s, color 0.2s; }
+#reset-filters:hover { background: var(--gold); color: var(--on-accent); }
+.is-filtering #reset-filters { visibility: visible; }
+
+.switch { position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 34px; font: italic 500 1.05rem var(--display); cursor: pointer; }
+.switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.switch-track { position: relative; flex: none; width: 44px; height: 24px; border: 1px solid var(--line); border-radius: 999px; transition: background-color 0.2s, border-color 0.2s; }
+.switch-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--muted); transition: transform 0.2s, background-color 0.2s; }
+.switch input:checked + .switch-track { background: var(--gold); border-color: var(--gold); }
+.switch input:checked + .switch-track::after { transform: translateX(20px); background: var(--on-accent); }
+.switch input:focus-visible + .switch-track { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+/* ---------- months: the name in the middle of two wavy rules ---------- */
+.container { max-width: var(--wrap); margin: 0 auto; padding: 8px var(--gutter) 90px; }
+.month-block { padding-top: 34px; }
+.month-header { display: flex; align-items: center; justify-content: center; gap: 18px; margin-bottom: 22px; font: 700 clamp(2rem, 6vw, 3.2rem)/1 var(--display); font-style: italic; text-align: center; }
+.month-header::before, .month-header::after { flex: 1; min-width: 40px; }
+.month-header::before { transform: scaleX(-1); }   /* the two rules mirror each other */
+.month-header .year { color: var(--gold); font-weight: 500; }
+.month-header small { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }   /* the count stays for screen readers */
+.month-events { display: grid; gap: 14px; }
+
+/* ---------- an event: a framed card ---------- */
+.item-container { position: relative; isolation: isolate; --logo-opacity: 0.3;
+    display: grid; grid-template-columns: 5.6rem minmax(0, 1fr) auto; grid-template-areas: "date info weapons" "date info meta"; align-items: center; gap: 2px 22px; padding: 18px 56px 18px 20px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 38px 6px 38px 6px; transition: background-color 0.25s, border-color 0.25s, transform 0.25s ease, box-shadow 0.25s; }
+/* a second, inner hairline: a double frame */
+.item-container::before { content: ''; position: absolute; inset: 5px; z-index: -1; border: 1px solid var(--line); border-radius: 33px 3px 33px 3px; pointer-events: none; transition: border-color 0.25s; }
+.item-container:hover, .item-container:focus-within { background: var(--hover); border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 14px 28px rgba(0, 0, 0, 0.22); }
+.item-container:hover::before, .item-container:focus-within::before { border-color: var(--gold); }
+
+.serial { display: none; }
+/* the date sits in an arched window */
+.event-date { grid-area: date; grid-row: 1 / span 2; align-self: center; display: grid; justify-items: center; gap: 0; padding: 14px 8px 10px; border: 1px solid var(--gold); border-radius: 999px 999px 10px 10px; background: rgba(212, 175, 90, 0.1); text-align: center; }
+body[data-page="archive"] .event-date { background: rgba(154, 116, 36, 0.12); }
+.event-date b { font: 700 2.5rem/1 var(--display); font-variant-numeric: lining-nums; }
+.event-date .weekday { margin-top: 2px; font: italic 600 0.9rem/1.1 var(--display); color: var(--gold); }
+.event-date small { margin-top: 2px; font: italic 500 0.8rem/1.2 var(--display); color: var(--muted); }
+.event-info { grid-area: info; min-width: 0; }
+.title { font: 700 clamp(1.3rem, 2.4vw, 1.7rem)/1.15 var(--display); overflow-wrap: break-word; }
+.info { margin-top: 3px; color: var(--muted); font-size: 1.08rem; font-style: italic; }
+.type-tag { display: inline-block; margin-bottom: 6px; padding: 1px 12px 2px; border: 1px solid var(--gold); border-radius: 999px; color: var(--gold); font: italic 600 0.88rem/1.35 var(--display); }
+
+.status-notice { display: inline-block; margin-bottom: 6px; padding: 1px 12px 2px; border-radius: 999px; background: var(--warn); color: #1d130d; font: italic 700 0.92rem/1.35 var(--display); }
+.is-postponed { --gold: var(--warn); --line: color-mix(in srgb, var(--warn) 55%, transparent); }   /* gold frame and date arch turn terracotta */
+.is-postponed .event-date { background: color-mix(in srgb, var(--warn) 14%, transparent); }
+.is-cancelled { --logo-opacity: 0.12; }
+.is-cancelled .title { text-decoration: line-through; text-decoration-thickness: 2px; }
+.is-cancelled .event-date, .is-cancelled .weapons, .is-cancelled .meta { opacity: 0.5; }
+
+/* F E S: leaf-shaped medallions, filled in the weapon's colour when the event uses it */
+.weapons { grid-area: weapons; justify-self: end; display: flex; gap: 6px; align-self: end; }
+.weapons span { display: grid; place-items: center; width: 2rem; height: 2rem; border: 1px solid var(--glyph-off); border-radius: 60% 6% 60% 6%; color: var(--glyph-off); font: 700 0.95rem/1 var(--display); }
+.weapons .on { color: var(--on-accent); border-color: transparent; }
+.weapons [data-w="foil"].on { background: var(--foil); }
+.weapons [data-w="epee"].on { background: var(--epee); }
+.weapons [data-w="saber"].on { background: var(--saber); }
+.meta { grid-area: meta; justify-self: end; align-self: start; display: grid; text-align: right; color: var(--muted); font: italic 500 0.98rem/1.3 var(--body); }
+
+/* the organiser's logo: a soft ghost behind the right side; it fades in on hover (always faint on touch screens) */
+.img-container { position: absolute; top: 0; right: 0; bottom: 0; width: 44%; z-index: -1; padding: 12px 44px 12px 12px; pointer-events: none; opacity: var(--logo-opacity);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 50%); mask-image: linear-gradient(to right, transparent, #000 50%); }
+.img-container img { width: 100%; height: 100%; object-fit: contain; object-position: right center; }
+@media (hover: hover) {
+    .img-container { opacity: 0; transition: opacity 0.4s ease; }
+    .item-container:hover .img-container, .item-container:has(.action:focus-visible) .img-container { opacity: var(--logo-opacity); }
+}
+
+/* the whole card is the link; a small curl in the corner marks it */
+.action { position: absolute; inset: 0; display: block; font-size: 0; text-decoration: none; border-radius: inherit; }
+.action i { position: absolute; top: 50%; right: 20px; margin-top: -0.55em; font-size: 1.05rem; color: var(--gold); transition: transform 0.25s ease; }
+.item-container:hover .action i { transform: translateX(4px); }
+.action:focus-visible { outline: none; }
+.action:focus-visible::after { content: ''; position: absolute; inset: -4px; border: 2px solid var(--focus); border-radius: inherit; }
+
+.message { padding: 56px 0; text-align: center; font: italic 500 1.5rem var(--display); }
+
+/* Compact view (wide screens only) */
+@media (min-width: 720px) {
+    .is-compact .month-events { gap: 8px; }
+    .is-compact .item-container { grid-template-columns: 4.2rem minmax(0, 1fr) auto; grid-template-areas: "date info weapons"; padding-block: 8px; border-radius: 28px 5px 28px 5px; }
+    .is-compact .item-container::before { border-radius: 24px 2px 24px 2px; }
+    .is-compact .meta, .is-compact .img-container, .is-compact .info, .is-compact .event-date .weekday, .is-compact .event-date small { display: none; }
+    .is-compact .event-date { grid-row: auto; padding-block: 6px 4px; }
+    .is-compact .event-date b { font-size: 1.7rem; }
+    .is-compact .title { font-size: 1.2rem; }
+    .is-compact .weapons { align-self: center; }
+}
+
+/* ---------- About page ---------- */
+.content { max-width: 44rem; margin: clamp(24px, 5vw, 48px) auto 96px; width: calc(100% - 2 * var(--gutter)); padding: clamp(28px, 6vw, 56px) clamp(22px, 5vw, 56px); background: var(--panel); border: 1px solid var(--line); border-radius: 46px 8px 46px 8px; box-shadow: inset 0 0 0 6px var(--panel), inset 0 0 0 7px var(--line); }
+.content h1 { margin-bottom: 24px; text-align: center; font: 700 clamp(2.3rem, 6vw, 3.8rem)/1 var(--display); font-style: italic; text-wrap: balance; }
+.content p { margin-bottom: 1.1em; font-size: 1.22rem; line-height: 1.65; text-wrap: pretty; }
+.button { display: inline-block; margin-top: 8px; padding: 11px 28px; border-radius: 999px; background: var(--gold); color: var(--on-accent); font: italic 700 1.1rem/1 var(--display); text-decoration: none; transition: background-color 0.2s, color 0.2s; }
+.button:hover { background: var(--text); }
+
+/* ---------- wide screens ---------- */
+@media (min-width: 900px) {
+    .month-events { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- phones: the same look in small rows ---------- */
+@media (max-width: 719px) {
+    .nav-container { flex-direction: row; flex-wrap: wrap; justify-content: space-between; gap: 0 8px; padding-top: 4px; }
+    .nav-container::after { flex: 1 1 100%; margin-top: 0; }
+    .brand-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .nav-logo { flex: none; min-height: 44px; }
+    .nav-menu { flex: 1 1 auto; justify-content: flex-end; gap: 0; min-width: 0; }
+    .nav-link { display: grid; place-items: center; min-height: 44px; padding: 0 clamp(6px, 2.4vw, 12px); font-size: clamp(0.88rem, 3.9vw, 1.02rem); white-space: nowrap; }
+    .nav-link::after { left: clamp(6px, 2.4vw, 12px); right: clamp(6px, 2.4vw, 12px); bottom: 6px; }
+
+    .hero { gap: 10px; padding-block: 16px 14px; }
+    .hero h1 { font-size: clamp(2.4rem, 12vw, 3.1rem); }
+    .lede { font-size: 1.05rem; }
+
+    /* "Next up": one slim pill; tap anywhere on it to show every event that day */
+    .next-up { position: relative; display: flex; align-items: center; width: 100%; padding: 0; border-radius: 999px; box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--gold); }
+    .next-up .text { flex: 1; min-width: 0; padding: 7px 4px 7px 22px; text-align: left; }
+    .next-head { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+    .next-up .next-label { flex: none; white-space: nowrap; font-size: 0.85rem; }
+    .next-up .when { flex: none; margin: 0; font-size: 1.25rem; }
+    .next-count { display: block; min-width: 0; overflow: hidden; font: italic 500 0.95rem/1.2 var(--display); text-overflow: ellipsis; white-space: nowrap; }
+    .next-up.is-open { border-radius: 28px; }
+    .next-up.is-open .next-count { display: none; }
+    .next-events { display: none; margin-top: 6px; }
+    .next-up.is-open .next-events { display: grid; }
+    .next-events strong { font-size: 1rem; }
+    .next-toggle { position: static; display: grid; flex: none; place-items: center; width: 48px; align-self: stretch; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+    .next-toggle::before { content: ''; width: 9px; height: 9px; margin-top: -4px; border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(45deg); transition: transform 0.2s; }
+    .next-up.is-open .next-toggle::before { margin-top: 4px; transform: rotate(-135deg); }
+    .next-toggle::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }   /* the whole pill is the button */
+    .next-toggle:focus-visible { outline: none; }
+    .next-toggle:focus-visible::after { outline: 2px solid var(--on-accent); outline-offset: -5px; }
+
+    /* filters: small */
+    .filters::before { margin-bottom: 8px; }
+    #filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-bottom: 2px; }
+    .filter-row:has(.chip-set) { grid-column: 1 / -1; order: -1; }
+    .filter-label { font-size: 0.85rem; }
+    .chip-set { gap: 4px; max-width: 100%; }
+    .chip span { min-height: 36px; padding: 0 clamp(10px, 3.6vw, 18px); font-size: clamp(0.9rem, 4vw, 1rem); }
+    select { width: 100%; min-height: 38px; padding: 0 26px 0 12px; font-size: 0.95rem; background-position: right 10px center; }
+    .filters-foot { padding-block: 8px 0; gap: 6px 14px; }
+    .switch { display: none; }
+
+    .container { padding-bottom: 96px; }
+    .month-block { padding-top: 24px; }
+    .month-header { gap: 10px; margin-bottom: 14px; font-size: clamp(1.8rem, 8.4vw, 2.3rem); }
+    .month-header::before, .month-header::after { min-width: 20px; }
+    .month-events { gap: 10px; }
+    .item-container { grid-template-columns: 3.6rem minmax(0, 1fr) auto; grid-template-areas: "date info info" "date weapons meta"; gap: 3px 10px; padding: 10px 34px 10px 12px; border-radius: 28px 5px 28px 5px; }
+    .item-container::before { inset: 4px; border-radius: 24px 2px 24px 2px; }
+    .item-container:hover, .item-container:focus-within { transform: none; box-shadow: none; }
+    .event-date { padding: 8px 4px 6px; }
+    .event-date b { font-size: 1.85rem; }
+    .event-date .weekday { font-size: 0.78rem; }
+    .event-date small { display: none; }
+    .title { font-size: 1.12rem; }
+    .info { margin-top: 0; font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .type-tag { margin-bottom: 2px; font-size: 0.78rem; }
+    .weapons { justify-self: start; }
+    .weapons span { width: 1.6rem; height: 1.6rem; font-size: 0.82rem; }
+    .meta { font-size: 0.82rem; }
+    .img-container { width: 36%; --logo-opacity: 0.12; }
+    .action i { right: 12px; font-size: 0.95rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+    .item-container:hover, .item-container:focus-within { transform: none; }
+}

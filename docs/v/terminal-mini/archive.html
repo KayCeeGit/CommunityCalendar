@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b0b0c">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <title>Archive – Cian's Calendar</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="../switcher.css">
+</head>
+
+<body data-page="archive">
+<div class="shell">
+    <aside class="rail">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">Cian's Community Calendar</span></a>
+        <nav aria-label="Pages">
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Calendar</a></li>
+                <li><a href="about.html" class="nav-link">What is this?</a></li>
+                <li><a href="archive.html" class="nav-link active">Archive</a></li>
+            </ul>
+        </nav>
+        <div class="filters">
+            <form id="filters" aria-label="Filter events">
+                <div class="filter-row wide">
+                    <span class="filter-label" id="label-weapon">Weapon</span>
+                    <div class="seg" role="radiogroup" aria-labelledby="label-weapon">
+                        <label class="seg-item" title="All weapons"><input type="radio" name="weapon" value="all" checked><span>All</span></label>
+                        <label class="seg-item" title="Foil"><input type="radio" name="weapon" value="foil" aria-label="Foil"><span>F</span></label>
+                        <label class="seg-item" title="Epee"><input type="radio" name="weapon" value="epee" aria-label="Epee"><span>E</span></label>
+                        <label class="seg-item" title="Saber"><input type="radio" name="weapon" value="saber" aria-label="Saber"><span>S</span></label>
+                    </div>
+                </div>
+                <div class="filter-row">
+                    <label class="filter-label" for="year-select">Year</label>
+                    <select id="year-select" name="year">
+                    <option value="all">All</option>
+                    </select>
+                </div>
+                <div class="filter-row">
+                    <label class="filter-label" for="month-select">Month</label>
+                    <select id="month-select" name="month">
+                    <option value="all">All</option>
+                    </select>
+                </div>
+                <div class="filter-row">
+                    <label class="filter-label" for="format-select">Format</label>
+                    <select id="format-select" name="format">
+                    <option value="all">All</option>
+                    <option value="individual">Individual</option>
+                    <option value="team">Team</option>
+                    </select>
+                </div>
+                <div class="filter-row">
+                    <label class="filter-label" for="type-select">Type</label>
+                    <select id="type-select" name="type">
+                    <option value="all">All</option>
+                    <option value="competition">Comp</option>
+                    <option value="camp">Camp</option>
+                    <option value="other">Other</option>
+                    </select>
+                </div>
+            </form>
+            <div class="filters-foot">
+                <p class="count" id="result-count" aria-live="polite"></p>
+                <button type="reset" form="filters" id="reset-filters">Clear filters</button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="stage">
+        <header class="hero">
+        <h1>Archive</h1>
+        <p class="lede">Everything that has already run. Use the year filter to go back further.</p>
+        </header>
+        <main>
+            <!-- Drawn by js/main.js from data/events.json: past events appear in the archive automatically -->
+            <div id="events" aria-live="polite"></div>
+        </main>
+    </div>
+</div>
+    <script type="module" src="js/main.js"></script>
+    <script src="../switcher.js" defer></script>
+</body>
+</html>

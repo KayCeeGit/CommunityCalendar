@@ -85,11 +85,14 @@ async function init() {
     return;
   }
 
-  // The next event that is going ahead (built with textContent, so names can't inject markup).
+  // The next day with an event going ahead, listing every event that day (built with textContent, so names can't inject markup).
   const next = nextUpBox && nextUp(pageEvents, todaySydney());
   if (next) {
     const part = (tag, className, text) => Object.assign(document.createElement(tag), { className, textContent: text });
-    nextUpBox.replaceChildren(part('span', 'label', 'Next up'), part('strong', 'name', next.event.name), part('span', 'when', next.when));
+    // one dark tile per event, so two events on the same day are easy to tell apart
+    const names = part('ul', 'next-events', '');
+    names.append(...next.events.map((e) => { const li = document.createElement('li'); li.append(part('strong', 'name', e.name)); return li; }));
+    nextUpBox.replaceChildren(part('span', 'label', 'Next up'), part('span', 'when', next.when), names);
     nextUpBox.hidden = false;
   }
 
