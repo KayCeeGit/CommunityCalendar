@@ -5,7 +5,7 @@
   "description": "One entry in data/events.json.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "name", "start_date", "end_date", "weapons", "format", "gender", "level", "venue", "organiser", "url"],
+  "required": ["id", "name", "start_date", "end_date", "weapons", "format", "gender", "level",  "organiser"],
   "properties": {
     "id": {
       "description": "Permanent label like evt-0042. Assigned when an event is approved; never reused or changed.",

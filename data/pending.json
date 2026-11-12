@@ -1,0 +1,197 @@
+[
+  {
+    "pid": "q-0001",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-3/",
+    "source_note": "AFF events feed",
+    "added": "2026-11-10",
+    "event": {
+      "name": "2026/27 Australian Fencing Circuit #3",
+      "start_date": "2026-11-20",
+      "end_date": "2026-11-22",
+      "weapons": [
+        "foil",
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual",
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open",
+        "veteran"
+      ],
+      "venue": "The Gold Netball Centre WA, Jolimont",
+      "organiser": "aff",
+      "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-3/"
+    },
+    "event_id": "evt-0015"
+  },
+  {
+    "pid": "q-0002",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-circuit-ayc-2-dates-and-location-to-be-determined/",
+    "source_note": "AFF events feed",
+    "added": "2026-11-10",
+    "event": {
+      "name": "2026/27 Australian Youth Circuit (AYC) #2",
+      "start_date": "2026-12-12",
+      "end_date": "2026-12-13",
+      "weapons": [
+        "foil",
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual",
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "youth"
+      ],
+      "venue": "The Lights Sports and Community Centre – Adelaide, Lightsview",
+      "organiser": "aff",
+      "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-circuit-ayc-2-dates-and-location-to-be-determined/"
+    },
+    "event_id": "evt-0016"
+  },
+  {
+    "pid": "q-0003",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://nswfencing.org.au/public/schedule/events/88148-sydney-intervarsity-fencing-league-round-6",
+    "source_note": "NSWFA events calendar. AI note: A numbered round of a league, so a competition; the description mentions novice sabre and epee events, which may not cover all of the round's categories.",
+    "added": "2026-11-10",
+    "event": {
+      "name": "Sydney Intervarsity Fencing League - Round 6",
+      "start_date": "2026-12-13",
+      "end_date": "2026-12-13",
+      "weapons": [
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual",
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open"
+      ],
+      "venue": "Sydney Academy of Fencing, Alexandria",
+      "organiser": "sifl",
+      "url": "https://nswfencing.org.au/public/schedule/events/88148-sydney-intervarsity-fencing-league-round-6"
+    },
+    "event_id": "evt-0018"
+  },
+  {
+    "pid": "q-0004",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://nswfencing.org.au/public/schedule/events/90805-pre-afc3-open-all-weapons",
+    "source_note": "NSWFA events calendar. AI note: A state-run competition offering state points, with weapon categories and a schedule. The description's draft times (Foil 11:00 AM, Sabre 3:00 PM) differ from the schedule (Foil 10:30 am), and the page does not say whether events are individual or team.",
+    "added": "2026-11-10",
+    "event": {
+      "name": "PRE AFC3 - Open - All Weapons",
+      "start_date": "2026-11-15",
+      "end_date": "2026-11-15",
+      "weapons": [
+        "foil",
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual",
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open"
+      ],
+      "venue": "Sydney Academy of Fencing, Alexandria",
+      "organiser": "nswfa",
+      "url": "https://nswfencing.org.au/public/schedule/events/90805-pre-afc3-open-all-weapons"
+    },
+    "event_id": "evt-0017"
+  },
+  {
+    "pid": "q-0005",
+    "status": "approved",
+    "source": "manual",
+    "source_url": null,
+    "source_note": null,
+    "added": "2026-11-10",
+    "event": {
+      "name": "SIFL 6",
+      "start_date": "2026-12-13",
+      "end_date": "2026-12-13",
+      "weapons": [
+        "foil",
+        "saber"
+      ],
+      "format": [
+        "individual",
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open"
+      ],
+      "organiser": "sifl"
+    },
+    "event_id": "evt-0019"
+  },
+  {
+    "pid": "q-0006",
+    "status": "approved",
+    "source": "manual",
+    "source_url": null,
+    "source_note": null,
+    "added": "2026-11-10",
+    "event": {
+      "name": "2026 Northen Novice/U18/U14 comp",
+      "start_date": "2026-11-15",
+      "end_date": "2026-11-15",
+      "weapons": [
+        "foil",
+        "epee"
+      ],
+      "format": [
+        "individual"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "novice",
+        "u14",
+        "u18"
+      ],
+      "venue": "Singleton PCYC",
+      "organiser": "nsfa",
+      "url": "https://www.facebook.com/events/1059707093466028/"
+    },
+    "event_id": "evt-0020"
+  }
+]

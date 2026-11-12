@@ -1,21 +1,22 @@
 #!/usr/bin/env node
 /**
- * Checks data/events.json and data/organisers.json before anything goes live.
+ * Checks the data files before anything goes live:
+ *   docs/data/events.json, docs/data/organisers.json, data/pending.json (the queue)
  *
- *    npm run validate
+ *   node scripts/validate.mjs [project-dir]      (also: npm run validate)
  *
  * ERRORS stop the check (exit code 1, so GitHub shows a red cross).
  * WARNINGS are printed but don't fail it (exit code 0).
  *
- * Two kinds of checking happen here:
- *   1. Shape: Ajv (a standard JSON Schema library) checks every event against
- *      schema/event.schema.json: required fields, allowed values, date format.
- *   2. Meaning: things a schema can't express, such as duplicate ids, an end
- *      date before the start date, or a logo file that doesn't exist.
+ * The rules themselves live in scripts/lib/checks.mjs, shared with the admin
+ * tool, so a bad event is judged the same way everywhere. This file just runs
+ * them over every entry and reports what it finds.
  */
 import { readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import Ajv from 'ajv';
+import { SOURCES } from './lib/store.mjs';
+import { compileValidators, eventProblems, findDuplicates, sanityWarnings } from './lib/checks.mjs';
+import { todaySydney } from '../docs/js/logic.js';
 
 const root = resolve(process.argv[2] ?? '.');
 const errors = [];
@@ -23,10 +24,10 @@ const warnings = [];
 const error = (where, msg) => errors.push(`${where}: ${msg}`);
 const warn = (where, msg) => warnings.push(`${where}: ${msg}`);
 
-function readJson(relPath) {
+function readJson(relPath, { optional = false } = {}) {
   const file = join(root, relPath);
   if (!existsSync(file)) {
-    error(relPath, 'file not found');
+    if (!optional) error(relPath, 'file not found');
     return null;
   }
   try {
@@ -37,44 +38,12 @@ function readJson(relPath) {
   }
 }
 
-/** True only for a date that really exists ("2026-02-31" is rejected). */
-function isRealDate(s) {
-  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
-  const [y, m, d] = s.split('-').map(Number);
-  const dt = new Date(Date.UTC(y, m - 1, d));
-  return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
-}
-
-/** Turns one Ajv error into a plain-English sentence. */
-function describe(err) {
-  const field = err.instancePath ? err.instancePath.slice(1).replace(/\//g, '.') : '';
-  switch (err.keyword) {
-    case 'required': return `missing required field "${err.params.missingProperty}"`;
-    case 'additionalProperties': return `unknown field "${err.params.additionalProperty}" (not in the schema)`;
-    case 'enum': return `${field} must be one of: ${err.params.allowedValues.join(', ')}`;
-    case 'pattern': {
-      const hints = {
-        id: 'must look like evt-0042',
-        start_date: 'must be written YYYY-MM-DD, for example 2026-12-12',
-        end_date: 'must be written YYYY-MM-DD, for example 2026-12-12',
-        url: 'must be a web link starting with http:// or https://',
-      };
-      return `${field} ${hints[field] ?? 'has the wrong format'}`;
-    }
-    case 'minItems': return `${field} must not be empty`;
-    case 'minLength': return `${field} must not be empty`;
-    case 'uniqueItems': return `${field} contains a repeated value`;
-    case 'type': return `${field} must be a ${err.params.type}`;
-    default: return `${field} ${err.message}`;
-  }
-}
-
-// ---------- organisers.json (maintained by hand, so checked in code, no schema) ----------
-const organisers = readJson('data/organisers.json');
+// ---------- organisers.json (maintained by hand, so checked here, no schema) ----------
+const organisers = readJson('docs/data/organisers.json');
 const organiserIds = new Set();
 if (organisers !== null) {
   if (!Array.isArray(organisers)) {
-    error('data/organisers.json', 'must be a list ([ ... ])');
+    error('docs/data/organisers.json', 'must be a list ([ ... ])');
   } else {
     const aliasOwner = new Map();
     organisers.forEach((o, i) => {
@@ -85,7 +54,7 @@ if (organisers !== null) {
       else organiserIds.add(o.id);
       if (typeof o.name !== 'string' || !o.name.trim()) error(where, 'missing name');
       if (typeof o.image !== 'string' || !/^img\/[\w\-. ]+$/.test(o.image)) error(where, 'image must be a file in img/ (e.g. "img/aff.jpg")');
-      else if (!existsSync(join(root, o.image))) error(where, `logo file ${o.image} does not exist`);
+      else if (!existsSync(join(root, 'docs', o.image))) error(where, `logo file ${o.image} does not exist`);
       if (!Array.isArray(o.aliases)) error(where, 'aliases must be a list (can be empty)');
       else {
         for (const a of [o.name, ...o.aliases].filter((x) => typeof x === 'string')) {
@@ -99,54 +68,61 @@ if (organisers !== null) {
   }
 }
 
-// ---------- events.json ----------
-const events = readJson('data/events.json');
 const schema = readJson('schema/event.schema.json');
+const validators = schema ? compileValidators(schema) : null;
 
-if (events !== null && schema !== null) {
+// ---------- events.json ----------
+const events = readJson('docs/data/events.json');
+if (events !== null && validators) {
   if (!Array.isArray(events)) {
-    error('data/events.json', 'must be a list ([ ... ])');
+    error('docs/data/events.json', 'must be a list ([ ... ])');
   } else {
-    const validateShape = new Ajv({ allErrors: true, strict: true }).compile(schema);
     const seenIds = new Map();
+    const validSoFar = []; // events that passed, for the duplicate check
 
     events.forEach((e, i) => {
       const label = `events[${i}]${e?.id ? ` ${e.id}` : ''}${e?.name ? ` "${e.name}"` : ''}`;
+      const problems = eventProblems(e, validators.full);
+      problems.forEach((p) => error(label, p));
 
-      // 1. Shape
-      if (!validateShape(e)) {
-        for (const err of validateShape.errors) error(label, describe(err));
-        return; // the meaning checks below assume the basic shape is right
+      if (typeof e?.id === 'string') {
+        if (seenIds.has(e.id)) error(label, `duplicate id (also used by events[${seenIds.get(e.id)}])`);
+        else seenIds.set(e.id, i);
       }
-
-      // 2. Meaning
-      if (!isRealDate(e.start_date)) error(label, `start_date "${e.start_date}" is not a real date`);
-      if (!isRealDate(e.end_date)) error(label, `end_date "${e.end_date}" is not a real date`);
-      if (isRealDate(e.start_date) && isRealDate(e.end_date) && e.end_date < e.start_date) {
-        error(label, `end_date ${e.end_date} is before start_date ${e.start_date}`);
-      }
-      if (seenIds.has(e.id)) error(label, `duplicate id (also used by events[${seenIds.get(e.id)}])`);
-      else seenIds.set(e.id, i);
-
-      if (organisers !== null && !organiserIds.has(e.organiser)) {
+      if (typeof e?.organiser === 'string' && organisers !== null && !organiserIds.has(e.organiser)) {
         warn(label, `organiser "${e.organiser}" is not in organisers.json, so it will show the placeholder image. Add the organiser and its logo`);
       }
-    });
-
-    // Possible duplicates: same start date and same venue
-    const byDateVenue = new Map();
-    events.forEach((e, i) => {
-      if (!e || typeof e.venue !== 'string') return;
-      const key = `${e.start_date}|${e.venue.trim().toLowerCase()}`;
-      if (!byDateVenue.has(key)) byDateVenue.set(key, []);
-      byDateVenue.get(key).push(e.id ?? `events[${i}]`);
-    });
-    for (const [key, ids] of byDateVenue) {
-      if (ids.length > 1) {
-        const [date, venue] = key.split('|');
-        warn(ids.join(' + '), `possible duplicates (same date ${date} and venue "${venue}"). Fine if they are separate categories`);
+      if (problems.length === 0) {
+        for (const m of findDuplicates(e, validSoFar, Array.isArray(organisers) ? organisers : [])) {
+          warn(`${m.ref} + ${e.id}`, `possible duplicates (${m.reason}). Fine if they are separate categories`);
+        }
+        for (const w of sanityWarnings(e, todaySydney())) warn(label, w);
+        validSoFar.push({ ref: e.id, event: e });
       }
-    }
+    });
+  }
+}
+
+// ---------- pending.json (the queue; optional) ----------
+const pending = readJson('data/pending.json', { optional: true });
+let queued = 0;
+if (pending !== null && validators) {
+  if (!Array.isArray(pending)) {
+    error('data/pending.json', 'must be a list ([ ... ])');
+  } else {
+    const seenPids = new Set();
+    pending.forEach((p, i) => {
+      const label = `pending[${i}]${p?.pid ? ` ${p.pid}` : ''}`;
+      if (typeof p?.pid !== 'string' || !/^q-\d+$/.test(p.pid)) error(label, 'pid must look like q-0007');
+      else if (seenPids.has(p.pid)) error(label, 'duplicate pid');
+      else seenPids.add(p.pid);
+      if (!['pending', 'approved', 'rejected'].includes(p?.status)) error(label, 'status must be pending, approved or rejected');
+      if (!SOURCES.includes(p?.source)) error(label, `source must be one of: ${SOURCES.join(', ')}`);
+      if (p?.status === 'pending') {
+        queued += 1; // only live queue entries are checked; old ones are history. Drafts may lack categories: the admin flags those
+        eventProblems(p.event, validators.draft).forEach((m) => error(`${label} "${p.event?.name ?? ''}"`, m));
+      }
+    });
   }
 }
 
@@ -158,4 +134,4 @@ if (errors.length) {
   console.log(`\nFailed: ${errors.length} error${errors.length === 1 ? '' : 's'}, ${warnings.length} warning${warnings.length === 1 ? '' : 's'}.`);
   process.exit(1);
 }
-console.log(`${warnings.length ? '\n' : ''}OK: ${count} events and ${organiserIds.size} organisers are valid${warnings.length ? ` (${warnings.length} warning${warnings.length === 1 ? '' : 's'})` : ''}.`);
+console.log(`${warnings.length ? '\n' : ''}OK: ${count} events, ${organiserIds.size} organisers and ${queued} queued event${queued === 1 ? '' : 's'} are valid${warnings.length ? ` (${warnings.length} warning${warnings.length === 1 ? '' : 's'})` : ''}.`);

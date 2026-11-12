@@ -53,9 +53,9 @@ export function cardHtml(e, organiser) {
       <p class="info-format">${labels(e.format, FORMATS)}</p>
       <p class="info-gender">${labels(e.gender, GENDERS)}</p>
       <p class="info-date"><i class="far fa-calendar-alt"></i>${esc(formatDateRange(e))}</p>
-      <div class="additional-info">
+       ${e.venue ? `<div class="additional-info">
         <p class="info"><i class="fas fa-map-marker-alt"></i> ${esc(e.venue)}</p>
-      </div>
+      </div>` : ''}
     </div>
   </div>
   ${link ? `<a href="${esc(link)}" class="action">Go To Page</a>` : ''}

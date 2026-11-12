@@ -323,31 +323,6 @@
   },
   {
     "id": "evt-0015",
-    "name": "Singleton PCYC Novice/U18/U14",
-    "start_date": "2026-11-15",
-    "end_date": "2026-11-15",
-    "weapons": [
-      "epee",
-      "foil"
-    ],
-    "format": [
-      "individual"
-    ],
-    "gender": [
-      "mens",
-      "womens"
-    ],
-    "level": [
-      "novice",
-      "u18",
-      "u14"
-    ],
-    "venue": "Singleton PCYC",
-    "organiser": "nswfa",
-    "url": "https://www.facebook.com/events/1059707093466028/"
-  },
-  {
-    "id": "evt-0016",
     "name": "2026/27 Australian Fencing Circuit #3",
     "start_date": "2026-11-20",
     "end_date": "2026-11-22",
@@ -365,22 +340,50 @@
       "womens"
     ],
     "level": [
-      "open"
+      "open",
+      "veteran"
     ],
-    "venue": "Western Australia",
+    "venue": "The Gold Netball Centre WA, Jolimont",
     "organiser": "aff",
     "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-3/"
   },
   {
-    "id": "evt-0017",
-    "name": "SIFL #6",
+    "id": "evt-0016",
+    "name": "2026/27 Australian Youth Circuit (AYC) #2",
     "start_date": "2026-12-12",
-    "end_date": "2026-12-12",
+    "end_date": "2026-12-13",
     "weapons": [
+      "foil",
       "epee",
       "saber"
     ],
     "format": [
+      "individual",
+      "team"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "youth"
+    ],
+    "venue": "The Lights Sports and Community Centre – Adelaide, Lightsview",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-circuit-ayc-2-dates-and-location-to-be-determined/"
+  },
+  {
+    "id": "evt-0017",
+    "name": "PRE AFC3 - Open - All Weapons",
+    "start_date": "2026-11-15",
+    "end_date": "2026-11-15",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual",
       "team"
     ],
     "gender": [
@@ -390,8 +393,57 @@
     "level": [
       "open"
     ],
-    "venue": "Sydney Academy Of Fencing",
+    "venue": "Sydney Academy of Fencing, Alexandria",
+    "organiser": "nswfa",
+    "url": "https://nswfencing.org.au/public/schedule/events/90805-pre-afc3-open-all-weapons"
+  },
+  {
+    "id": "evt-0018",
+    "name": "Sydney Intervarsity Fencing League - Round 6",
+    "start_date": "2026-12-13",
+    "end_date": "2026-12-13",
+    "weapons": [
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual",
+      "team"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "open"
+    ],
+    "venue": "Sydney Academy of Fencing, Alexandria",
     "organiser": "sifl",
-    "url": "https://www.instagram.com/sydneyintervarsityfencing/"
+    "url": "https://nswfencing.org.au/public/schedule/events/88148-sydney-intervarsity-fencing-league-round-6"
+  },
+  {
+    "id": "evt-0020",
+    "name": "2026 Northen Novice/U18/U14 comp",
+    "start_date": "2026-11-15",
+    "end_date": "2026-11-15",
+    "weapons": [
+      "foil",
+      "epee"
+    ],
+    "format": [
+      "individual"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "novice",
+      "u14",
+      "u18"
+    ],
+    "venue": "Singleton PCYC",
+    "organiser": "nsfa",
+    "url": "https://www.facebook.com/events/1059707093466028/"
   }
 ]

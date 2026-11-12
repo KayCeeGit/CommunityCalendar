@@ -15,7 +15,7 @@ export function todaySydney(now = new Date()) {
 }
 
 /** True only for a date that really exists ("2026-02-31" is rejected). */
-function isRealDate(s) {
+export function isRealDate(s) {
   if (typeof s !== 'string' || !ISO_DATE.test(s)) return false;
   const [y, m, d] = s.split('-').map(Number);
   const dt = new Date(Date.UTC(y, m - 1, d));
@@ -31,7 +31,6 @@ export function isValidEvent(e) {
   return Boolean(
     e && typeof e === 'object' &&
     typeof e.name === 'string' && e.name.trim() &&
-    typeof e.venue === 'string' &&
     isRealDate(e.start_date) && isRealDate(e.end_date) && e.end_date >= e.start_date &&
     Array.isArray(e.weapons) && Array.isArray(e.format) && Array.isArray(e.gender)
   );

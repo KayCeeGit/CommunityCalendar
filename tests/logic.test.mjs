@@ -4,8 +4,8 @@ import assert from 'node:assert/strict';
 import {
   todaySydney, isValidEvent, splitEvents, sortEvents, filterEvents, groupByMonth,
   yearsIn, monthLabel, formatDateRange,
-} from '../js/logic.js';
-import { cardHtml } from '../js/render.js';
+} from '../docs/js/logic.js';
+import { cardHtml } from '../docs/js/render.js';
 
 const ev = (over = {}) => ({
   id: 'evt-0001', name: 'Test', start_date: '2026-12-12', end_date: '2026-12-12',
@@ -87,7 +87,6 @@ test('bad events are rejected', () => {
   assert.ok(!isValidEvent(ev({ end_date: '2026-12-01' })));
   assert.ok(!isValidEvent(ev({ weapons: 'epee' })));
   assert.ok(!isValidEvent(ev({ gender: undefined })));
-  assert.ok(!isValidEvent(ev({ venue: undefined })));
   assert.ok(!isValidEvent(ev({ name: '' })));
   assert.ok(!isValidEvent(null));
 });
