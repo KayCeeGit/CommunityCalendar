@@ -11,7 +11,7 @@
  *    (nswfa-prompt.mjs, nswfa-ai.mjs) and keep only the answers that pass the checks.
  * 3. The event goes into the approval queue (data/pending.json). Anything the AI couldn't
  *    establish is left blank for you to fill in, and the queue won't let a blank event be approved.
- *    Events that aren't competitions (camps, open days...) are listed in the output, not queued.
+ *    Events the AI says aren't worth listing (a recap, something unrelated) are listed in the output, not queued.
  * Needs the ANTHROPIC_API_KEY environment variable (see scrapers/lib/llm.mjs).
  */
 import { readFileSync } from 'node:fs';
@@ -66,7 +66,7 @@ export function mapNswfaEvent(item, organisers, today) {
  * Returns one result per item, saying what happened:
  *   queued           added to the queue (notes = warnings and anything the checks threw away)
  *   known            we already hold it: not touched, its page not even fetched
- *   set-aside        the AI says it isn't a competition, camp or training session (a meeting, a social...): not queued
+ *   set-aside        the AI says it isn't an event to list (a recap, something unrelated): not queued
  *   needs-person     the page or the AI's answer couldn't be used
  *   skipped          the calendar item itself was unusable
  *   past             already finished

@@ -18,7 +18,7 @@ export function buildPrompt(pageText, choices) {
 The event's name, dates and organiser are already known, so ignore them. Report only these:
 
 {
-  "type": "competition", "camp", "training" or "other",
+  "type": "competition", "other" or "none",
   "reason": "one short sentence explaining the decision above",
   "status": "",
   "weapons": [],

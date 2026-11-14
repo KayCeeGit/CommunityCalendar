@@ -130,7 +130,7 @@ const answers = (prompt) => {
     : body.includes('Intervarsity')
       ? { type: 'competition', reason: 'League round.', weapons: ['epee', 'saber'], format: ['individual', 'team'], gender: [], level: ['novice'], venue: '',
           evidence: { weapons: 'novice sabre and epee competitions', format: 'individual, team', level: 'novice' } }
-      : { type: 'other', reason: 'A camp, not a competition.' };
+      : { type: 'none', reason: 'A camp, not a competition.' };
   return Promise.resolve({ text: JSON.stringify(json), usage: {} });
 };
 const orgs = [{ id: 'nswfa', name: 'NSWFA', aliases: ['NSWFA'] }, { id: 'sifl', name: 'Sydney Intervarsity Fencing League', aliases: ['SIFL'] }];

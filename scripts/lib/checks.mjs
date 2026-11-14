@@ -103,6 +103,10 @@ const datesOverlap = (a, b) => a.start_date <= b.end_date && b.start_date <= a.e
 const NEARBY_DAYS = 60; // "same event, date changed" window
 const nearbyDate = (a, b) => Math.abs(dayNumber(a.start_date) - dayNumber(b.start_date)) <= NEARBY_DAYS;
 
+const bothOther = (a, b) => a.type === 'other' && b.type === 'other';
+// "Sydney Uni" and "Sydney Uni, Camperdown" count as the same venue; a missing venue matches nothing.
+const similarVenue = (a, b) => sameText(a, b) || similarNames(a, b);
+
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
@@ -208,6 +212,9 @@ export function isKnown(event, state) {
  *   3. same start date and a similar name
  *   4. same organiser, date ranges that overlap, and each of weapons, format, gender and level
  *      shares at least one choice
+ *   4b. two "other" events (camps and the like) on days that overlap, from the same organiser or at the same (or a similar)
+ *      venue: probably one event listed twice. Their weapons and levels are optional and often differ between listings,
+ *      and the venue is often missing, so none of those is needed (by the club and by the association, say), so it is checked in case it is the same one
  *   5. same organiser, a similar name, overlapping categories and a start date within 60 days
  *      (a postponed event keeps its weapons; a series like "Club Champs" changes them each round)
  * Matches are hints for a human, not decisions.
@@ -223,6 +230,8 @@ export function findDuplicates(event, pool, organisers = []) {
     if (link && linkUses === 1 && specificLink(other.url) === link) reason = 'same link';
     else if (other.start_date === event.start_date && sameText(other.venue, event.venue)) reason = 'same date and venue';
     else if (other.start_date === event.start_date && similar(other)) reason = 'similar name on the same date';
+    else if (bothOther(other, event) && datesOverlap(other, event) && other.organiser === event.organiser) reason = 'same organiser, other events on overlapping days';
+    else if (bothOther(other, event) && datesOverlap(other, event) && similarVenue(other.venue, event.venue)) reason = 'other events at the same venue on overlapping days';
     else if (other.organiser === event.organiser && datesOverlap(other, event) && overlappingCategories(other, event)) reason = 'same organiser, overlapping dates and categories';
     else if (other.organiser === event.organiser && similar(other) && nearbyDate(other, event) && overlappingCategories(other, event)) reason = 'similar name close by in time (was the date changed?)';
     if (reason) found.push({ ref, name: other.name, reason });
@@ -233,14 +242,14 @@ export function findDuplicates(event, pool, organisers = []) {
 // ---------- sanity warnings (not duplicates, just "does this look like a typo?") ----------
 
 const MAX_EVENT_DAYS = 5;  // a competition
-const MAX_CAMP_DAYS = 14; // a camp or training block
+const MAX_OTHER_DAYS = 14; // a camp or other non-competition event
 const MAX_DAYS_AHEAD = 548; // about 18 months
 
 /** Plain-sentence warnings for an event that is valid but looks odd. `today` is YYYY-MM-DD. */
 export function sanityWarnings(e, today) {
   const warnings = [];
   const days = dayNumber(e.end_date) - dayNumber(e.start_date) + 1;
-  if (days > (e.type ? MAX_CAMP_DAYS : MAX_EVENT_DAYS)) warnings.push(`Lasts ${days} days. Check the end date`);
+  if (days > (e.type ? MAX_OTHER_DAYS : MAX_EVENT_DAYS)) warnings.push(`Lasts ${days} days. Check the end date`);
   if (dayNumber(e.start_date) - dayNumber(today) > MAX_DAYS_AHEAD) warnings.push('Starts more than 18 months from now. Check the year');
   return warnings;
 }

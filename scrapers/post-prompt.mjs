@@ -16,7 +16,7 @@ export function buildPostPrompt({ text = '', organiserName, today, knownVenues =
 Today's date is ${today} (YYYY-MM-DD). The organiser is ${organiserName}.
 
 {
-  "type": "competition", "camp", "training" or "other",
+  "type": "competition", "other" or "none",
   "reason": "one short sentence explaining the decision above",
   "status": "",
   "name": "",
@@ -55,8 +55,8 @@ start_date and end_date
   If every event is postponed or cancelled, or the date is unclear or contradicts itself, leave both dates empty and explain in "reason".
   If the post covers several separate events (a series of rounds, say), report only the one with the nearest upcoming date (the most recent if none is upcoming) and mention the others in "reason".
   If the post says the event is postponed or cancelled but still shows its original date, report that date and set "status".
-  If the post is a recap of an event that has already happened (results, thank-yous, photos), answer type "other" and say so in "reason".
-  If the post is not about a fencing event at all, answer type "other".
+  If the post is a recap of an event that has already happened (results, thank-yous, photos), answer type "none" and say so in "reason".
+  If the post is not about a fencing event at all, answer type "none".
 
 Rules
   1. Report only what the post states or clearly shows. If it does not say, leave that field empty ([] or ""). An empty field is correct; a guess is not. A person fills the gaps in later.

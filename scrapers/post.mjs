@@ -58,7 +58,7 @@ export async function readPost(state, input, ask = askModel, today = todaySydney
  */
 export function queuePost(state, input, { answer, source }) {
   const reason = String(answer.reason ?? '').trim().slice(0, 300);
-  if (setAside(answer)) return { message: `The AI says this isn't a competition, camp or training session: ${reason}` };
+  if (setAside(answer)) return { message: `The AI says this isn't an event to list: ${reason}` };
 
   const { fields, notes } = checkAnswer(answer, source, state.validators.choices);
   const text = (v) => (typeof v === 'string' ? v.trim() : '');

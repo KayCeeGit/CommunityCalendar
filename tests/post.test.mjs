@@ -104,8 +104,8 @@ test('quotes that are not in the post stop a category being kept; a date is kept
 
 test('a post that is not a competition, or is already known, queues nothing', async () => {
   const state = freshState();
-  const camp = { type: 'other', reason: 'A training camp.' };
-  assert.match(queuePost(state, input(), await readPost(state, input(), asking(camp), TODAY)).message, /isn't a competition, camp or training session: A training camp\./);
+  const camp = { type: 'none', reason: 'A recap, not an event.' };
+  assert.match(queuePost(state, input(), await readPost(state, input(), asking(camp), TODAY)).message, /isn't an event to list: A recap, not an event\./);
 
   queuePost(state, input(), await readPost(state, input(), asking(round6), TODAY));
   const again = queuePost(state, input(), await readPost(state, input(), asking(round6), TODAY));

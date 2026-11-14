@@ -448,8 +448,8 @@
   },
   {
     "id": "evt-0023",
-    "name": "Youth Summer Epee Camp",
-    "type": "camp",
+    "name": "YOUTH SUMMER EPEE CAMP with Valerio Cuomo",
+    "type": "other",
     "start_date": "2026-12-14",
     "end_date": "2026-12-16",
     "weapons": [
@@ -468,7 +468,7 @@
   {
     "id": "evt-0024",
     "name": "2027 Sydney International Fencing Camp",
-    "type": "camp",
+    "type": "other",
     "start_date": "2027-01-03",
     "end_date": "2027-01-11",
     "weapons": [
@@ -481,5 +481,138 @@
     "venue": "Sydney Uni Sport, Darlington",
     "organiser": "usyd",
     "url": "https://nswfencing.org.au/public/schedule/events/91015-join-us-for-the-2027-sydney-international-fencing-camp"
+  },
+  {
+    "id": "evt-0025",
+    "name": "2026/27 Australian Junior and Cadet Championships",
+    "start_date": "2027-02-27",
+    "end_date": "2027-03-03",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "cadet",
+      "junior"
+    ],
+    "venue": "Sydney Olympic Park Sports Halls, Sydney Olympic Park",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-junior-and-cadets/"
+  },
+  {
+    "id": "evt-0026",
+    "name": "2026/27 Australian Youth Circuit #3",
+    "start_date": "2027-04-10",
+    "end_date": "2027-04-11",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "youth"
+    ],
+    "venue": "Nissan Arena, Brisbane, Nathan",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-circuit-3/"
+  },
+  {
+    "id": "evt-0027",
+    "name": "2026/27 Robyn Chaplin (AFC4)",
+    "start_date": "2027-04-23",
+    "end_date": "2027-04-25",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "open"
+    ],
+    "venue": "Galuwa Recreation Centre, Lane Cove",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-robyn-chaplin-afc4/"
+  },
+  {
+    "id": "evt-0028",
+    "name": "2026/27 Australian Senior and Veteran Championships",
+    "start_date": "2027-05-13",
+    "end_date": "2027-05-17",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "open",
+      "veteran"
+    ],
+    "venue": "Victorian State Fencing Centre, North Melbourne",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-senior-and-veteran-championships/"
+  },
+  {
+    "id": "evt-0029",
+    "name": "2026/27 Australian Youth and Under13 Championships",
+    "start_date": "2027-07-02",
+    "end_date": "2027-07-06",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual",
+      "team"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "open"
+    ],
+    "venue": "Victorian State Fencing Centre, North Melbourne",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-and-under13-championships/"
+  },
+  {
+    "id": "evt-0030",
+    "name": "Wheelchair Fencing Training Camp - December 26",
+    "type": "other",
+    "start_date": "2026-12-07",
+    "end_date": "2026-12-10",
+    "venue": "Sydney Academy of Fencing, Alexandria",
+    "organiser": "saf",
+    "url": "https://nswfencing.org.au/public/schedule/events/91681-wheelchair-fencing-training-camp-december-26"
   }
 ]

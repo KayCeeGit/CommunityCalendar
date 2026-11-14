@@ -64,8 +64,8 @@ test('the long-event warning allows a nine-day camp but not a nine-day competiti
   assert.equal(sanityWarnings(lasting(1), '2027-01-01').length, 0);
   assert.equal(sanityWarnings(lasting(5), '2027-01-01').length, 0);
   assert.match(sanityWarnings(lasting(9), '2027-01-01')[0], /Lasts 9 days/); // a competition: probably a typo
-  assert.equal(sanityWarnings(lasting(9, { type: 'camp' }), '2027-01-01').length, 0);
-  assert.match(sanityWarnings(lasting(20, { type: 'training' }), '2027-01-01')[0], /Lasts 20 days/); // even camps have a limit
+  assert.equal(sanityWarnings(lasting(9, { type: 'other' }), '2027-01-01').length, 0);
+  assert.match(sanityWarnings(lasting(20, { type: 'other' }), '2027-01-01')[0], /Lasts 20 days/); // even camps have a limit
 });
 
 // ---------- queue and ids ----------
@@ -94,7 +94,7 @@ test('names with accents, emoji or only punctuation are accepted as text and com
 });
 
 test('a camp and a competition on the same days for one organiser are not called duplicates', () => {
-  const { weapons, format, gender, level, ...camp } = raw({ name: 'Squad Camp', type: 'camp' });
+  const { weapons, format, gender, level, ...camp } = raw({ name: 'Squad Camp', type: 'other' });
   assert.deepEqual(findDuplicates(raw({ name: 'Open Cup' }), [{ ref: 'evt-0001', event: camp }]), []); // nothing to compare categories on
   assert.equal(findDuplicates(raw({ name: 'Open Cup', venue: 'Hall' }), [{ ref: 'evt-0001', event: { ...camp, venue: 'Hall' } }]).length, 1); // ...but the same venue on the same day still is
 });
@@ -116,7 +116,7 @@ test('cards never let data change the markup: odd links, odd logos, odd classes'
 });
 
 test('a card for an event with missing optional parts still draws', () => {
-  const html = cardHtml({ id: 'evt-0001', name: 'Bare Camp', type: 'camp', start_date: '2027-01-01', end_date: '2027-01-01', organiser: 'zzz' });
+  const html = cardHtml({ id: 'evt-0001', name: 'Bare Camp', type: 'other', start_date: '2027-01-01', end_date: '2027-01-01', organiser: 'zzz' });
   assert.match(html, /Bare Camp/);
   assert.ok(!html.includes('undefined'));
   assert.ok(!/<p class="info-(wep|format|gender)"><\/p>/.test(html)); // no empty lines where a camp has no weapons or gender

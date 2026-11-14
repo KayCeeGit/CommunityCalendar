@@ -25,6 +25,7 @@ const LEVELS = [
   [/\bveterans?\b/, 'veteran'],
   [/\bayc\b/, 'youth'], // Australian Youth Circuit
   [/\bcadet\b/, 'cadet'],
+  [/\bjunior\b/, 'junior'],
 ];
 const found = (line, table) => table.filter(([pattern]) => pattern.test(line)).map(([, value]) => value);
 // The values we saw, listed in the order the table lists them, so results look the same every time.

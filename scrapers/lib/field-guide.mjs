@@ -7,19 +7,18 @@ export function fieldGuide(choices) {
   const allowed = (field) => choices[field].join(', ');
   return `type
   "competition": a fencing tournament, league round, championship, ranking event, friendly or practice tournament.
-  "camp": a training camp (squad camp, holiday camp, intensive).
-  "training": coaching or training sessions, clinics, workshops, courses, open days, "come and try" sessions.
-  "other": anything else: meetings, social events, fundraisers, results or recaps of past events, or nothing to do with fencing.
-  If you are unsure, pick the closest of the first three and say what you are unsure about in "reason". A person reviews every event, but an event wrongly set aside is never seen.
-  When it is "other", leave every other field empty.
-  Weapons, format, gender and level are optional for a camp or training session: fill them in only if the text states them.
+  "other": a fencing event that is not a competition: training camps (squad camp, holiday camp, intensive), coaching or training sessions, clinics, workshops, courses, open days, "come and try" sessions, meetings, social events, fundraisers.
+  "none": not an event to list: results or recaps of past events, or nothing to do with fencing.
+  If you are unsure, pick "competition" or "other" and say what you are unsure about in "reason". A person reviews every event, but an event wrongly set aside is never seen.
+  When it is "none", leave every other field empty.
+  Weapons, format, gender and level are optional for an "other" event: fill them in only if the text states them.
 
 status
   "postponed" or "cancelled" if the text says the event itself is postponed or cancelled, otherwise empty (""). Fill it only with an "evidence" quote.
   Only the event being described counts; a different event or a general notice does not.
 
 Allowed values (use these exact words, lower case):
-  type:    ${allowed('type')}, other
+  type:    ${allowed('type')}, none
   status:  ${allowed('status')}
   weapons: ${allowed('weapons')}   ("sabre" is written "saber" here)
   format:  ${allowed('format')}   ("individual" is a single fencer, "team" is teams)
@@ -33,7 +32,7 @@ gender
 
 level
   Use a level only if the text names it. Never turn an age or a description into a level yourself.
-  If the text names a level that is not in the allowed list (for example "U20" or "Junior"), leave it out and mention it in "reason".
+  If the text names a level that is not in the allowed list (for example "U20"), leave it out and mention it in "reason".
 
 venue
   The place name plus its suburb, short, like "Sydney Academy of Fencing, Alexandria". No street address, state or postcode.

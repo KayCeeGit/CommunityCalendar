@@ -7,6 +7,7 @@ import { spawn } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { tempRoot } from './helpers.mjs';
 
 const PORT = 4400 + Math.floor(Math.random() * 500);
@@ -16,7 +17,7 @@ const event = { name: 'Test Cup', start_date: '2027-03-06', weapons: ['epee'], f
 let server;
 
 before(async () => {
-  server = spawn(process.execPath, [new URL('../admin/server.mjs', import.meta.url).pathname, root], { env: { ...process.env, PORT: String(PORT) } });
+  server = spawn(process.execPath, [fileURLToPath(new URL('../admin/server.mjs', import.meta.url)), root], { env: { ...process.env, PORT: String(PORT), SCRAPER_DIR: fileURLToPath(new URL('./fixtures/fake-scrapers', import.meta.url)) } });
   await new Promise((resolve, reject) => {
     server.stdout.once('data', resolve);
     server.once('exit', () => reject(new Error('the admin server did not start')));
@@ -96,4 +97,19 @@ test('adding an organiser with a logo: a refused organiser leaves no file behind
   assert.equal(ok.status, 201);
   assert.ok(existsSync(join(root, 'docs', 'img', 'club.png')));
   assert.deepEqual(JSON.parse(readFileSync(join(root, 'docs', 'data', 'organisers.json'), 'utf8')).at(-1), { id: 'club', name: 'Club', image: 'img/club.png', aliases: ['The Club'] });
+});
+
+test('the scrapers tab: a run can be started, read back, and is refused without the usual checks', async () => {
+  assert.equal((await call('POST', '/api/run', { headers: { 'Content-Type': 'text/plain' }, body: '{"scraper":"aff"}' })).status, 403);
+  assert.equal((await call('POST', '/api/run', { headers: { ...JSON_HEADERS, Origin: 'https://evil.example' }, body: { scraper: 'aff' } })).status, 403);
+  assert.equal((await post('/api/run', { scraper: 'nope' })).status, 404);
+
+  assert.equal((await post('/api/run', { scraper: 'aff' })).status, 202);
+  let run;
+  do {
+    await new Promise((r) => setTimeout(r, 100));
+    run = (await call('GET', '/api/run')).json().run;
+  } while (run.running);
+  assert.equal(run.exitCode, 0);
+  assert.equal(run.lines[0].text, 'line one');
 });

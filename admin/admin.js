@@ -1,5 +1,6 @@
 // admin.js: the screen of the local admin tool. It asks server.mjs for the data
-// and draws five tabs: Queue (review), From a post (paste screenshots), Add event (the form), Published and Organisers.
+// and draws six tabs: Queue (review), From a post (paste screenshots), Add event (the form), Published, Organisers
+// and Scrapers (run the scrapers and watch their output).
 //
 // Everything that comes from the data is put on the page as plain text, never
 // as HTML, because scraped content can't be trusted not to contain markup.
@@ -99,6 +100,12 @@ function showTab(name) {
   for (const button of document.querySelectorAll('#tabs button')) button.classList.toggle('active', button.dataset.tab === name);
 }
 
+/** Opens a tab from the menu. Leaving the form abandons any edit. */
+function goTo(name) {
+  if (name !== 'form' && editing) resetForm();
+  showTab(name);
+}
+
 // ---------- queue tab ----------
 
 function queueCard(p) {
@@ -107,7 +114,7 @@ function queueCard(p) {
     ['When', dates(e)],
     e.type ? ['Type', nice(e.type)] : null,
     e.status ? ['Status', nice(e.status) + (e.status_note ? `: ${e.status_note}` : '')] : null,
-    ...CATEGORIES.filter((c) => !e.type || e[c]?.length).map((c) => [nice(c), list(e[c])]), // a camp needn't have them
+    ...CATEGORIES.filter((c) => !e.type || e[c]?.length).map((c) => [nice(c), list(e[c])]), // an "other" event needn't have them
     ['Venue', e.venue || '—'],
     ['Organiser', organiserName(e.organiser)],
     ['Link', e.url ? link(e.url) : '—'],
@@ -376,7 +383,7 @@ function drawOrganiserForm() {
   showOrgErrors([]);
   $('#org-buttons').replaceChildren(
     h('button', { type: 'submit', class: 'primary' }, adding ? 'Add organiser' : 'Save changes'),
-    adding ? null : h('button', { type: 'button', onclick: () => { editingOrganiser = null; orgForm().reset(); drawOrganiserForm(); } }, 'Cancel'));
+    ...(adding ? [] : [h('button', { type: 'button', onclick: () => { editingOrganiser = null; orgForm().reset(); drawOrganiserForm(); } }, 'Cancel')]));
 }
 
 function renderOrganisers() {
@@ -419,6 +426,98 @@ async function submitOrganiser(ev) {
   }
 }
 
+// ---------- scrapers tab ----------
+
+const POLL_MS = 700;
+let scraperInfo = [];  // from /api/run: which scrapers exist and whether they can run
+let shownRun = null;   // startedAt of the run whose output is on screen
+let lastLine = -1;     // number of the last output line we have (the server only sends newer ones)
+let runPoll;
+
+/** Colours a line of scraper output by its first word (the scrapers print QUEUED, NEEDS YOU, KNOWN, SKIPPED). */
+function lineClass(line) {
+  if (line.stream === 'err') return /^Scrape failed/.test(line.text) ? 'fail' : 'err';
+  if (/^QUEUED/.test(line.text)) return 'queued';
+  if (/^(NEEDS YOU|DRAFT)/.test(line.text)) return 'needs';
+  if (/^(KNOWN|SKIPPED)/.test(line.text)) return 'dim';
+  return '';
+}
+
+const clock = (ms) => `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, '0')}`;
+
+function drawScraperButtons(running) {
+  $('#scraper-buttons').replaceChildren(...scraperInfo.map((s) => h('button', {
+    type: 'button', class: `scraper-card${running === s.id ? ' is-running' : ''}`, disabled: Boolean(running) || !s.ready,
+    onclick: () => startScraper(s.id),
+  }, h('strong', {}, `Run ${s.label}`), h('span', {}, s.ready ? s.about : `${s.about} Needs ANTHROPIC_API_KEY set before starting the admin.`))));
+}
+
+function drawRun(run) {
+  const out = $('#term-out');
+  const state = $('#term-state');
+  const running = run?.running ? run.scraper : null;
+  drawScraperButtons(running);
+  $('#count-scrapers').textContent = running ? '●' : '';
+  $('#term-stop').hidden = !running;
+  out.classList.toggle('is-running', Boolean(running));
+  if (!run) return;
+  $('#term-title').textContent = `npm run scrape:${run.scraper}`;
+  if (run.running) {
+    state.textContent = `running ${clock(Date.now() - run.startedAt)}`;
+    state.className = 'running';
+  } else {
+    const ok = run.exitCode === 0;
+    state.textContent = run.stopped ? 'stopped' : ok ? `done in ${clock(run.endedAt - run.startedAt)}` : `failed (exit ${run.exitCode})`;
+    state.className = ok && !run.stopped ? 'ok' : 'fail';
+  }
+}
+
+/** Fetches whatever is new and draws it. Keeps polling while a scraper is running. */
+async function loadRun() {
+  clearTimeout(runPoll);
+  const asked = lastLine;
+  let data;
+  try {
+    data = await api('GET', `/api/run?since=${asked}`);
+  } catch {
+    return; // the server is gone; the next click will say so
+  }
+  scraperInfo = data.scrapers;
+  const run = data.run;
+  const out = $('#term-out');
+  if (run && run.startedAt !== shownRun) {
+    // A different run than the one on screen (a new run, or the first look after a reload): start the output again
+    shownRun = run.startedAt;
+    lastLine = -1;
+    out.replaceChildren(h('p', { class: 'line dim start' }, `npm run scrape:${run.scraper}`));
+    if (asked !== -1) return loadRun(); // we asked for "newer than N" about the old run, so ask again for everything
+  }
+  if (run) {
+    const atBottom = out.scrollHeight - out.scrollTop - out.clientHeight < 40;
+    for (const line of run.lines) out.append(h('p', { class: `line ${lineClass(line)}` }, line.text || ' '));
+    if (run.lines.length) lastLine = run.lines.at(-1).n;
+    if (atBottom) out.scrollTop = out.scrollHeight;
+  }
+  const wasRunning = out.classList.contains('is-running');
+  drawRun(run);
+  if (run?.running) runPoll = setTimeout(loadRun, POLL_MS);
+  else if (wasRunning) {
+    await refresh(); // a finished scraper may have added to the queue
+    const waiting = state.pending.filter((p) => p.status === 'pending').length;
+    toast(run.exitCode === 0 ? `Scraper finished. ${waiting} waiting in the queue.` : 'Scraper stopped or failed. See the output.', run.exitCode !== 0);
+  }
+}
+
+async function startScraper(id) {
+  try {
+    await api('POST', '/api/run', { scraper: id });
+    shownRun = null; // so loadRun draws the new run from its first line
+    await loadRun();
+  } catch (err) {
+    toast(err.errors ? err.errors.join(' ') : err.message, true);
+  }
+}
+
 // ---------- start-up ----------
 
 async function refresh() {
@@ -435,11 +534,18 @@ async function refresh() {
 
 async function init() {
   for (const button of document.querySelectorAll('#tabs button')) {
-    button.addEventListener('click', () => {
-      if (button.dataset.tab !== 'form' && editing) resetForm(); // leaving the form abandons any edit
-      showTab(button.dataset.tab);
-    });
+    button.addEventListener('click', () => goTo(button.dataset.tab));
   }
+  // Number keys jump between pages (not while typing in a field)
+  const tabNames = [...document.querySelectorAll('#tabs button')].map((b) => b.dataset.tab);
+  document.addEventListener('keydown', (ev) => {
+    if (ev.ctrlKey || ev.metaKey || ev.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) return;
+    const tab = tabNames[Number(ev.key) - 1];
+    if (tab) goTo(tab);
+  });
+  $('#term-stop').addEventListener('click', async () => {
+    try { await api('POST', '/api/run/stop'); await loadRun(); } catch (err) { toast(err.message, true); }
+  });
   try {
     await refresh();
   } catch (err) {
@@ -463,6 +569,7 @@ async function init() {
   document.addEventListener('paste', pasteShots);
   resetForm();
   showTab(state.pending.some((p) => p.status === 'pending') ? 'queue' : 'form');
+  loadRun(); // shows the last run (if any) and carries on polling if one is still going
 }
 
 init();

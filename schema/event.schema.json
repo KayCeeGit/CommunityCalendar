@@ -7,7 +7,7 @@
   "additionalProperties": false,
   "required": ["id", "name", "start_date", "end_date", "organiser"],
   "dependencies": { "status_note": ["status"] },
-  "if": { "required": ["type"], "properties": { "type": { "enum": ["camp", "training"] } } },
+  "if": { "required": ["type"], "properties": { "type": { "enum": ["other"] } } },
   "else": { "required": ["weapons", "format", "gender", "level"], "properties": { "weapons": true, "format": true, "gender": true, "level": true } },
   "properties": {
     "id": {
@@ -20,8 +20,8 @@
       "minLength": 1
     },
     "type": {
-      "description": "Left out for a competition (the default). A competition must have weapons, format, gender and level; a camp or training session may leave them out.",
-      "enum": ["competition", "camp", "training"]
+      "description": "Left out for a competition (the default). A competition must have weapons, format, gender and level; another type of event (a camp, a clinic...) may leave them out.",
+      "enum": ["competition", "other"]
     },
     "start_date": {
       "description": "YYYY-MM-DD",
@@ -56,7 +56,7 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "enum": ["open", "novice", "u14", "u18", "cadet", "youth", "u16", "u12", "u11", "u10","u13","u15","u17", "school", "veteran"] }
+      "items": { "enum": ["open", "novice", "u14", "u18", "cadet", "youth", "u16", "u12", "u11", "u10","u13","u15","u17", "school", "veteran", "junior"] }
     },
     "venue": {
       "type": "string",
