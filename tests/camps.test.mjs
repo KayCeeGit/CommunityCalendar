@@ -1,10 +1,10 @@
-// Tests for event types (competition / camp / training) and status (postponed / cancelled):
+// Tests for event types (competition / camp / other) and status (postponed / cancelled):
 // the schema rules, the queue, the public card and filter, and what the AI's answer may set.
 // Run with:  npm test
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { compileValidators, eventProblems, missingCategories } from '../scripts/lib/checks.mjs';
+import { compileValidators, eventProblems, findDuplicates, missingCategories } from '../scripts/lib/checks.mjs';
 import { enqueue, Problem } from '../scripts/lib/store.mjs';
 import { checkAnswer, setAside } from '../scrapers/lib/check-answer.mjs';
 import { queuePost, readPost } from '../scrapers/post.mjs';
@@ -19,9 +19,9 @@ const comp = { ...base, name: 'Cup', weapons: ['epee'], format: ['individual'], 
 const state = () => ({ events: [], pending: [], validators, changed: new Set(), organisers: [{ id: 'aff', name: 'AFF' }, { id: 'sifl', name: 'SIFL' }] });
 const problems = (e, v = validators.candidate) => eventProblems(e, v).join(' | ');
 
-test('a camp or training session needs no weapons, format, gender or level; a competition still does', () => {
+test('a camp or other event needs no weapons, format, gender or level; a competition still does', () => {
   assert.equal(problems({ ...base, type: 'camp' }), '');
-  assert.equal(problems({ ...base, type: 'training', weapons: ['foil'] }), '');
+  assert.equal(problems({ ...base, type: 'other', weapons: ['foil'] }), '');
   assert.match(problems(base), /missing required field "weapons"/);
   assert.match(problems({ ...base, type: 'competition' }), /missing required field "weapons"/);
   assert.match(problems({ ...base, type: 'tournament' }), /type must be one of/);
@@ -82,7 +82,7 @@ test('cards label camps and show postponed / cancelled notices; unknown values s
   assert.ok(!odd.includes('<script>') && !odd.includes('is-'));
 });
 
-test('the AI may set camp / training and a supported status; "other" is set aside', () => {
+test('the AI may set camp / other and a supported status; "none" is set aside', () => {
   const text = 'Squad camp 9 Jan. The camp is POSTPONED until further notice.';
   const ok = checkAnswer({ type: 'camp', status: 'postponed', evidence: { status: 'is POSTPONED' } }, text, choices);
   assert.deepEqual(ok.fields, { type: 'camp', status: 'postponed' });
@@ -94,8 +94,8 @@ test('the AI may set camp / training and a supported status; "other" is set asid
   assert.match(unsupported.notes.join(), /status: left blank/);
   assert.match(checkAnswer({ status: 'moved' }, text, choices).notes.join(), /status: ignored "moved"/);
 
-  assert.ok(setAside({ type: 'other' }) && setAside({ type: ' Other ' }));
-  assert.ok(!setAside({ type: 'camp' }) && !setAside({}) && !setAside({ type: 'bogus' })); // unsure means keep it for a person
+  assert.ok(setAside({ type: 'none' }) && setAside({ type: ' None ' }));
+  assert.ok(!setAside({ type: 'camp' }) && !setAside({ type: 'other' }) && !setAside({}) && !setAside({ type: 'bogus' })); // unsure means keep it for a person
 });
 
 test('a pasted post about a camp is queued as a camp with its notice', async () => {
@@ -108,4 +108,18 @@ test('a pasted post about a camp is queued as a camp with its notice', async () 
   assert.equal(entry.event.status, 'postponed');
   assert.ok(!entry.event.weapons);
   assert.ok(!(entry instanceof Problem));
+});
+
+test('two camps at the same venue on overlapping days are flagged, whoever runs them', () => {
+  const camp = (over) => ({ name: 'Camp', start_date: '2027-04-10', end_date: '2027-04-11', organiser: 'sifl', type: 'camp', venue: 'Sydney Uni, Camperdown', ...over });
+  const pool = [{ ref: 'evt-0001', event: camp({ name: 'Winter Squad Camp' }) }];
+  const reasons = (over) => findDuplicates(camp({ name: 'Totally different', organiser: 'aff', ...over }), pool).map((m) => m.reason);
+  const rule = ['camps at the same venue on overlapping days'];
+  assert.deepEqual(reasons({}), ['same date and venue']);                                // the older rule gets there first
+  assert.deepEqual(reasons({ start_date: '2027-04-11', end_date: '2027-04-12' }), rule);  // overlaps on the second day
+  assert.deepEqual(reasons({ venue: 'sydney uni' }), rule);                              // a shorter way of writing the venue
+  assert.deepEqual(reasons({ venue: 'Parramatta Park' }), []);                           // another venue
+  assert.deepEqual(reasons({ venue: undefined }), []);                                   // no venue to compare
+  assert.deepEqual(reasons({ start_date: '2027-04-12', end_date: '2027-04-12' }), []);   // the next day
+  assert.deepEqual(reasons({ type: 'other', start_date: '2027-04-11', end_date: '2027-04-12' }), []);                                      // only camps are compared this way
 });

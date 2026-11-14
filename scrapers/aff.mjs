@@ -9,7 +9,7 @@
  *    have, we read its own page (aff-page.mjs) to fill those in.
  * 3. A complete event goes into the approval queue (data/pending.json) as a scraper entry.
  *    Nothing is published until you approve it in the admin tool.
- * An event we can't read completely is listed in the output, not queued.
+ * An event whose page we can't read completely is queued as a draft with weapons, format, gender and level left blank, for you to fill in.
  */
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -73,7 +73,9 @@ export async function fetchAffFeed({ get = getJson, pause = sleep } = {}) {
  * Returns one result per item, saying what happened:
  *   queued        added to the queue (with any warnings, like a possible duplicate)
  *   known         we already hold it: not touched, its page not even fetched
- *   needs-person  the page couldn't be fully read, or the event failed validation
+ *   draft         the page couldn't be fully read (no schedule, say), so the event is queued with weapons, format,
+ *                 gender and level left blank for you to fill in; the queue won't let it be approved until you do
+ *   needs-person  the event failed validation even as a draft
  *   skipped       the feed item itself was unusable
  * `state` is changed in memory only; the caller saves it. `getPage` and `pause` can be
  * replaced in tests.
@@ -93,15 +95,16 @@ export async function processFeed(items, state, { getPage = getText, pause = sle
 
     await pause(1000); // one page request a second
     const done = await completeEvent(partial, getPage);
-    if (!done.event) {
-      results.push({ outcome: 'needs-person', name: partial.name, url: partial.url, notes: done.uncertain });
-      continue;
-    }
-
+    const complete = Boolean(done.event);
+    const event = done.event ?? partial; // an unreadable page leaves the details blank: a half-finished event for you
     try {
-      const queued = enqueue(state, done.event, { source: 'scraper', source_url: partial.url, source_note: 'AFF events feed' });
+      const queued = enqueue(state, event, {
+        source: 'scraper',
+        source_url: partial.url,
+        source_note: complete ? 'AFF events feed' : `AFF events feed. Details to fill in: ${done.uncertain.join('; ')}`,
+      });
       if (queued.skipped) results.push({ outcome: 'known', name: partial.name });
-      else results.push({ outcome: 'queued', name: partial.name, event: done.event, pid: queued.entry.pid, notes: flagsFor(state, queued.entry) });
+      else results.push({ outcome: complete ? 'queued' : 'draft', name: partial.name, event, pid: queued.entry.pid, notes: [...(complete ? [] : done.uncertain), ...flagsFor(state, queued.entry)] });
     } catch (err) {
       if (!(err instanceof Problem)) throw err;
       results.push({ outcome: 'needs-person', name: partial.name, url: partial.url, notes: err.errors });
@@ -125,22 +128,24 @@ async function main() {
   const results = await processFeed(items, state);
   saveState(state); // writes data/pending.json only if something was queued
 
-  const label = { queued: 'QUEUED', known: 'KNOWN', 'needs-person': 'NEEDS YOU', skipped: 'SKIPPED' };
+  const label = { queued: 'QUEUED', draft: 'DRAFT', known: 'KNOWN', 'needs-person': 'NEEDS YOU', skipped: 'SKIPPED' };
   for (const r of results) {
     console.log(`${label[r.outcome].padEnd(9)} ${r.name}${r.pid ? `  (${r.pid})` : ''}`);
     if (r.event) {
       const e = r.event;
       console.log(`          ${e.start_date}${e.end_date !== e.start_date ? ` to ${e.end_date}` : ''}   ${e.venue ?? '(no venue)'}`);
-      console.log(`          weapons ${e.weapons.join(', ')} | format ${e.format.join(', ')} | gender ${e.gender.join(', ')} | level ${e.level.join(', ')}`);
+      const show = (v) => (v?.length ? v.join(', ') : '(blank)');
+      console.log(`          weapons ${show(e.weapons)} | format ${show(e.format)} | gender ${show(e.gender)} | level ${show(e.level)}`);
     }
     for (const note of r.notes ?? []) console.log(`          ${r.outcome === 'queued' ? 'warning: ' : ''}${note}`);
+    if (r.outcome === 'draft') console.log('          fill in the blanks in the admin Queue before approving');
     if (r.outcome === 'needs-person') console.log(`          add it by hand if you want it: ${r.url}`);
     console.log();
   }
 
   const count = (outcome) => results.filter((r) => r.outcome === outcome).length;
-  console.log(`${count('queued')} queued, ${count('known')} already known, ${count('needs-person')} need you, ${count('skipped')} skipped.`);
-  if (count('queued')) console.log('Review them with:  npm run admin');
+  console.log(`${count('queued')} queued, ${count('draft')} drafts to finish, ${count('known')} already known, ${count('needs-person')} need you, ${count('skipped')} skipped.`);
+  if (count('queued') || count('draft')) console.log('Review them with:  npm run admin');
 }
 
 // Run main() only when this file is started directly, not when tests import it.

@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { mapAffEvent, fetchAffFeed, processFeed } from '../scrapers/aff.mjs';
 import { compileValidators, eventProblems } from '../scripts/lib/checks.mjs';
+import { approve } from '../scripts/lib/store.mjs';
 import { decodeEntities, htmlToLines } from '../scrapers/lib/html.mjs';
 import { scheduleLines, readSchedule, completeEvent } from '../scrapers/aff-page.mjs';
 import { robotsAllows } from '../scrapers/lib/http.mjs';
@@ -158,13 +159,20 @@ test('running it again adds nothing, and does not even fetch the pages', async (
   assert.equal(state.pending.length, 2);
 });
 
-test('an event whose page can\'t be read is listed for a person, not queued', async () => {
+test('an event whose page can\'t be read is queued as a draft with the details blank', async () => {
   const state = makeState();
   const unreadable = [{ ...feed.events[0], url: 'https://www.ausfencing.org/tribe-events/unknown-page/' }];
   const [result] = await run(unreadable, state);
-  assert.equal(result.outcome, 'needs-person');
+  assert.equal(result.outcome, 'draft');
   assert.match(result.notes[0], /no "Tournament Schedule"/);
-  assert.equal(state.pending.length, 0);
+  assert.equal(state.pending.length, 1);
+  const { event, source_note } = state.pending[0];
+  assert.equal(event.name, '2026/27 Australian Fencing Circuit #3');
+  assert.equal(event.weapons, undefined);
+  assert.match(source_note, /Details to fill in: .*Tournament Schedule/);
+  assert.throws(() => approve(state, state.pending[0].pid), /weapons/i); // a blank event can't be approved
+  const again = await run(unreadable, state);
+  assert.equal(again[0].outcome, 'known'); // and running again doesn't add a second copy
 });
 
 test('unusable feed items are skipped, and a possible duplicate is queued with a warning', async () => {

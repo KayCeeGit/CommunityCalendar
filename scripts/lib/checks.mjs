@@ -103,6 +103,10 @@ const datesOverlap = (a, b) => a.start_date <= b.end_date && b.start_date <= a.e
 const NEARBY_DAYS = 60; // "same event, date changed" window
 const nearbyDate = (a, b) => Math.abs(dayNumber(a.start_date) - dayNumber(b.start_date)) <= NEARBY_DAYS;
 
+const bothCamps = (a, b) => a.type === 'camp' && b.type === 'camp';
+// "Sydney Uni" and "Sydney Uni, Camperdown" count as the same venue; a missing venue matches nothing.
+const similarVenue = (a, b) => sameText(a, b) || similarNames(a, b);
+
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
@@ -208,6 +212,8 @@ export function isKnown(event, state) {
  *   3. same start date and a similar name
  *   4. same organiser, date ranges that overlap, and each of weapons, format, gender and level
  *      shares at least one choice
+ *   4b. two camps at the same (or a similar) venue on days that overlap, whoever runs them: probably one camp
+ *      listed twice (by the club and by the association, say), so it is checked in case it is the same one
  *   5. same organiser, a similar name, overlapping categories and a start date within 60 days
  *      (a postponed event keeps its weapons; a series like "Club Champs" changes them each round)
  * Matches are hints for a human, not decisions.
@@ -223,6 +229,7 @@ export function findDuplicates(event, pool, organisers = []) {
     if (link && linkUses === 1 && specificLink(other.url) === link) reason = 'same link';
     else if (other.start_date === event.start_date && sameText(other.venue, event.venue)) reason = 'same date and venue';
     else if (other.start_date === event.start_date && similar(other)) reason = 'similar name on the same date';
+    else if (bothCamps(other, event) && datesOverlap(other, event) && similarVenue(other.venue, event.venue)) reason = 'camps at the same venue on overlapping days';
     else if (other.organiser === event.organiser && datesOverlap(other, event) && overlappingCategories(other, event)) reason = 'same organiser, overlapping dates and categories';
     else if (other.organiser === event.organiser && similar(other) && nearbyDate(other, event) && overlappingCategories(other, event)) reason = 'similar name close by in time (was the date changed?)';
     if (reason) found.push({ ref, name: other.name, reason });

@@ -11,142 +11,169 @@
 </head>
 
 <body>
-    <header>
-        <h1>Calendar admin <small>runs on this computer only</small></h1>
-        <nav id="tabs">
-            <button data-tab="queue">Queue <span id="count-queue"></span></button>
-            <button data-tab="post">From a post</button>
-            <button data-tab="form">Add event</button>
-            <button data-tab="published">Published <span id="count-published"></span></button>
-            <button data-tab="organisers">Organisers</button>
-        </nav>
-    </header>
+    <div class="shell">
+        <!-- The rail: the name and the pages, like a terminal's menu -->
+        <aside class="rail">
+            <h1 class="brand"><span class="brand-mark" aria-hidden="true"></span><span>calendar<span class="cursor" aria-hidden="true">_</span></span> <small>admin · this computer only</small></h1>
+            <nav id="tabs" aria-label="Pages">
+                <button data-tab="queue"><span class="key">1</span>Queue <span id="count-queue"></span></button>
+                <button data-tab="post"><span class="key">2</span>From a post</button>
+                <button data-tab="form"><span class="key">3</span>Add event</button>
+                <button data-tab="published"><span class="key">4</span>Published <span id="count-published"></span></button>
+                <button data-tab="organisers"><span class="key">5</span>Organisers</button>
+                <button data-tab="scrapers"><span class="key">6</span>Scrapers <span id="count-scrapers"></span></button>
+            </nav>
+            <p class="rail-foot" id="rail-foot">127.0.0.1</p>
+        </aside>
 
-    <div id="toast" role="status" hidden></div>
+        <div class="stage">
+        <div id="toast" role="status" hidden></div>
 
-    <main>
-        <!-- Each tab is drawn by admin.js -->
-        <section id="tab-queue"></section>
+        <main>
+            <!-- Each tab is drawn by admin.js -->
+            <section id="tab-queue"></section>
 
-        <section id="tab-post" hidden>
-            <h2>Add from a post</h2>
-            <p class="note">Crop a screenshot to just the post (Win+Shift+S), click "See more" first so the whole caption shows, then press Ctrl+V on this page.
-                Paste several for a carousel. Pasted text works too.</p>
-            <ul id="post-errors" class="errors" hidden></ul>
+            <section id="tab-post" hidden>
+                <h2>Add from a post</h2>
+                <p class="note">Crop a screenshot to just the post (Win+Shift+S), click "See more" first so the whole caption shows, then press Ctrl+V on this page.
+                    Paste several for a carousel. Pasted text works too.</p>
+                <ul id="post-errors" class="errors" hidden></ul>
 
-            <form id="post-form" novalidate>
-                <div id="post-shots" class="shots"></div>
+                <form id="post-form" novalidate>
+                    <div id="post-shots" class="shots"></div>
 
-                <label>Pasted text <small>(optional)</small>
-                    <textarea name="text" rows="5"></textarea>
-                </label>
-
-                <div class="row">
-                    <label>Organiser
-                        <select name="organiser"></select>
+                    <label>Pasted text <small>(optional)</small>
+                        <textarea name="text" rows="5"></textarea>
                     </label>
-                    <label>Link to the post <small>(optional)</small>
-                        <input type="url" name="url" placeholder="https://" autocomplete="off">
-                    </label>
-                </div>
 
-                <div class="buttons">
-                    <button type="submit" class="primary" id="post-submit">Read the post</button>
-                </div>
-            </form>
-        </section>
+                    <div class="row">
+                        <label>Organiser
+                            <select name="organiser"></select>
+                        </label>
+                        <label>Link to the post <small>(optional)</small>
+                            <input type="url" name="url" placeholder="https://" autocomplete="off">
+                        </label>
+                    </div>
 
-        <section id="tab-form" hidden>
-            <h2 id="form-title">Add event</h2>
-            <ul id="form-errors" class="errors" hidden></ul>
+                    <div class="buttons">
+                        <button type="submit" class="primary" id="post-submit">Read the post</button>
+                    </div>
+                </form>
+            </section>
 
-            <form id="event-form" novalidate>
-                <label>Name
-                    <input name="name" autocomplete="off">
-                </label>
+            <section id="tab-form" hidden>
+                <h2 id="form-title">Add event</h2>
+                <ul id="form-errors" class="errors" hidden></ul>
 
-                <label>Type
-                    <select name="type"></select>
-                </label>
-
-                <div class="row">
-                    <label>Start date
-                        <input type="date" name="start_date">
-                    </label>
-                    <label>End date <small>(blank = one day)</small>
-                        <input type="date" name="end_date">
-                    </label>
-                </div>
-
-                <p class="note">Weapons, format, gender and level are required for competitions. A camp or other event can leave them empty.</p>
-                <!-- The checkboxes are filled in from the schema, so the options can't drift from the rules -->
-                <fieldset data-field="weapons"><legend>Weapons</legend></fieldset>
-                <fieldset data-field="format"><legend>Format</legend></fieldset>
-                <fieldset data-field="gender"><legend>Gender</legend></fieldset>
-                <fieldset data-field="level"><legend>Level</legend></fieldset>
-
-                <label>Venue
-                    <input name="venue" autocomplete="off">
-                </label>
-
-                <label>Organiser
-                    <select name="organiser"></select>
-                </label>
-
-                <label>Link <small>(page with the details)</small>
-                    <input type="url" name="url" placeholder="https://" autocomplete="off">
-                </label>
-
-                <div class="row">
-                    <label>Status
-                        <select name="status"></select>
-                    </label>
-                    <label>Notice <small>(optional, shown with a postponed or cancelled event)</small>
-                        <input name="status_note" maxlength="200" autocomplete="off" placeholder="e.g. New date to be announced">
-                    </label>
-                </div>
-
-                <div class="buttons" id="form-buttons"></div>
-            </form>
-        </section>
-
-        <section id="tab-published" hidden></section>
-
-        <section id="tab-organisers" hidden>
-            <h2 id="org-title">Add organiser</h2>
-            <p class="note">The logo shows on the event cards. Aliases are other names the scrapers might see (SIFL, USYD Fencing, ...).</p>
-            <ul id="org-errors" class="errors" hidden></ul>
-
-            <form id="org-form" novalidate>
-                <div class="row">
-                    <label>Id <small>(lowercase letters, numbers, hyphens. Can't be changed later)</small>
-                        <input name="id" autocomplete="off">
-                    </label>
+                <form id="event-form" novalidate>
                     <label>Name
                         <input name="name" autocomplete="off">
                     </label>
-                </div>
 
-                <label>Aliases <small>(separate with commas)</small>
-                    <input name="aliases" autocomplete="off">
-                </label>
-
-                <div class="row">
-                    <label>Logo
-                        <select name="image"></select>
+                    <label>Type
+                        <select name="type"></select>
                     </label>
-                    <label>or upload a new one <small>(PNG, JPEG or WebP, up to 1 MB)</small>
-                        <input type="file" name="upload" accept="image/png,image/jpeg,image/webp">
+
+                    <div class="row">
+                        <label>Start date
+                            <input type="date" name="start_date">
+                        </label>
+                        <label>End date <small>(blank = one day)</small>
+                            <input type="date" name="end_date">
+                        </label>
+                    </div>
+
+                    <p class="note">Weapons, format, gender and level are required for competitions. A camp or other event can leave them empty.</p>
+                    <!-- The checkboxes are filled in from the schema, so the options can't drift from the rules -->
+                    <fieldset data-field="weapons"><legend>Weapons</legend></fieldset>
+                    <fieldset data-field="format"><legend>Format</legend></fieldset>
+                    <fieldset data-field="gender"><legend>Gender</legend></fieldset>
+                    <fieldset data-field="level"><legend>Level</legend></fieldset>
+
+                    <label>Venue
+                        <input name="venue" autocomplete="off">
                     </label>
+
+                    <label>Organiser
+                        <select name="organiser"></select>
+                    </label>
+
+                    <label>Link <small>(page with the details)</small>
+                        <input type="url" name="url" placeholder="https://" autocomplete="off">
+                    </label>
+
+                    <div class="row">
+                        <label>Status
+                            <select name="status"></select>
+                        </label>
+                        <label>Notice <small>(optional, shown with a postponed or cancelled event)</small>
+                            <input name="status_note" maxlength="200" autocomplete="off" placeholder="e.g. New date to be announced">
+                        </label>
+                    </div>
+
+                    <div class="buttons" id="form-buttons"></div>
+                </form>
+            </section>
+
+            <section id="tab-published" hidden></section>
+
+            <section id="tab-organisers" hidden>
+                <h2 id="org-title">Add organiser</h2>
+                <p class="note">The logo shows on the event cards. Aliases are other names the scrapers might see (SIFL, USYD Fencing, ...).</p>
+                <ul id="org-errors" class="errors" hidden></ul>
+
+                <form id="org-form" novalidate>
+                    <div class="row">
+                        <label>Id <small>(lowercase letters, numbers, hyphens. Can't be changed later)</small>
+                            <input name="id" autocomplete="off">
+                        </label>
+                        <label>Name
+                            <input name="name" autocomplete="off">
+                        </label>
+                    </div>
+
+                    <label>Aliases <small>(separate with commas)</small>
+                        <input name="aliases" autocomplete="off">
+                    </label>
+
+                    <div class="row">
+                        <label>Logo
+                            <select name="image"></select>
+                        </label>
+                        <label>or upload a new one <small>(PNG, JPEG or WebP, up to 1 MB)</small>
+                            <input type="file" name="upload" accept="image/png,image/jpeg,image/webp">
+                        </label>
+                    </div>
+
+                    <div class="buttons" id="org-buttons"></div>
+                </form>
+
+                <h2>Organisers</h2>
+                <div id="org-list"></div>
+            </section>
+
+            <section id="tab-scrapers" hidden>
+                <h2>Run the scrapers</h2>
+                <p class="note">Each button runs the same thing as <code>npm run scrape:…</code> in a terminal. New events go to the Queue for your review; nothing is published from here.
+                    The output appears below as it happens. Only one scraper runs at a time.</p>
+                <div class="buttons" id="scraper-buttons"></div>
+
+                <div class="term" role="region" aria-label="Scraper output">
+                    <div class="term-bar">
+                        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <span id="term-title">output</span>
+                        <span id="term-state"></span>
+                        <button type="button" id="term-stop" class="danger" hidden>Stop</button>
+                    </div>
+                    <div id="term-out" class="term-out" tabindex="0" aria-live="polite">
+                        <p class="term-empty">Nothing has run yet. Press a button above.</p>
+                    </div>
                 </div>
+            </section>
+        </main>
 
-                <div class="buttons" id="org-buttons"></div>
-            </form>
-
-            <h2>Organisers</h2>
-            <div id="org-list"></div>
-        </section>
-    </main>
+        </div>
+    </div>
 
     <script type="module" src="admin.js"></script>
 </body>

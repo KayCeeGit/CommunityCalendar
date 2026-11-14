@@ -21,11 +21,13 @@ import * as store from '../scripts/lib/store.mjs';
 import { queuePost, readPost } from '../scrapers/post.mjs';
 import { decodeLogo, deleteLogo, listLogos, logoFile, saveLogo } from './logos.mjs';
 import { decodeImages, deleteScreenshots, saveScreenshots, screenshotFile } from './screenshots.mjs';
+import { createRunner } from './runner.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(process.argv[2] ?? join(here, '..'));
 const PORT = Number(process.env.PORT ?? 4321);
 const ALLOWED_HOSTS = new Set([`localhost:${PORT}`, `127.0.0.1:${PORT}`]);
+const runner = createRunner({ dir: process.env.SCRAPER_DIR }); // SCRAPER_DIR is only used by the tests
 
 // The only files the server will hand out.
 const PAGES = {
@@ -80,6 +82,19 @@ async function handleApi(req, res, path) {
   }
   // Only the routes that take images get a big limit.
   const body = method === 'GET' ? {} : await readBody(req, path === '/api/post' ? 10_000_000 : path.startsWith('/api/organisers') ? 2_000_000 : 100_000);
+
+  // The scrapers tab: start / stop a run, and read what it has printed so far. Needs no calendar data.
+  if (path === '/api/run' || path === '/api/run/stop') {
+    if (method === 'GET' && path === '/api/run') {
+      const since = Number(new URL(req.url, 'http://x').searchParams.get('since') ?? -1);
+      return send(res, 200, runner.status(Number.isFinite(since) ? since : -1));
+    }
+    if (method !== 'POST') throw new store.Problem(['Unknown request'], 404);
+    const outcome = path === '/api/run/stop' ? runner.stop() : runner.start(String(body.scraper));
+    if (outcome.error) throw new store.Problem([outcome.error], outcome.status);
+    return send(res, 202, {});
+  }
+
   const state = store.loadState(root);
   let m;
 

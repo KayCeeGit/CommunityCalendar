@@ -322,58 +322,6 @@
     "url": "https://www.facebook.com/events/2434445696966166"
   },
   {
-    "id": "evt-0015",
-    "name": "2026/27 Australian Fencing Circuit #3",
-    "start_date": "2026-11-20",
-    "end_date": "2026-11-22",
-    "weapons": [
-      "foil",
-      "epee",
-      "saber"
-    ],
-    "format": [
-      "individual",
-      "team"
-    ],
-    "gender": [
-      "mens",
-      "womens"
-    ],
-    "level": [
-      "open",
-      "veteran"
-    ],
-    "venue": "The Gold Netball Centre WA, Jolimont",
-    "organiser": "aff",
-    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-3/",
-    "status": "cancelled"
-  },
-  {
-    "id": "evt-0016",
-    "name": "2026/27 Australian Youth Circuit (AYC) #2",
-    "start_date": "2026-12-12",
-    "end_date": "2026-12-13",
-    "weapons": [
-      "foil",
-      "epee",
-      "saber"
-    ],
-    "format": [
-      "individual",
-      "team"
-    ],
-    "gender": [
-      "mens",
-      "womens"
-    ],
-    "level": [
-      "youth"
-    ],
-    "venue": "The Lights Sports and Community Centre – Adelaide, Lightsview",
-    "organiser": "aff",
-    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-circuit-ayc-2-dates-and-location-to-be-determined/"
-  },
-  {
     "id": "evt-0017",
     "name": "PRE AFC3 - Open - All Weapons",
     "start_date": "2026-11-15",
@@ -450,27 +398,6 @@
     "url": "https://www.facebook.com/events/1059707093466028/"
   },
   {
-    "id": "evt-0023",
-    "name": "Youth Summer Epee Camp",
-    "type": "camp",
-    "start_date": "2026-12-14",
-    "end_date": "2026-12-16",
-    "weapons": [
-      "epee"
-    ],
-    "level": [
-      "u14",
-      "u12",
-      "u11",
-      "u13",
-      "u15"
-    ],
-    "organiser": "saf",
-    "url": "https://www.facebook.com/photo?fbid=122222487230354527&set=a.122119067408354527",
-    "status": "postponed",
-    "status_note": "New dates to be announced"
-  },
-  {
     "id": "evt-0024",
     "name": "2027 Sydney International Fencing Camp",
     "type": "camp",
@@ -486,5 +413,189 @@
     "venue": "Sydney Uni Sport, Darlington",
     "organiser": "usyd",
     "url": "https://nswfencing.org.au/public/schedule/events/91015-join-us-for-the-2027-sydney-international-fencing-camp"
+  },
+  {
+    "id": "evt-0025",
+    "name": "2026/27 Australian Fencing Circuit #3",
+    "start_date": "2026-11-20",
+    "end_date": "2026-11-22",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual",
+      "team"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "open",
+      "veteran"
+    ],
+    "venue": "The Gold Netball Centre WA, Jolimont",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-3/"
+  },
+  {
+    "id": "evt-0026",
+    "name": "2026/27 Australian Youth Circuit (AYC) #2",
+    "start_date": "2026-12-12",
+    "end_date": "2026-12-13",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual",
+      "team"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "youth"
+    ],
+    "venue": "The Lights Sports and Community Centre – Adelaide, Lightsview",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-circuit-ayc-2-dates-and-location-to-be-determined/"
+  },
+  {
+    "id": "evt-0027",
+    "name": "2026/27 Australian Junior and Cadet Championships",
+    "start_date": "2027-02-27",
+    "end_date": "2027-03-03",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "cadet"
+    ],
+    "venue": "Sydney Olympic Park Sports Halls, Sydney Olympic Park",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-junior-and-cadets/"
+  },
+  {
+    "id": "evt-0028",
+    "name": "2026/27 Australian Youth Circuit #3",
+    "start_date": "2027-04-10",
+    "end_date": "2027-04-11",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "youth"
+    ],
+    "venue": "Nissan Arena, Brisbane, Nathan",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-circuit-3/"
+  },
+  {
+    "id": "evt-0029",
+    "name": "2026/27 Robyn Chaplin (AFC4)",
+    "start_date": "2027-04-23",
+    "end_date": "2027-04-25",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "open"
+    ],
+    "venue": "Galuwa Recreation Centre, Lane Cove",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-robyn-chaplin-afc4/"
+  },
+  {
+    "id": "evt-0030",
+    "name": "2026/27 Australian Senior and Veteran Championships",
+    "start_date": "2027-05-13",
+    "end_date": "2027-05-17",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual",
+      "team"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "open",
+      "veteran"
+    ],
+    "venue": "Victorian State Fencing Centre, North Melbourne",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-senior-and-veteran-championships/"
+  },
+  {
+    "id": "evt-0031",
+    "name": "2026/27 Australian Youth and Under13 Championships",
+    "start_date": "2027-07-02",
+    "end_date": "2027-07-06",
+    "weapons": [
+      "foil",
+      "epee",
+      "saber"
+    ],
+    "format": [
+      "individual"
+    ],
+    "gender": [
+      "mens",
+      "womens"
+    ],
+    "level": [
+      "youth",
+      "u13"
+    ],
+    "venue": "Victorian State Fencing Centre, North Melbourne",
+    "organiser": "aff",
+    "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-and-under13-championships/"
+  },
+  {
+    "id": "evt-0032",
+    "name": "Wheelchair Fencing Training Camp - December 26",
+    "type": "camp",
+    "start_date": "2026-12-07",
+    "end_date": "2026-12-10",
+    "venue": "Sydney Academy of Fencing, Alexandria",
+    "organiser": "nswfa",
+    "url": "https://nswfencing.org.au/public/schedule/events/91681-wheelchair-fencing-training-camp-december-26"
   }
 ]
