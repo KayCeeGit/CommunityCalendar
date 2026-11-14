@@ -3,7 +3,7 @@
 // and Scrapers (run the scrapers and watch their output).
 //
 // Everything that comes from the data is put on the page as plain text, never
-// as HTML, because scraped content can't be trusted not to contain markup.
+// as HTML, because scraped content can't be trusted not to contain markup. TEST
 
 const $ = (selector) => document.querySelector(selector);
 
