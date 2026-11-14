@@ -1,0 +1,511 @@
+[
+  {
+    "pid": "q-0001",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-3/",
+    "source_note": "AFF events feed",
+    "added": "2026-11-10",
+    "event": {
+      "name": "2026/27 Australian Fencing Circuit #3",
+      "start_date": "2026-11-20",
+      "end_date": "2026-11-22",
+      "weapons": [
+        "foil",
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual",
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open",
+        "veteran"
+      ],
+      "venue": "The Gold Netball Centre WA, Jolimont",
+      "organiser": "aff",
+      "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-fencing-circuit-3/"
+    },
+    "event_id": "evt-0015"
+  },
+  {
+    "pid": "q-0002",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-circuit-ayc-2-dates-and-location-to-be-determined/",
+    "source_note": "AFF events feed",
+    "added": "2026-11-10",
+    "event": {
+      "name": "2026/27 Australian Youth Circuit (AYC) #2",
+      "start_date": "2026-12-12",
+      "end_date": "2026-12-13",
+      "weapons": [
+        "foil",
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual",
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "youth"
+      ],
+      "venue": "The Lights Sports and Community Centre – Adelaide, Lightsview",
+      "organiser": "aff",
+      "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-circuit-ayc-2-dates-and-location-to-be-determined/"
+    },
+    "event_id": "evt-0016"
+  },
+  {
+    "pid": "q-0003",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://nswfencing.org.au/public/schedule/events/88148-sydney-intervarsity-fencing-league-round-6",
+    "source_note": "NSWFA events calendar. AI note: A numbered round of a league, so a competition; the description mentions novice sabre and epee events, which may not cover all of the round's categories.",
+    "added": "2026-11-10",
+    "event": {
+      "name": "Sydney Intervarsity Fencing League - Round 6",
+      "start_date": "2026-12-13",
+      "end_date": "2026-12-13",
+      "weapons": [
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual",
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open"
+      ],
+      "venue": "Sydney Academy of Fencing, Alexandria",
+      "organiser": "sifl",
+      "url": "https://nswfencing.org.au/public/schedule/events/88148-sydney-intervarsity-fencing-league-round-6"
+    },
+    "event_id": "evt-0018"
+  },
+  {
+    "pid": "q-0004",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://nswfencing.org.au/public/schedule/events/90805-pre-afc3-open-all-weapons",
+    "source_note": "NSWFA events calendar. AI note: A state-run competition offering state points, with weapon categories and a schedule. The description's draft times (Foil 11:00 AM, Sabre 3:00 PM) differ from the schedule (Foil 10:30 am), and the page does not say whether events are individual or team.",
+    "added": "2026-11-10",
+    "event": {
+      "name": "PRE AFC3 - Open - All Weapons",
+      "start_date": "2026-11-15",
+      "end_date": "2026-11-15",
+      "weapons": [
+        "foil",
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual",
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open"
+      ],
+      "venue": "Sydney Academy of Fencing, Alexandria",
+      "organiser": "nswfa",
+      "url": "https://nswfencing.org.au/public/schedule/events/90805-pre-afc3-open-all-weapons"
+    },
+    "event_id": "evt-0017"
+  },
+  {
+    "pid": "q-0005",
+    "status": "approved",
+    "source": "manual",
+    "source_url": null,
+    "source_note": null,
+    "added": "2026-11-10",
+    "event": {
+      "name": "SIFL 6",
+      "start_date": "2026-12-13",
+      "end_date": "2026-12-13",
+      "weapons": [
+        "foil",
+        "saber"
+      ],
+      "format": [
+        "individual",
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open"
+      ],
+      "organiser": "sifl"
+    },
+    "event_id": "evt-0019"
+  },
+  {
+    "pid": "q-0006",
+    "status": "approved",
+    "source": "manual",
+    "source_url": null,
+    "source_note": null,
+    "added": "2026-11-10",
+    "event": {
+      "name": "2026 Northen Novice/U18/U14 comp",
+      "start_date": "2026-11-15",
+      "end_date": "2026-11-15",
+      "weapons": [
+        "foil",
+        "epee"
+      ],
+      "format": [
+        "individual"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "novice",
+        "u14",
+        "u18"
+      ],
+      "venue": "Singleton PCYC",
+      "organiser": "nsfa",
+      "url": "https://www.facebook.com/events/1059707093466028/"
+    },
+    "event_id": "evt-0020"
+  },
+  {
+    "pid": "q-0007",
+    "status": "approved",
+    "source": "post",
+    "source_url": "https://www.instagram.com/p/DfQznLqGDTR/?img_index=1",
+    "source_note": "Pasted post. AI note: A team epee and sabre tournament on 13 December 2026; the slide's \"#2\" conflicts with the post's \"Round 6\", and no suburb is given for the venue.",
+    "added": "2026-11-12",
+    "event": {
+      "name": "test",
+      "start_date": "2026-12-13",
+      "end_date": "2026-12-13",
+      "weapons": [
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open"
+      ],
+      "organiser": "sifl",
+      "url": "https://www.instagram.com/p/DfQznLqGDTR/?img_index=1"
+    },
+    "event_id": "evt-0021"
+  },
+  {
+    "pid": "q-0008",
+    "status": "approved",
+    "source": "post",
+    "source_url": null,
+    "source_note": "Pasted post. AI note: Sabre was postponed to October with no date, so only epee and foil are dated; 23 August 2026 is a Sunday as stated.",
+    "added": "2026-11-12",
+    "event": {
+      "name": "test",
+      "start_date": "2026-08-23",
+      "end_date": "2026-08-23",
+      "weapons": [
+        "foil",
+        "epee"
+      ],
+      "format": [
+        "individual"
+      ],
+      "gender": [
+        "mens"
+      ],
+      "level": [
+        "open"
+      ],
+      "organiser": "saf"
+    },
+    "event_id": "evt-0022"
+  },
+  {
+    "pid": "q-0009",
+    "status": "approved",
+    "source": "post",
+    "source_url": "https://www.facebook.com/photo?fbid=122222487230354527&set=a.122119067408354527",
+    "source_note": "Pasted post. AI note: Youth epee camp on 14–16 December 2026, checked as Monday to Wednesday; the U11–U15 range is entered as levels u11 to u15.",
+    "added": "2026-11-12",
+    "event": {
+      "name": "Youth Summer Epee Camp",
+      "type": "other",
+      "start_date": "2026-12-14",
+      "end_date": "2026-12-16",
+      "weapons": [
+        "epee"
+      ],
+      "level": [
+        "u14",
+        "u12",
+        "u11",
+        "u13",
+        "u15"
+      ],
+      "organiser": "saf",
+      "url": "https://www.facebook.com/photo?fbid=122222487230354527&set=a.122119067408354527"
+    },
+    "event_id": "evt-0023"
+  },
+  {
+    "pid": "q-0010",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://nswfencing.org.au/public/schedule/events/91015-join-us-for-the-2027-sydney-international-fencing-camp",
+    "source_note": "NSWFA events calendar. AI note: A multi-day fencing training camp; the age range \"Ages 12 to Veteran\" is not a named level list, so level is left empty.",
+    "added": "2026-11-12",
+    "event": {
+      "name": "Join Us for the 2027 Sydney International Fencing Camp!",
+      "type": "other",
+      "start_date": "2027-01-03",
+      "end_date": "2027-01-11",
+      "weapons": [
+        "foil",
+        "epee"
+      ],
+      "level": [
+        "open"
+      ],
+      "venue": "Sydney Uni Sport, Darlington",
+      "organiser": "nswfa",
+      "url": "https://nswfencing.org.au/public/schedule/events/91015-join-us-for-the-2027-sydney-international-fencing-camp"
+    },
+    "event_id": "evt-0024"
+  },
+  {
+    "pid": "q-0011",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://www.ausfencing.org/tribe-events/2026-27-junior-and-cadets/",
+    "source_note": "AFF events feed. Details to fill in: the schedule has no competitions we could recognise",
+    "added": "2026-11-14",
+    "event": {
+      "name": "2026/27 Australian Junior and Cadet Championships",
+      "start_date": "2027-02-27",
+      "end_date": "2027-03-03",
+      "weapons": [
+        "foil",
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "cadet",
+        "junior"
+      ],
+      "venue": "Sydney Olympic Park Sports Halls, Sydney Olympic Park",
+      "organiser": "aff",
+      "url": "https://www.ausfencing.org/tribe-events/2026-27-junior-and-cadets/"
+    },
+    "event_id": "evt-0025"
+  },
+  {
+    "pid": "q-0012",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-circuit-3/",
+    "source_note": "AFF events feed. Details to fill in: the schedule has no competitions we could recognise",
+    "added": "2026-11-14",
+    "event": {
+      "name": "2026/27 Australian Youth Circuit #3",
+      "start_date": "2027-04-10",
+      "end_date": "2027-04-11",
+      "weapons": [
+        "foil",
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "youth"
+      ],
+      "venue": "Nissan Arena, Brisbane, Nathan",
+      "organiser": "aff",
+      "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-circuit-3/"
+    },
+    "event_id": "evt-0026"
+  },
+  {
+    "pid": "q-0013",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://www.ausfencing.org/tribe-events/2026-27-robyn-chaplin-afc4/",
+    "source_note": "AFF events feed. Details to fill in: the schedule has no competitions we could recognise",
+    "added": "2026-11-14",
+    "event": {
+      "name": "2026/27 Robyn Chaplin (AFC4)",
+      "start_date": "2027-04-23",
+      "end_date": "2027-04-25",
+      "weapons": [
+        "foil",
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open"
+      ],
+      "venue": "Galuwa Recreation Centre, Lane Cove",
+      "organiser": "aff",
+      "url": "https://www.ausfencing.org/tribe-events/2026-27-robyn-chaplin-afc4/"
+    },
+    "event_id": "evt-0027"
+  },
+  {
+    "pid": "q-0014",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://www.ausfencing.org/tribe-events/2026-27-australian-senior-and-veteran-championships/",
+    "source_note": "AFF events feed. Details to fill in: the schedule has no competitions we could recognise",
+    "added": "2026-11-14",
+    "event": {
+      "name": "2026/27 Australian Senior and Veteran Championships",
+      "start_date": "2027-05-13",
+      "end_date": "2027-05-17",
+      "weapons": [
+        "foil",
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open",
+        "veteran"
+      ],
+      "venue": "Victorian State Fencing Centre, North Melbourne",
+      "organiser": "aff",
+      "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-senior-and-veteran-championships/"
+    },
+    "event_id": "evt-0028"
+  },
+  {
+    "pid": "q-0015",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-and-under13-championships/",
+    "source_note": "AFF events feed. Details to fill in: the schedule has no competitions we could recognise",
+    "added": "2026-11-14",
+    "event": {
+      "name": "2026/27 Australian Youth and Under13 Championships",
+      "start_date": "2027-07-02",
+      "end_date": "2027-07-06",
+      "weapons": [
+        "foil",
+        "epee",
+        "saber"
+      ],
+      "format": [
+        "individual",
+        "team"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "open"
+      ],
+      "venue": "Victorian State Fencing Centre, North Melbourne",
+      "organiser": "aff",
+      "url": "https://www.ausfencing.org/tribe-events/2026-27-australian-youth-and-under13-championships/"
+    },
+    "event_id": "evt-0029"
+  },
+  {
+    "pid": "q-0016",
+    "status": "approved",
+    "source": "scraper",
+    "source_url": "https://nswfencing.org.au/public/schedule/events/91681-wheelchair-fencing-training-camp-december-26",
+    "source_note": "NSWFA events calendar. AI note: A wheelchair fencing training camp; it mentions a Wheels and Steel Sabre competition, which is not clearly part of this event.",
+    "added": "2026-11-14",
+    "event": {
+      "name": "Wheelchair Fencing Training Camp - December 26",
+      "type": "other",
+      "start_date": "2026-12-07",
+      "end_date": "2026-12-10",
+      "venue": "Sydney Academy of Fencing, Alexandria",
+      "organiser": "nswfa",
+      "url": "https://nswfencing.org.au/public/schedule/events/91681-wheelchair-fencing-training-camp-december-26"
+    },
+    "event_id": "evt-0030"
+  },
+  {
+    "pid": "q-0017",
+    "status": "rejected",
+    "source": "scraper",
+    "source_url": "https://nswfencing.org.au/public/schedule/events/91684-youth-summer-epee-camp-with-valerio-cuomo",
+    "source_note": "NSWFA events calendar. AI note: A youth summer epee training camp with Valerio Cuomo, which is a camp rather than a competition.",
+    "added": "2026-11-14",
+    "event": {
+      "name": "YOUTH SUMMER EPEE CAMP with Valerio Cuomo",
+      "type": "other",
+      "start_date": "2026-12-14",
+      "end_date": "2026-12-16",
+      "weapons": [
+        "epee"
+      ],
+      "level": [
+        "youth"
+      ],
+      "venue": "Sydney Academy of Fencing, Alexandria",
+      "organiser": "saf",
+      "url": "https://nswfencing.org.au/public/schedule/events/91684-youth-summer-epee-camp-with-valerio-cuomo"
+    }
+  }
+]

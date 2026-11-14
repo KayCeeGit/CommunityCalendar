@@ -1,0 +1,15 @@
+{
+  "name": "community-calendar",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "admin": "node admin/server.mjs",
+    "test": "node --test",
+    "scrape:aff": "node scrapers/aff.mjs",
+    "scrape:nswfa": "node scrapers/nswfa.mjs"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.0"
+  }
+}
