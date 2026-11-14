@@ -249,7 +249,7 @@ main { padding: 8px clamp(16px, 3vw, 40px) 80px; }
     .filters-foot { padding: 0; }
     #reset-filters { min-height: 34px; }
 
-    main { grid-row: 4; grid-column: 1 / -1; padding: 6px 12px 96px; }
+    main { grid-row: 4; grid-column: 1 / -1; padding: 6px 12px 96px; background-color: var(--bg); }   
     .month-block { margin-top: 20px; }
     .month-header { flex-wrap: wrap; gap: 4px 12px; margin-bottom: 10px; font-size: clamp(1.25rem, 5.8vw, 1.6rem); }
     .month-events { grid-template-columns: minmax(0, 1fr); gap: 8px; }
