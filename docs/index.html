@@ -25,6 +25,7 @@
             </ul>
         </nav>
         <div class="filters">
+            <button type="button" class="filters-toggle" id="filters-toggle" aria-expanded="false" aria-controls="filters">Filters <span class="filter-badge" id="filter-badge"></span></button>
             <form id="filters" aria-label="Filter events">
                 <div class="filter-row wide">
                     <span class="filter-label" id="label-weapon">Weapon</span>
@@ -57,6 +58,19 @@
                     <option value="other">Other</option>
                     </select>
                 </div>
+                <div class="filter-row">
+                    <label class="filter-label" for="age-select">Age</label>
+                    <select id="age-select" name="age">
+                    <option value="all">All</option>
+                    <option value="u11">U11</option>
+                    <option value="u13">U13</option>
+                    <option value="youth">Youth</option>
+                    <option value="cadet">Cadet</option>
+                    <option value="junior">Junior</option>
+                    <option value="senior">Senior</option>
+                    <option value="veterans">Veterans</option>
+                    </select>
+                </div>
             </form>
             <div class="filters-foot">
                 <p class="count" id="result-count" aria-live="polite"></p>
@@ -68,7 +82,7 @@
     <div class="stage">
         <header class="hero">
         <h1>Fencing NSW</h1>
-        <p class="lede">Unofficial calendar of fencing events across NSW</p>
+        <p class="lede">Unofficial calendar of fencing events across NSW.</p>
         <p class="next-up" id="next-up" hidden></p>
         </header>
         <main>

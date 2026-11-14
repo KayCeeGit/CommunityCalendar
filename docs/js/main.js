@@ -17,7 +17,9 @@ const container = byId('events');
 const form = byId('filters');
 const nextUpBox = byId('next-up');   // only on the calendar page
 const countBox = byId('result-count');
-const FILTERS = ['year', 'month', 'weapon', 'format', 'type']; // the radio groups in the filter form (year only exists on the archive page)
+const filtersBox = form.closest('.filters');
+const filterBadge = byId('filter-badge');   // how many filters are on, shown on the Filters button
+const FILTERS = ['year', 'month', 'weapon', 'format', 'type', 'age']; // the radio groups in the filter form (year only exists on the archive page)
 
 let pageEvents = [];            // the events this page is allowed to show
 let organisersById = new Map(); // organiser id -> { name, image, ... }
@@ -44,7 +46,8 @@ function render() {
   const values = filterValues();
   const shown = filterEvents(pageEvents, values);
   const filtering = Object.values(values).some((v) => v !== 'all');
-  form.closest('.filters').classList.toggle('is-filtering', filtering);
+  filtersBox.classList.toggle('is-filtering', filtering);
+  filterBadge.textContent = Object.values(values).filter((v) => v !== 'all').length || '';
   countBox.textContent = pageEvents.length === 0 ? '' : `${shown.length} ${shown.length === 1 ? 'event' : 'events'}`;
 
   if (pageEvents.length === 0) {
@@ -116,6 +119,9 @@ async function init() {
   addOptions('month-select', monthsPresent.map((m) => [m, monthLabel(`2000-${m}`, false).slice(0, 3)]));
   addOptions('year-select', yearsIn(pageEvents).map((y) => [y, y]));
 
+  byId('filters-toggle').addEventListener('click', (e) => {   // on small screens the filters start hidden behind this button
+    e.currentTarget.setAttribute('aria-expanded', filtersBox.classList.toggle('is-open'));
+  });
   form.addEventListener('change', render);
   form.addEventListener('reset', () => setTimeout(render)); // the form is cleared after this event, so draw afterwards
   render();

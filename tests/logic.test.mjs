@@ -55,6 +55,21 @@ test('weapon, format, month and year filters work alone and together', () => {
   assert.equal(filterEvents(all, { month: '12', year: '2027' }).length, 0);
 });
 
+test('the age filter groups levels: U16 is a cadet level, open is senior, novice is in no group', () => {
+  const [u11, u12, u14, u16, u18, open, vet, novice, none] = [['u11'], ['u12'], ['u14'], ['u16'], ['u18'], ['open'], ['veteran'], ['novice'], undefined].map((level) => ev({ level }));
+  const all = [u11, u12, u14, u16, u18, open, vet, novice, none];
+  const pick = (age) => filterEvents(all, { age });
+  assert.deepEqual(pick('u11'), [u11]);
+  assert.deepEqual(pick('u13'), [u12]);
+  assert.deepEqual(pick('youth'), [u14]);
+  assert.deepEqual(pick('cadet'), [u16]);
+  assert.deepEqual(pick('junior'), [u18]);
+  assert.deepEqual(pick('senior'), [open]);
+  assert.deepEqual(pick('veterans'), [vet]);
+  assert.equal(filterEvents(all, { age: 'all' }).length, all.length);
+  assert.deepEqual(filterEvents([ev({ level: ['open', 'veteran'] })], { age: 'veterans' }).length, 1); // one event can sit in several groups
+});
+
 test('the date block shows the weekday, the start day and where a longer event ends', () => {
   assert.deepEqual(dateParts(ev()), { weekday: 'Sat', day: '12', month: 'Dec', until: '' });
   assert.deepEqual(dateParts(ev({ start_date: '2026-09-11', end_date: '2026-09-13' })), { weekday: 'Fri', day: '11', month: 'Sep', until: 'to 13' });

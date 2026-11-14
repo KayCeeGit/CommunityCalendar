@@ -80,9 +80,16 @@ select:not(:has(option[value="all"]:checked)) { border-color: var(--accent); col
 
 .filters-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; }
 .count { margin: 0; font: 600 0.75rem/1.4 var(--mono); color: var(--muted); }
-#reset-filters { display: none; min-height: 36px; padding: 0 10px; border: 1px solid var(--text); background: none; color: var(--text); font: 600 0.75rem var(--mono); cursor: pointer; }
+#reset-filters { min-height: 36px; padding: 0 10px; border: 1px solid var(--text); background: none; color: var(--text); font: 600 0.75rem var(--mono); cursor: pointer; }
 #reset-filters:hover { background: var(--text); color: var(--bg); }
-.is-filtering #reset-filters { display: inline-block; }
+
+/* wide screens: the filters and the Clear button share one two-column grid, so Clear sits beside the last filter (Age) and lines up with it; the count goes underneath */
+@media (min-width: 1000px) {
+    .filters { grid-template-columns: 1fr 1fr; gap: 12px 10px; }
+    #filters, .filters-foot { display: contents; }
+    .count { grid-column: 1 / -1; order: 1; }
+    #reset-filters { align-self: end; min-height: 40px; }
+}
 
 /* a barcode to fill the foot of the rail: decoration only */
 .rail::after { content: ''; flex: none; height: 38px; margin-top: auto; background: repeating-linear-gradient(90deg, var(--text) 0 2px, transparent 2px 5px, var(--text) 5px 6px, transparent 6px 9px, var(--text) 9px 12px, transparent 12px 14px); opacity: 0.55; }
@@ -190,6 +197,9 @@ main { padding: 8px clamp(16px, 3vw, 40px) 80px; }
 .button { display: inline-block; margin-top: 8px; padding: 14px 24px; background: var(--accent); color: var(--on-accent); font: 800 0.95rem/1 var(--display); font-stretch: 112%; text-transform: uppercase; text-decoration: none; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%); }
 .button:hover { background: var(--text); }
 
+/* the Filters button only exists on smaller screens (below) */
+.filters-toggle { display: none; }
+
 /* ---------- smaller screens: the rail becomes a header ---------- */
 @media (max-width: 999px) {
     .shell { display: block; }
@@ -200,6 +210,17 @@ main { padding: 8px clamp(16px, 3vw, 40px) 80px; }
     .nav-menu { display: flex; }
     .nav-link { white-space: nowrap; padding: 10px 14px; }
     .filters { flex: 1 1 100%; }
+
+    /* the filters start hidden behind one button, which shows how many are on */
+    .filters-toggle { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); background: none; color: var(--text);
+        font: 800 0.95rem/1 var(--display); font-stretch: 112%; text-transform: uppercase; text-align: left; cursor: pointer; }
+    .filters-toggle:hover, .filters-toggle[aria-expanded="true"] { border-color: var(--accent); }
+    .is-filtering .filters-toggle { color: var(--accent); border-color: var(--accent); }
+    .filters-toggle::after { content: ''; width: 9px; height: 9px; margin: -4px 3px 0 auto; border: solid currentColor; border-width: 0 3px 3px 0; transform: rotate(45deg); transition: transform 0.15s; }
+    .filters-toggle[aria-expanded="true"]::after { margin-top: 4px; transform: rotate(-135deg); }
+    .filter-badge { min-width: 22px; padding: 4px 6px; background: var(--accent); color: var(--on-accent); font: 600 0.72rem/1 var(--mono); text-align: center; }
+    .filter-badge:empty { display: none; }
+    .filters:not(.is-open) #filters, .filters:not(.is-open) .filters-foot { display: none; }
     .seg-item span, select { min-height: 44px; }
     #reset-filters { min-height: 44px; }
 }
@@ -240,13 +261,14 @@ main { padding: 8px clamp(16px, 3vw, 40px) 80px; }
     .next-toggle:focus-visible::after { outline: 3px solid var(--on-accent); outline-offset: -4px; }
 
     /* filters: small. Weapon row first, then Month / Format / Type side by side */
-    .filters { grid-row: 3; grid-column: 1 / -1; gap: 6px; padding: 10px 14px 12px; background: #0b0b0c; color: var(--text); border-block: 1px solid var(--line); }
-    #filters { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .filters { grid-row: 3; grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 8px; padding: 10px 14px 12px; background: #0b0b0c; color: var(--text); border-block: 1px solid var(--line); }
+    #filters { display: contents; }   /* the filters join .filters' three-column grid, so the count and Clear button can share a row with the last filter */
     .filter-row.wide:not(:has(.seg)) { grid-column: auto; }   /* Month sits beside Format and Type */
     .filter-label { font-size: 0.62rem; }
     .seg-item span, select { min-height: 36px; }
     .seg { justify-self: start; width: min(100%, 22rem); }
-    .filters-foot { padding: 0; }
+    .filters-foot { display: flex; grid-column: span 2; padding: 0; }
+    .filters:has(#year-select) .filters-foot { grid-column: 1 / -1; }   /* the archive has five filters, so the count gets its own row */
     #reset-filters { min-height: 34px; }
 
     main { grid-row: 4; grid-column: 1 / -1; padding: 6px 12px 96px; background-color: var(--bg); }   /* .stage has no box here (display: contents), so main paints the stage colour: the archive's paper */

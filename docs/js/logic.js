@@ -67,19 +67,34 @@ export function monthLabel(key, withYear = true) {
 }
 
 /**
- * Filters by month ("01" to "12"), year ("2026"), weapon, format and type (competition, other).
+ * Filters by month ("01" to "12"), year ("2026"), weapon, format, type (competition, other) and age group (see AGE_GROUPS).
  * Each filter is "all" (or missing) to mean "don't filter on this".
  * Month and year are separate, so month "01" + year "2027" means January 2027.
  */
 export const typeOf = (e) => e.type ?? 'competition'; // an event with no type is a competition
 
-export function filterEvents(events, { month = 'all', year = 'all', weapon = 'all', format = 'all', type = 'all' } = {}) {
+/**
+ * The age filter. Each group lists the event levels that count as it, so "U16" and "U17" sit under Cadet.
+ * "open" counts as Senior. Levels in no group (novice, school) only show when the age filter is "all".
+ */
+export const AGE_GROUPS = {
+  u11: ['u10', 'u11'],
+  u13: ['u12', 'u13'],
+  youth: ['u14', 'u15', 'youth'],
+  cadet: ['u16', 'u17', 'cadet'],
+  junior: ['u18', 'junior'],
+  senior: ['open'],
+  veterans: ['veteran'],
+};
+
+export function filterEvents(events, { month = 'all', year = 'all', weapon = 'all', format = 'all', type = 'all', age = 'all' } = {}) {
   return events.filter((e) =>
     (month === 'all' || monthOf(e) === month) &&
     (year === 'all' || yearOf(e) === year) &&
     (weapon === 'all' || e.weapons?.includes(weapon)) &&
     (format === 'all' || e.format?.includes(format)) &&
-    (type === 'all' || typeOf(e) === type));
+    (type === 'all' || typeOf(e) === type) &&
+    (age === 'all' || e.level?.some((l) => AGE_GROUPS[age]?.includes(l))));
 }
 
 /** Groups an already-sorted list into [{ key: "2026-12", events: [...] }, ...]. */
