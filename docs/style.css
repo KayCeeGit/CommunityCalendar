@@ -111,7 +111,7 @@ select:not(:has(option[value="all"]:checked)) { border-color: var(--accent); col
 .next-events { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 3px; }
 /* each event is its own dark tile with a violet bar on the left */
 .next-events li { padding: 3px 10px; background: var(--on-accent); box-shadow: inset 3px 0 0 var(--accent); }
-.next-up .name { font: 700 0.95rem/1.2 var(--display); color: var(--accent); }
+.next-up .name { font: 700 0.95rem/1.2 var(--display); color: var(--accent); overflow-wrap: anywhere; }
 
 main { padding: 8px clamp(16px, 3vw, 40px) 80px; }
 
@@ -244,7 +244,7 @@ main { padding: 8px clamp(16px, 3vw, 40px) 80px; }
     .lede { font-size: 0.95rem; }
 
     /* "Next up": one slim line; tap anywhere on it to show every event that day */
-    .next-up { position: relative; display: flex; align-items: center; max-width: none; padding: 0; }
+    .next-up { position: relative; display: flex; align-items: center; min-width: 0; max-width: none; padding: 0; }   /* min-width: 0 stops a long event name widening the whole page */
     .next-up .text { flex: 1; padding: 6px 4px 6px 14px; }
     .next-head { flex-wrap: nowrap; gap: 8px; min-width: 0; }
     .next-up .label, .next-up .when { flex: none; white-space: nowrap; }
