@@ -507,5 +507,34 @@
       "organiser": "saf",
       "url": "https://nswfencing.org.au/public/schedule/events/91684-youth-summer-epee-camp-with-valerio-cuomo"
     }
+  },
+  {
+    "pid": "q-0018",
+    "status": "approved",
+    "source": "post",
+    "source_url": "https://www.instagram.com/ready_to_fence/",
+    "source_note": "Pasted post. AI note: A School Championships event on Sunday 6 December 2026, which is a Sunday in 2026 and upcoming; gender is taken from the \"girls and boys\" medal note and weapons are not stated.",
+    "added": "2026-11-17",
+    "event": {
+      "name": "School Championships",
+      "start_date": "2026-12-06",
+      "end_date": "2026-12-06",
+      "weapons": [
+        "foil"
+      ],
+      "format": [
+        "individual"
+      ],
+      "gender": [
+        "mens",
+        "womens"
+      ],
+      "level": [
+        "school"
+      ],
+      "organiser": "ready-to-fence",
+      "url": "https://www.instagram.com/ready_to_fence/"
+    },
+    "event_id": "evt-0031"
   }
 ]

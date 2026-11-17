@@ -95,6 +95,11 @@
       "Lake Mac",
       "Lake Macquarie Fencing Club"
     ]
+  },
+  {
+    "id": "ready-to-fence",
+    "name": "Ready To Fence",
+    "image": "img/ready-to-fence.webp",
+    "aliases": []
   }
 ]
-  
